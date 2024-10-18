@@ -1,8 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
-import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorModel, DecoratorModel, Diagram, DiagramComponent, DiagramModule, LayoutModel, NodeModel, TextModel } from '@syncfusion/ej2-angular-diagrams';
+import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorModel, DecoratorModel, Diagram, DiagramComponent, DiagramModule, LayoutModel, LineDistribution, NodeModel, TextModel } from '@syncfusion/ej2-angular-diagrams';
 import { RuleData } from '../../models/appModel';
 import { RULE_DATA } from '../../data/rule-data';
-Diagram.Inject(ComplexHierarchicalTree);
+Diagram.Inject(ComplexHierarchicalTree, LineDistribution);
 
 @Component({
   selector: 'app-workflow-diagram',
@@ -37,6 +37,7 @@ export class WorkflowDiagramComponent {
           id: `connector${item['id']}-s${item['success_rule_id']}`,
           sourceID: `node${item['id']}`,
           targetID: `node${item['success_rule_id']}`,
+          annotations: [{ content: 'success', alignment: 'Center'}]
         });
       }
 
@@ -46,6 +47,7 @@ export class WorkflowDiagramComponent {
           id: `connector${item['id']}-f${item['failure_rule_id']}`,
           sourceID: `node${item['id']}`,
           targetID: `node${item['failure_rule_id']}`,
+          annotations: [{ content: 'failure', alignment: 'Center'}]
         });
       }
     });
