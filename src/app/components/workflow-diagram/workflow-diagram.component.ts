@@ -1,8 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
-import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorModel, DecoratorModel, Diagram, DiagramComponent, DiagramModule, LayoutModel, NodeModel, TextModel } from '@syncfusion/ej2-angular-diagrams';
+import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorModel, DecoratorModel, Diagram, DiagramComponent, DiagramModule, LayoutModel, LineDistribution, NodeModel, TextModel } from '@syncfusion/ej2-angular-diagrams';
 import { RuleData } from '../../models/appModel';
 import { RULE_DATA } from '../../data/rule-data';
-Diagram.Inject(ComplexHierarchicalTree);
+Diagram.Inject(ComplexHierarchicalTree, LineDistribution);
 
 @Component({
   selector: 'app-workflow-diagram',

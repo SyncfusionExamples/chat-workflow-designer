@@ -1,0 +1,12 @@
+<ejs-diagram id="diagram1" class="diagram-container" [width]="'100%'" [height]="'600px'" [nodes]="nodes"
+    [selectedItems]="selectedItems" [getCustomTool]="getCustomTool" (created)="created()">
+</ejs-diagram>
+
+<ejs-dialog #dialog id="dialog" target="#diagram1" [header]="dialogHeader()" [visible]='isDialogVisible' isModal="true" (close)="onCloseDialog()" closeOnEscape='true' width="300px" (overlayClick)="dialogOverlayClick()">
+    <div>
+      <button ejs-button (click)="handleEvent()">Event</button>
+      <button ejs-button (click)="handleAction()">Action</button>
+      <button ejs-button (click)="handleCondition()">Condition</button>
+      <button ejs-button (click)="handleExit()">Exit</button>
+    </div>
+</ejs-dialog>
