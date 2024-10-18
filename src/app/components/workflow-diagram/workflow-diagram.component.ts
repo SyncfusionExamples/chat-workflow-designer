@@ -37,6 +37,7 @@ export class WorkflowDiagramComponent {
           id: `connector${item['id']}-s${item['success_rule_id']}`,
           sourceID: `node${item['id']}`,
           targetID: `node${item['success_rule_id']}`,
+          annotations: [{ content: 'success', alignment: 'Center'}]
         });
       }
 
@@ -46,6 +47,7 @@ export class WorkflowDiagramComponent {
           id: `connector${item['id']}-f${item['failure_rule_id']}`,
           sourceID: `node${item['id']}`,
           targetID: `node${item['failure_rule_id']}`,
+          annotations: [{ content: 'failure', alignment: 'Center'}]
         });
       }
     });
