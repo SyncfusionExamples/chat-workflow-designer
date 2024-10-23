@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
-import { DiagramComponent, DiagramModule, NodeModel, SelectorConstraints, SelectorModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
+import { DiagramComponent, DiagramModule, IClickEventArgs, Node, NodeModel, SelectorConstraints, SelectorModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
 import { DialogComponent, DialogModule } from '@syncfusion/ej2-angular-popups';
 
 @Component({
@@ -10,7 +10,8 @@ import { DialogComponent, DialogModule } from '@syncfusion/ej2-angular-popups';
   templateUrl: './workflow.component.html',
   styleUrl: './workflow.component.scss'
 })
-export class WorkflowComponent {
+export class WorkflowComponent{
+  
   @ViewChild('flowdiagram') flowdiagram!: DiagramComponent;
   @ViewChild('dialogBlock') dialogBlock!: DialogComponent;
   
@@ -22,7 +23,9 @@ export class WorkflowComponent {
     },
   ]
   
-  public plusIconHandles: UserHandleModel[] = [
+  public dialogPosition : object={ X: 'center', Y: 'center' };
+
+  public handles: UserHandleModel[] = [
     {
       name: 'plusIcon',
       pathData:
@@ -37,95 +40,45 @@ export class WorkflowComponent {
 
   public selectedItems: SelectorModel = {
     constraints: SelectorConstraints.UserHandle,
-    userHandles: this.plusIconHandles,
+    userHandles: this.handles,
   };
 
-  public isDialogVisible: boolean = false;
-
-  public dialogPosition : object={ X: 'center', Y: 'center' };
-
-  // For checking the dialog component
-  ngAfterViewInit(): void {
-    // Check if the dialog is initialized
-    console.log('Dialog:', this.dialogBlock);  // Should not log "undefined"
-    this.isDialogVisible = false;
-    const entryNode = document.getElementById('entryNode');
-    if (entryNode) {
-      entryNode.onclick = this.onEntryNodeClick.bind(this);
-    }
+  onDialogCreated(): void {
+    this.dialogBlock.hide();
   }
 
-  public created(): void {
-    const entryNode = document.getElementById('entryNode');
-    if (entryNode) {
-      entryNode.onclick = this.onEntryNodeClick.bind(this);
-    }
-  }
-
-  public onEntryNodeClick(): void {
-    const handle = this.plusIconHandles[0];
-    handle.offset = 0.5; // Center the handle horizontally
-
-    // Update selected items to include the user handle
-    this.selectedItems.userHandles = [handle];
-    this.flowdiagram.selectedItems = this.selectedItems;
-
-    // Update the diagram to reflect changes
-    this.flowdiagram.dataBind();
-  }
-
-  /*public getCustomTool: Function = this.getTool.bind(this);
-
-  public getTool(action: string): void {
-    if (action === "plusIcon") {
-      this.dialogBlock.visible= true;
-      this.isDialogVisible = true;
-      if(this.flowdiagram.selectedItems.nodes)
-        {
-          const selectedNode = this.flowdiagram.selectedItems.nodes[0];
-      
-          if (selectedNode && selectedNode.wrapper && selectedNode.width && this.dialogBlock?.position) {
-            const nodeBounds = selectedNode.wrapper.bounds;
-            const dialogPosition = {
-              X: (nodeBounds.x + selectedNode.width + 10) + 'px',
-              Y: nodeBounds.y + 'px'
-            };
-            
-            this.dialogBlock.position = dialogPosition; // Set dialog position
-          }
-        }
-    } else {
-      this.isDialogVisible = false;
-    }
-    this.flowdiagram.dataBind();
-  }*/
-
-  public onNodeClick(args: any): void {
-    if(args.element.id === 'entryNode') {
-      if(this.flowdiagram.selectedItems.userHandles)
+  public onNodeClick(args: IClickEventArgs): void {
+    if(args.actualObject instanceof Node) {
+      if(this.flowdiagram.selectedItems.userHandles) {
         this.flowdiagram.selectedItems.userHandles[0].visible = true;
+      }
+    } else {
+      this.dialogBlock.visible = false;
     }
   }
-  
-  public onUserHandleMouseDown: Function = (event: UserHandleEventsArgs) => {
-    if(event.element.name === 'plusIcon')
-    {
+
+  public onUserHandleMouseDown(event: UserHandleEventsArgs) {
+    if(event.element.name === 'plusIcon') {
+      if (this.flowdiagram.selectedItems.nodes && this.dialogBlock)
+      {
+        const selectedNode = this.flowdiagram.selectedItems.nodes[0];
+      if (selectedNode && selectedNode.wrapper) {
+        const nodeBounds = selectedNode.wrapper.bounds;
+        const dialogWidth = this.dialogBlock.width as number;  // Ensure width is a number
+        this.dialogPosition = {
+          X: (nodeBounds.x + nodeBounds.width / 2 - dialogWidth / 2) + 'px',
+          Y: (nodeBounds.y + nodeBounds.height + 30) + 'px'
+        };
+      }
+      }
+      
       this.dialogBlock.visible = true;
     }
     this.flowdiagram.dataBind();
   }
 
-  public dialogOverlayClick(): void {
-    this.isDialogVisible = false;
-  }
-
-  public dialogHeader(): string {
-    return 'Choose an option'; // Replace with your desired header logic
-  }
-
   public onCloseDialog(): void {
-    this.dialogBlock?.hide();
-    // Optionally reset or handle additional logic when dialog closes
+    this.dialogBlock.visible = false;
   }
 
   // Dialog option handlers

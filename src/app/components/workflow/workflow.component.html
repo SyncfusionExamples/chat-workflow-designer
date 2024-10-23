@@ -1,13 +1,12 @@
+<ejs-dialog #dialogBlock id="dialog" header="Choose an option" target="#flow-diagram" [visible]='false' isModal='true' (close)="onCloseDialog()" closeOnEscape='false' width='200px' (created)="onDialogCreated()" [position]="dialogPosition">
+  <div>
+    <div><button ejs-button (click)="handleEvent()">Event</button></div>
+    <div><button ejs-button (click)="handleAction()">Action</button></div>
+    <div><button ejs-button (click)="handleCondition()">Condition</button></div>
+    <div><button ejs-button (click)="handleExit()">Exit</button></div>
+  </div>
+</ejs-dialog>
 
-  <ejs-dialog #dialogBlock id="dialog" target="#diagram1" [header]="dialogHeader()" [visible]='isDialogVisible' isModal="true" (close)="onCloseDialog()" closeOnEscape='true' width="300px" (overlayClick)="dialogOverlayClick()">
-    <div>
-      <button ejs-button (click)="handleEvent()">Event</button>
-      <button ejs-button (click)="handleAction()">Action</button>
-      <button ejs-button (click)="handleCondition()">Condition</button>
-      <button ejs-button (click)="handleExit()">Exit</button>
-    </div>
-  </ejs-dialog>
-
-<ejs-diagram #flowdiagram id="diagram1" class="diagram-container" [width]="'100%'" [height]="'600px'" [nodes]="nodes"
-    [selectedItems]="selectedItems" [onUserHandleMouseDown]="onUserHandleMouseDown" (created)="created()" (click)="onNodeClick($event)">
+<ejs-diagram #flowdiagram id="flow-diagram" class="diagram-container" [width]="'100%'" [height]="'600px'" [nodes]="nodes"
+    [selectedItems]="selectedItems" (onUserHandleMouseDown)="onUserHandleMouseDown($event)" (click)="onNodeClick($event)">
 </ejs-diagram>
