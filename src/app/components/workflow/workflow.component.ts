@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, ViewChild } from '@angular/core';
 import { DiagramComponent, DiagramModule, IClickEventArgs, Node, NodeModel, SelectorConstraints, SelectorModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
 import { DialogComponent, DialogModule } from '@syncfusion/ej2-angular-popups';
@@ -6,7 +5,7 @@ import { DialogComponent, DialogModule } from '@syncfusion/ej2-angular-popups';
 @Component({
   selector: 'app-workflow',
   standalone: true,
-  imports: [DiagramModule, DialogModule, CommonModule],
+  imports: [DiagramModule, DialogModule],
   templateUrl: './workflow.component.html',
   styleUrl: './workflow.component.scss'
 })
