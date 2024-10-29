@@ -1,11 +1,13 @@
 <div id="dialogContainer">
-  <ejs-dialog #dialog id="dialog" header="Choose an option" target="#diagram" visible='false' isModal='true' (close)="onCloseDialog()" closeOnEscape='false' width='200px' (created)="onDialogCreated()" [position]="dialogPosition">
-    <div>
-      <button ejs-button (click)="handleEvent()">Event</button>
-      <button ejs-button (click)="handleAction()">Action</button>
-      <button ejs-button (click)="handleCondition()">Condition</button>
-      <button ejs-button (click)="handleExit()">Exit</button>
-    </div>
+  <ejs-dialog class="e-control e-dialog e-lib e-dlg-modal e-popup e-popup-open" #dialog id="dialog" header="Choose an option" target="#diagram" [visible]='false' [isModal]='false' (close)="onCloseDialog()" closeOnEscape='false' showCloseIcon="true" width='250px' (created)="onDialogCreated()" [position]="dialogPosition" (open)="onOpenDialog($event)">
+    <ng-template #content>
+      <div>
+        <div><button ejs-button class="e-control e-btn e-lib" (click)="handleEvent()">Event</button></div>
+        <div><button ejs-button class="e-control e-btn e-lib" (click)="handleAction()">Action</button></div>
+        <div><button ejs-button class="e-control e-btn e-lib" (click)="handleCondition()">Condition</button></div>
+        <div><button ejs-button class="e-control e-btn e-lib" (click)="handleExit()">Exit</button></div>
+      </div>
+    </ng-template>
   </ejs-dialog>
 </div>
 
