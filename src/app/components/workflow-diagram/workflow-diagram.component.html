@@ -1,5 +1,5 @@
 <div id="dialogContainer">
-  <ejs-dialog class="e-control e-dialog e-lib e-dlg-modal e-popup e-popup-open" #dialog id="dialog" header="Choose an option" target="#diagram" [visible]='false' [isModal]='false' (close)="onCloseDialog()" closeOnEscape='false' showCloseIcon="true" width='250px' (created)="onDialogCreated()" [position]="dialogPosition" (open)="onOpenDialog($event)">
+  <ejs-dialog class="e-control e-dialog e-lib e-dlg-modal e-popup e-popup-open" #dialog id="dialog" header="Choose an option" target="#diagram" [visible]='false' [isModal]='true' (close)="onCloseDialog()" closeOnEscape='false' showCloseIcon="true" width='250px' (created)="onDialogCreated()" [position]="dialogPosition" (open)="onOpenDialog($event)">
     <ng-template #content>
       <div>
         <div><button ejs-button class="e-control e-btn e-lib" (click)="handleEvent()">Event</button></div>
@@ -21,4 +21,5 @@
   [getConnectorDefaults]="getConnectorDefaults"
   (created)="onDiagramCreated()"
   [selectedItems]="selectedItems" (onUserHandleMouseDown)="onUserHandleMouseDown($event)" (click)="onNodeClick($event)"
+  [snapSettings]="snapSettings"
 ></ejs-diagram>

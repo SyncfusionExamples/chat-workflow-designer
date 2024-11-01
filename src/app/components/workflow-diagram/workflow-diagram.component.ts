@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { ComplexHierarchicalTree, ConnectionPointOrigin,  ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, IClickEventArgs, LayoutModel, LineDistribution, Node, NodeModel, SelectorConstraints, SelectorModel, TextModel, UserHandleEventsArgs, UserHandleModel, LineRouting } from '@syncfusion/ej2-angular-diagrams';
+import { ComplexHierarchicalTree, ConnectionPointOrigin,  ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, IClickEventArgs, LayoutModel, LineDistribution, Node, NodeModel, SelectorConstraints, SelectorModel, TextModel, UserHandleEventsArgs, UserHandleModel, LineRouting, SnapSettingsModel } from '@syncfusion/ej2-angular-diagrams';
 import { RuleData } from '../../models/appModel';
 import { RULE_DATA } from '../../data/rule-data';
 import { DialogComponent, DialogModule } from '@syncfusion/ej2-angular-popups';
@@ -85,6 +85,13 @@ export class WorkflowDiagramComponent {
     (this.diagram as DiagramComponent).fitToPage();
   };
 
+  // Configure snapSettings to hide grid lines
+  public snapSettings: SnapSettingsModel = {
+    horizontalGridlines: { lineColor: 'transparent', lineIntervals: [] },
+    verticalGridlines: { lineColor: 'transparent', lineIntervals: [] },
+    constraints: 0 // Disable all snapping
+  };
+
   public selectedItems: SelectorModel = {
     constraints: SelectorConstraints.UserHandle,
     userHandles: this.handles,
@@ -153,24 +160,6 @@ export class WorkflowDiagramComponent {
 
   public onUserHandleMouseDown(event: UserHandleEventsArgs) {
     if(event.element.name === 'plusIcon') {
-      if (this.clickedNode && this.dialog)
-      {
-        if(this.diagram.selectedItems.userHandles) 
-            this.diagram.selectedItems.userHandles[0].visible = false;
-        if(this.diagram.selectedItems.userHandles) 
-            this.diagram.selectedItems.userHandles[1].visible = true;
-        const selectedNode = this.clickedNode;
-        if (selectedNode && selectedNode.wrapper) {
-          const nodeBounds = selectedNode.wrapper.bounds;
-          // Convert dialog width from string to number
-        const dialogWidthString = this.dialog.width as string;
-        const dialogWidth = parseInt(dialogWidthString, 10); // Parse integer from string
-          this.dialogPosition = {
-            X: ((nodeBounds.x + nodeBounds.width) / 2 - dialogWidth / 2) + 'px',
-            Y: (nodeBounds.y + nodeBounds.height + 10) + 'px'
-          };
-        }
-      }
       this.dialog.visible = true;
     } else {
       this.onCloseDialog();
