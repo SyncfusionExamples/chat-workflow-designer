@@ -3,9 +3,9 @@ import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, C
 import { RuleData } from '../../models/appModel';
 import { RULE_DATA } from '../../data/rule-data';
 import { DialogModule } from '@syncfusion/ej2-angular-popups';
-import { DropDownButtonComponent, DropDownButtonModule, ItemModel, OpenCloseMenuEventArgs } from '@syncfusion/ej2-angular-splitbuttons';
+import { BeforeOpenCloseMenuEventArgs, DropDownButtonComponent, DropDownButtonModule, ItemModel, OpenCloseMenuEventArgs } from '@syncfusion/ej2-angular-splitbuttons';
 import { CommonModule } from '@angular/common';
-import { ListViewModule } from '@syncfusion/ej2-angular-lists';
+import { ListViewComponent, ListViewModule, SelectEventArgs } from '@syncfusion/ej2-angular-lists';
 import { LIST_DATA } from '../../data/list-data';
 
 Diagram.Inject(ComplexHierarchicalTree, LineDistribution);
@@ -20,13 +20,12 @@ Diagram.Inject(ComplexHierarchicalTree, LineDistribution);
 export class WorkflowDiagramComponent {
   @ViewChild('diagram') diagram!: DiagramComponent;
   @ViewChild('dropdownbutton') dropdownbutton!: DropDownButtonComponent;
+  // @ViewChild('listview') listView!: ListViewComponent;
 
   public data: RuleData[] = RULE_DATA;
 
   public nodes: NodeModel[] = [];
   public connectors: ConnectorModel[] = [];
-  public dialogPosition : object={ X: 'center', Y: 'center' };
-  public clickedNode? : NodeModel;
 
   public handles: UserHandleModel[] = [
     {
@@ -56,6 +55,7 @@ export class WorkflowDiagramComponent {
   public fields: {[key: string]: string} ={ tooltip: 'text'};
   public headertitle = 'Continent';
   public animation: Object  = { duration: 0};
+  public isParentListItem : boolean = false;
 
   constructor() {
     // Initialize nodes and connectors based on the data
@@ -153,33 +153,32 @@ export class WorkflowDiagramComponent {
 
   public onNodeClick(args: IClickEventArgs): void {
     if (args.actualObject instanceof Node) {
-      // Directly handle the node that was clicked
-      this.clickedNode = args.actualObject as NodeModel;
-
-      // Select this node to reflect in the diagram's state
-      this.diagram.select([this.clickedNode]);
       if(this.diagram.selectedItems.userHandles) {
         this.diagram.selectedItems.userHandles[0].visible = true;
       }
     } 
-    // this.diagram.dataBind();
   }
 
   public onUserHandleMouseDown(event: UserHandleEventsArgs) {
     if(event.element.name === 'plusIcon') {
       this.dropdownbutton.toggle();
     }
-    // this.diagram.dataBind();
   }
 
-  onOpenDropDownButton(args: OpenCloseMenuEventArgs){
+  onOpenDropDownButton(args: OpenCloseMenuEventArgs) {
     let dropDownContainer = document.querySelector('.dropDown-container') as HTMLElement;
 
     args.element.parentElement!.style.top = dropDownContainer.getBoundingClientRect().top + dropDownContainer.offsetHeight +'px';
 
     let ulElement = document.querySelector('ul') as HTMLElement;
     args.element.parentElement!.style.left = dropDownContainer.getBoundingClientRect().left - (ulElement.getBoundingClientRect().width / 2)+ (dropDownContainer.getBoundingClientRect().width / 2)+'px' ;
+  }
 
-    // args.element.parentElement!.style.left = dropDownContainer.getBoundingClientRect().left - (dropDownContainer.getBoundingClientRect().width*1.65) +'px' ;
+  onBeforeCloseDropDownButton(args: BeforeOpenCloseMenuEventArgs) {
+    args.cancel = this.isParentListItem;
+  }
+
+  onSelectListView(args: SelectEventArgs) {
+    this.isParentListItem = args.item.classList.contains("e-has-child");
   }
 }

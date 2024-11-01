@@ -12,9 +12,9 @@
 >
   <ng-template #userHandleTemplate >
     <div class="dropDown-container">
-      <button #dropdownbutton id="dropdownbutton" ejs-dropdownbutton  target="#listview" (open)="onOpenDropDownButton($event)" iconCss='e-icons e-plus' cssClass='e-caret-hide'></button>
+      <button #dropdownbutton id="dropdownbutton" ejs-dropdownbutton  target="#listview" (open)="onOpenDropDownButton($event)" iconCss='e-icons e-plus' cssClass='e-caret-hide' (beforeClose)="onBeforeCloseDropDownButton($event)"></button>
     </div>
   </ng-template>
 </ejs-diagram>
 
-<ejs-listview id='listview' [dataSource]='listdata' [fields]='fields' [showHeader]='true' [headerTitle]='headertitle' [animation]='animation'></ejs-listview>
+<ejs-listview id='listview' [dataSource]='listdata' [fields]='fields' [showHeader]='true' [headerTitle]='headertitle' [animation]='animation' (select)="onSelectListView($event)"></ejs-listview>
