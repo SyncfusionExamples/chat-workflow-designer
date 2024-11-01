@@ -1,17 +1,19 @@
 import { Component, ViewChild } from '@angular/core';
-import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, IClickEventArgs, LayoutModel, LineDistribution, Node, NodeModel, SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
+import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, IClickEventArgs, LayoutModel, LineDistribution, Node, NodeModel, SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
 import { RuleData } from '../../models/appModel';
 import { RULE_DATA } from '../../data/rule-data';
 import { DialogModule } from '@syncfusion/ej2-angular-popups';
 import { DropDownButtonComponent, DropDownButtonModule, ItemModel, OpenCloseMenuEventArgs } from '@syncfusion/ej2-angular-splitbuttons';
 import { CommonModule } from '@angular/common';
+import { ListViewModule } from '@syncfusion/ej2-angular-lists';
+import { LIST_DATA } from '../../data/list-data';
 
 Diagram.Inject(ComplexHierarchicalTree, LineDistribution);
 
 @Component({
   selector: 'app-workflow-diagram',
   standalone: true,
-  imports: [DiagramModule, DialogModule, DropDownButtonModule, CommonModule],
+  imports: [DiagramModule, DialogModule, DropDownButtonModule, CommonModule, ListViewModule],
   templateUrl: './workflow-diagram.component.html',
   styleUrl: './workflow-diagram.component.scss'
 })
@@ -48,6 +50,12 @@ export class WorkflowDiagramComponent {
     {
         text: 'Exit'
     }];
+
+    
+  public listdata: Object = LIST_DATA;
+  public fields: {[key: string]: string} ={ tooltip: 'text'};
+  public headertitle = 'Continent';
+  public animation: Object  = { duration: 0};
 
   constructor() {
     // Initialize nodes and connectors based on the data
@@ -134,6 +142,7 @@ export class WorkflowDiagramComponent {
   public getConnectorDefaults(connector: ConnectorModel): ConnectorModel {
     connector.type = 'Orthogonal';
     connector.cornerRadius = 7;
+    connector.constraints = ConnectorConstraints.Default & ~ConnectorConstraints.Select;
     (
       (connector as ConnectorModel).targetDecorator as DecoratorModel
     ).height = 5;
@@ -153,14 +162,14 @@ export class WorkflowDiagramComponent {
         this.diagram.selectedItems.userHandles[0].visible = true;
       }
     } 
-    this.diagram.dataBind();
+    // this.diagram.dataBind();
   }
 
   public onUserHandleMouseDown(event: UserHandleEventsArgs) {
     if(event.element.name === 'plusIcon') {
       this.dropdownbutton.toggle();
     }
-    this.diagram.dataBind();
+    // this.diagram.dataBind();
   }
 
   onOpenDropDownButton(args: OpenCloseMenuEventArgs){
