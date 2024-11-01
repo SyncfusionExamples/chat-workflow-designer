@@ -168,6 +168,9 @@ export class WorkflowDiagramComponent {
 
     args.element.parentElement!.style.top = dropDownContainer.getBoundingClientRect().top + dropDownContainer.offsetHeight +'px';
 
-    args.element.parentElement!.style.left = dropDownContainer.getBoundingClientRect().left +'px';
+    let ulElement = document.querySelector('ul') as HTMLElement;
+    args.element.parentElement!.style.left = dropDownContainer.getBoundingClientRect().left - (ulElement.getBoundingClientRect().width / 2)+ (dropDownContainer.getBoundingClientRect().width / 2)+'px' ;
+
+    // args.element.parentElement!.style.left = dropDownContainer.getBoundingClientRect().left - (dropDownContainer.getBoundingClientRect().width*1.65) +'px' ;
   }
 }
