@@ -798,3 +798,24 @@ export const RULE_DATA2: RuleData2[] = [
     "fieldOptionDetails": null
   }
 ];
+
+export const RULE_DATA3: RuleData2[] = [
+  {
+    "id": 1,
+    "chatWorkflowId": 1,
+    "successWorkflowId": 1,
+    "successRuleId": null,
+    "isActive": true,
+    "chatWorkflowBlockId": 3,
+    "chatWorkflowEditorTypeId": 18,
+    "fieldDetails": {
+      "description": "Enter valid name",
+      "label": "Enter name",
+      "placeholder": "Enter name",
+      "apiName": "visitorName",
+      "maskForAgent": false
+    },
+    "branchDetails": null,
+    "messageDetails": null,
+    "fieldOptionDetails": null
+  }]

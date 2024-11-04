@@ -12,9 +12,48 @@
 >
   <ng-template #userHandleTemplate >
     <div class="dropDown-container">
-      <button #dropdownbutton id="dropdownbutton" ejs-dropdownbutton  target="#listview" (open)="onOpenDropDownButton($event)" iconCss='e-icons e-plus' cssClass='e-caret-hide' (beforeClose)="onBeforeCloseDropDownButton($event)"></button>
+      <button #dropdownbutton id="dropdownbutton" ejs-dropdownbutton  target="#listview" (open)="onOpenDropDownButton($event)" iconCss='e-icons e-plus' cssClass='e-caret-hide' (beforeClose)="onBeforeCloseDropDownButton($event)" (beforeOpen)="onBeforeOpenDropDownButton()"></button>
     </div>
   </ng-template>
 </ejs-diagram>
 
 <ejs-listview #listview id='listview' [dataSource]='listdata' [fields]='fields' [showHeader]='true' [headerTitle]='headertitle' [animation]='animation' (select)="onSelectListView($event)"></ejs-listview>
+
+<!-- <ejs-sidebar id="default-sidebar" #sidebar [type]='type' (created)="onSideBarCreated($event)" style="visibility: hidden" [width]="width" [closeOnDocumentClick]="closeOnDocumentClick">
+  <div class="title"> Sidebar content</div>
+  <div class="sub-title">
+      Click the button to close the Sidebar.
+  </div>
+  <div class="center-align">
+      <button ejs-button id="close" (click)="onCloseSideBarClick()" class="e-btn close-btn">Close Sidebar</button>
+  </div>
+</ejs-sidebar> -->
+
+<ejs-sidebar id="default-sidebar" #sidebar [type]='type' (created)="onSideBarCreated($event)" style="visibility: hidden" [width]="width" [closeOnDocumentClick]="closeOnDocumentClick" [showBackdrop]="true">
+  <div class="title sidebar-header">{{sidebarHeader}}</div>
+  <div class="content">
+      <!-- Place sidebar content here -->
+       <form (ngSubmit)="onFormSubmit()"  class="full-size-form">
+               <!-- <form (ngSubmit)="onFormSubmit()"  class="full-size-form"> -->
+        <div class="form-header">
+          {{sidebarHeader}}
+        </div>
+          @if (nodeType == 'Boolean') {
+              <div class="content boolean-controls">
+              <input type="text" [(ngModel)]="sidebarInput" name="question" placeholder="Enter question..." class="description-box" required/>
+              <span>
+                <button type="button" ejs-button class="e-btn yes-btn">Yes</button>
+                <button type="button" ejs-button class="e-btn no-btn">No</button>
+              </span>
+            </div>
+          }
+          <!-- <div class="form-footer center-align">
+            <button type="submit" class="e-btn save-btn">Save</button>
+             <button ejs-button id="close" type="submit" (click)="onCloseSideBarClick()" class="e-btn close-btn">Save</button>
+          </div> -->
+       </form>      
+  </div>
+  <div class="center-align">
+      <button ejs-button id="close" (click)="onCloseSideBarClick()" class="e-btn close-btn">Close Sidebar</button>
+  </div>
+</ejs-sidebar>

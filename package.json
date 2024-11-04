@@ -20,6 +20,7 @@
     "@angular/router": "^18.2.0",
     "@syncfusion/ej2-angular-diagrams": "^27.1.53",
     "@syncfusion/ej2-angular-lists": "^27.1.50",
+    "@syncfusion/ej2-angular-navigations": "^27.1.57",
     "@syncfusion/ej2-angular-popups": "^27.1.53",
     "@syncfusion/ej2-angular-splitbuttons": "^27.1.56",
     "rxjs": "~7.8.0",
