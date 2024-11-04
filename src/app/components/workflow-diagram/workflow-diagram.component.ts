@@ -151,12 +151,6 @@ export class WorkflowDiagramComponent {
   }
 
   onOpenDropDownButton(args: OpenCloseMenuEventArgs) {
-    // Reset ListView to its initial state before opening
-    if (this.listView) {
-      this.listView.dataSource = this.listdata; // Reset data
-      this.listView.refresh();
-    }
-
     let dropDownContainer = document.querySelector('.dropDown-container') as HTMLElement;
     args.element.parentElement!.style.top = dropDownContainer.getBoundingClientRect().top + dropDownContainer.offsetHeight +'px';
 
@@ -170,5 +164,13 @@ export class WorkflowDiagramComponent {
 
   onSelectListView(args: SelectEventArgs) {
     this.isParentListItem = args.item.classList.contains("e-has-child");
+  }
+
+  onBeforeOpenDropDownButton() {
+    // Reset ListView to its initial state before opening
+    if (this.listView) {
+      this.listView.dataSource = this.listdata; // Reset data
+      this.listView.refresh();
+    }
   }
 }
