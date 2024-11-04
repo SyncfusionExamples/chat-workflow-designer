@@ -20,10 +20,9 @@ Diagram.Inject(ComplexHierarchicalTree, LineDistribution);
 export class WorkflowDiagramComponent {
   @ViewChild('diagram') diagram!: DiagramComponent;
   @ViewChild('dropdownbutton') dropdownbutton!: DropDownButtonComponent;
-  // @ViewChild('listview') listView!: ListViewComponent;
+  @ViewChild('listview') listView!: ListViewComponent;
 
   public data: RuleData[] = RULE_DATA;
-
   public nodes: NodeModel[] = [];
   public connectors: ConnectorModel[] = [];
 
@@ -38,20 +37,7 @@ export class WorkflowDiagramComponent {
     }
   ];
 
-  // Initialize action items.
-  public items: ItemModel[] = [
-    {
-        text: 'Action'
-    },
-    {
-        text: 'Condition'
-    },
-    {
-        text: 'Exit'
-    }];
-
-    
-  public listdata: Object = LIST_DATA;
+  public listdata: { [key: string]: any }[] = LIST_DATA;
   public fields: {[key: string]: string} ={ tooltip: 'text'};
   public headertitle = 'Continent';
   public animation: Object  = { duration: 0};
@@ -127,7 +113,6 @@ export class WorkflowDiagramComponent {
       strokeColor: 'none',
       strokeWidth: 2,
     };
-    obj.borderColor = 'black';
     obj.backgroundColor = '#6BA5D7';
     obj.borderWidth = 1;
     (obj.shape as TextModel).margin = {
@@ -166,8 +151,13 @@ export class WorkflowDiagramComponent {
   }
 
   onOpenDropDownButton(args: OpenCloseMenuEventArgs) {
-    let dropDownContainer = document.querySelector('.dropDown-container') as HTMLElement;
+    // Reset ListView to its initial state before opening
+    if (this.listView) {
+      this.listView.dataSource = this.listdata; // Reset data
+      this.listView.refresh();
+    }
 
+    let dropDownContainer = document.querySelector('.dropDown-container') as HTMLElement;
     args.element.parentElement!.style.top = dropDownContainer.getBoundingClientRect().top + dropDownContainer.offsetHeight +'px';
 
     let ulElement = document.querySelector('ul') as HTMLElement;
