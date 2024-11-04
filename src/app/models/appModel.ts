@@ -1,3 +1,5 @@
+import { TextFormatEnum } from "./enum";
+
 export interface RuleData {
   id: number;
   workflow_id: number;
@@ -17,4 +19,64 @@ export interface RuleData {
   custom_details: string | null;  // Assuming this is always a JSON string
   last_modified_on: string;  // Keep as a string, or use Date if you prefer converting it
   is_active: boolean;
+}
+
+// Define FieldOptionDetails interface
+export interface FieldOptionDetail {
+  label: string;
+  value: string;
+}
+
+// Define FieldValidation interface
+export interface FieldValidation {
+  max?: string;
+  min?: string;
+  regex?: string;
+}
+
+// Define FieldDetails interface
+export interface FieldDetails {
+  description?: string | null;
+  label?: string | null;
+  placeholder?: string | null;
+  apiName?: string | null;
+  maskForAgent?: boolean | null;
+  isOptional?: boolean | null;
+  useAPI?: boolean | null;
+  fieldValidation?: FieldValidation | null;
+  value?: string | null;
+  groupId?: number | null;
+  ruleType?: number | null;
+}
+
+// Define MessageDetails interface
+export interface MessageDetails {
+  text: string;
+  isPrivate: boolean;
+  textFormat: TextFormatEnum; // 2 for Text, Html, Markdown
+}
+
+// Define BranchDetails interface
+export interface BranchDetail {
+  id?: number;
+  type?: string;
+  name?: string;
+  successRuleId?: number;
+  successWorkflowId?: number | null;
+  value?: string;
+}
+
+// Define the main Workflow interface
+export interface RuleData2 {
+  id: number;
+  chatWorkflowId: number;
+  successWorkflowId?: number | null;
+  successRuleId?: number | null;
+  isActive: boolean;
+  chatWorkflowBlockId: number;
+  chatWorkflowEditorTypeId?: number | null;
+  fieldDetails?: FieldDetails | null;
+  branchDetails?: BranchDetail[] | null;
+  messageDetails?: MessageDetails | null;
+  fieldOptionDetails?: FieldOptionDetail[] | null;
 }

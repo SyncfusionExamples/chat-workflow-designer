@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, IClickEventArgs, LayoutModel, LineDistribution, Node, NodeModel, SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
-import { RuleData } from '../../models/appModel';
-import { RULE_DATA } from '../../data/rule-data';
+import { RuleData, RuleData2 } from '../../models/appModel';
+import { RULE_DATA, RULE_DATA2 } from '../../data/rule-data';
 import { DialogModule } from '@syncfusion/ej2-angular-popups';
 import { BeforeOpenCloseMenuEventArgs, DropDownButtonComponent, DropDownButtonModule, ItemModel, OpenCloseMenuEventArgs } from '@syncfusion/ej2-angular-splitbuttons';
 import { CommonModule } from '@angular/common';
@@ -22,7 +22,8 @@ export class WorkflowDiagramComponent {
   @ViewChild('dropdownbutton') dropdownbutton!: DropDownButtonComponent;
   @ViewChild('listview') listView!: ListViewComponent;
 
-  public data: RuleData[] = RULE_DATA;
+  // public data: RuleData[] = RULE_DATA;
+  public data: RuleData2[] = RULE_DATA2;
   public nodes: NodeModel[] = [];
   public connectors: ConnectorModel[] = [];
 
@@ -47,6 +48,7 @@ export class WorkflowDiagramComponent {
     // Initialize nodes and connectors based on the data
     this.initializeDiagramElements();
   }
+  
   private initializeDiagramElements(): void {
     this.data.forEach(item => {
       // Create nodes based on the data
@@ -56,22 +58,24 @@ export class WorkflowDiagramComponent {
       });
 
       // Create connectors from success_rule_id
-      if (item['success_rule_id']) {
+      if (item['successRuleId']) {
         this.connectors.push({
-          id: `connector${item['id']}-s${item['success_rule_id']}`,
+          id: `connector${item['id']}-s${item['successRuleId']}`,
           sourceID: `node${item['id']}`,
-          targetID: `node${item['success_rule_id']}`,
+          targetID: `node${item['successRuleId']}`,
           annotations: [{ content: 'success', alignment: 'Center'}]
         });
       }
-
-      // Create connectors from failure_rule_id
-      if (item['failure_rule_id']) {
-        this.connectors.push({
-          id: `connector${item['id']}-f${item['failure_rule_id']}`,
-          sourceID: `node${item['id']}`,
-          targetID: `node${item['failure_rule_id']}`,
-          annotations: [{ content: 'failure', alignment: 'Center'}]
+      if (item.branchDetails) {
+        item.branchDetails.forEach(branch => {
+          if (branch.successRuleId) {
+            this.connectors.push({
+              id: `connector${item.id}-s${branch.successRuleId}`,
+              sourceID: `node${item.id}`,
+              targetID: `node${branch.successRuleId}`,
+              annotations: [{ content: 'success', alignment: 'Center' }]
+            });
+          }
         });
       }
     });
