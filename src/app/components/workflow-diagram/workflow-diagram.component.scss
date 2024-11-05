@@ -125,3 +125,114 @@
     border-radius: 5px;
     font-size: 15px;
   }
+
+  .custom-node-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 5px;
+    box-sizing: border-box;
+  }
+  
+  .custom-input {
+    width: 90%;
+    margin-bottom: 10px;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+  }
+  
+  .custom-button {
+    width: 45%;
+    padding: 5px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    background-color: #008cba;
+    cursor: pointer;
+  }
+  
+  .yes-button {
+    background-color: #4CAF50;
+  }
+  
+  .no-button {
+    background-color: #f44336;
+  }
+
+  .full-size-form {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+  
+  .description-box {
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+  
+  .button-list {
+    margin-bottom: 20px;
+  }
+  
+  .button-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+  
+  .add-button-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .button-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  .form-footer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .error {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+
+  .e-listview {
+    width: 100%;               /* Full width to ensure space */
+  }
+
+  .e-listview .e-list-item {
+    white-space: normal;       /* Allow text to wrap */
+    overflow: visible;         /* Show overflow */
+    text-overflow: unset;      /* Remove ellipsis */
+    width: 100%;               /* Ensure enough width */
+    padding: 10px;             /* Add padding for space */
+    box-sizing: border-box;    /* Include padding in width */
+  }
+    
+  .e-listview .e-list-item.e-hover {
+    color:rgb(13, 12, 12);
+    background-color: rgba(114, 109, 109, 0.151);
+  }

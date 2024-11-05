@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, IClickEventArgs, LayoutModel, LineDistribution, Node, NodeModel, SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
+import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, HtmlModel, IClickEventArgs, LayoutModel, LineDistribution, Node, NodeModel, SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
 import { RuleData, RuleData2 } from '../../models/appModel';
 import { RULE_DATA, RULE_DATA2, RULE_DATA3 } from '../../data/rule-data';
 import { DialogModule } from '@syncfusion/ej2-angular-popups';
@@ -9,6 +9,7 @@ import { ListViewComponent, ListViewModule, SelectEventArgs } from '@syncfusion/
 import { LIST_DATA } from '../../data/list-data';
 import { SidebarComponent, SidebarModule } from '@syncfusion/ej2-angular-navigations';
 import { FormsModule } from '@angular/forms';
+import workflowData from '../../data/workflow-data.json'; // Adjust the path as needed
 
 Diagram.Inject(ComplexHierarchicalTree, LineDistribution);
 
@@ -31,6 +32,8 @@ export class WorkflowDiagramComponent {
   public connectors: ConnectorModel[] = [];
   public closeOnDocumentClick: boolean = true;
   public sidebarInput: string = '';
+  public newNodeWidth: number = 100;
+  public newNodeHeight: number = 100;
 
   public handles: UserHandleModel[] = [
     {
@@ -54,6 +57,7 @@ export class WorkflowDiagramComponent {
   public nodeType: string = '';
   private nodeIdCounter: number = 0;
   private connectorIdCounter: number = 0;
+  public buttons: Array<{ label: string, value: string }> = [];
 
   constructor() {
     // Initialize nodes and connectors based on the data
@@ -120,15 +124,15 @@ export class WorkflowDiagramComponent {
   };
 
   public getNodeDefaults(obj: NodeModel): NodeModel {
-    obj.width = 100;
-    obj.height = 100;
+    // obj.width = 100;
+    // obj.height = 70;
     // obj.annotations = [{ content: obj.id }];
     obj.style = {
-      fill: '#6BA5D7',
-      strokeColor: 'none',
-      strokeWidth: 2,
+      fill: '#FFFFFF',
+      strokeColor: '#0f2c60',
+      strokeWidth: 5,
     };
-    obj.backgroundColor = '#6BA5D7';
+    // obj.backgroundColor = '#FFFFFF';
     obj.borderWidth = 1;
     (obj.shape as TextModel).margin = {
       left: 5,
@@ -158,43 +162,54 @@ export class WorkflowDiagramComponent {
       }
       // const clickedNodeId = args.actualObject.id;
       // this.addNodeAndConnect(clickedNodeId); // Add and connect a new node
-    } 
+    }
   }
 
   // Method to add a new node and connect it
   addNodeAndConnect(sourceNodeId: string): void {
-    // Create a new node with a unique ID
-    const newNodeId = `node${++this.nodeIdCounter + 1}`;
-    const questionText = this.sidebarInput; // Use sidebar input or default
     let htmlContent = '';
+    let addInfo: any = {};
 
     if (this.nodeType === 'Boolean') {
-      htmlContent = `
-      <div class="custom-node-container">
-        <input type="text" value="${questionText}" placeholder="Enter question" class="custom-input">
-        <div class="button-container">
-          <button class="custom-button yes-button">Yes</button>
-          <button class="custom-button no-button">No</button>
-        </div>
+    const questionText = this.sidebarInput; // Use sidebar input or default
+
+    htmlContent = `
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 10px; box-sizing: border-box; border-radius: 10px;">
+      <input type="text" value="${questionText}" placeholder="Enter your question" 
+            style="width: 85%; padding: 8px; margin-bottom: 10px; border: 2px solid #1F4B99; border-radius: 8px; font-size: 14px; box-sizing: border-box;">
+      <div style="width: 85%; display: flex; justify-content: space-between;">
+        <button ejs-button style="width: 45%; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px;">Yes</button>
+        <button ejs-button style="width: 45%; background-color: #f44336; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px;">No</button>
       </div>
-      `;
-    } else {
+    </div>
+  `;
+    addInfo = { questionText }; // Store questionText
+    this.newNodeHeight= 150; // Set a default height for the new node
+    this.newNodeWidth = 200;
+    } else if (this.nodeType == 'Buttons') {
+      const questionText = this.sidebarInput; // Use sidebar input or default
+
+      htmlContent = `
+      <div style="padding: 10px; display: flex; flex-direction: column; align-items: center; width: 100%;">
+        <input type="text" value="${questionText}" placeholder="Enter your question..." style="width: 100%; padding: 8px; margin-bottom: 10px; border: 3px solid #0f2c60; border-radius: 4px;" />
+        <div class="button-list" style="width: 100%;">
+        ${this.buttons.map(button => `
+          <div style="display: flex; justify-content: center; margin-bottom: 5px;">
+            <button ejs-button cssClass="e-primary" style="width: 75%;background-color: #0f2c60;color: white; border: none; border-radius: 5px;">${button.label}</button>
+          </div>
+        `).join('')}
+      </div>
+      </div>
+    `;
+      addInfo = { questionText, buttons: this.buttons }; // Store questionText and buttons list
+      this.newNodeHeight= 100 + (this.buttons.length * 10); // Set a default height for the new node
+      this.newNodeWidth = 200;
+    }
+    else {
       htmlContent = `<div><p>Default Content</p></div>`;
     }
 
-    const newNode: NodeModel = {
-      id: newNodeId,
-      annotations: [],
-      offsetX: 100,
-      offsetY: 70,
-      style: { fill: '#FFFFFF', strokeColor: '#0000FF' },
-      height: 150,  // Adjust height as needed
-      width: 180,   // Adjust width as needed
-      shape: {
-        type: 'HTML',
-        content: htmlContent
-      }
-    };
+    const newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, htmlContent); // Width and height as parameters
 
     // Add the new node to the diagram
     this.diagram.addNode(newNode);
@@ -204,13 +219,32 @@ export class WorkflowDiagramComponent {
     const newConnector: ConnectorModel = {
       id: newConnectorId,
       sourceID: sourceNodeId,
-      targetID: newNodeId,
+      targetID: newNode.id,
       type: 'Orthogonal',
       style: { strokeColor: '#6BA5D7', strokeWidth: 1 }
     };
 
     // Add the connector to the diagram
     this.diagram.addConnector(newConnector);
+  }
+
+  createNode(width: number, height: number, content: string): NodeModel {
+    return {
+      id: `node${++this.nodeIdCounter + 1}`,
+      annotations: [],
+      offsetX: 100,
+      offsetY: 70,
+      style: { fill: '#FFFFFF', strokeColor: '#0f2c60', strokeWidth: 5 },
+      height: height,
+      width: width,
+      borderColor: '#0f2c60',
+      borderWidth: 3,
+      shape: { 
+        type: 'HTML',
+        content: content,
+        cornerRadius: 10
+      }
+    };
   }
 
   public onUserHandleMouseDown(event: UserHandleEventsArgs) {
@@ -260,7 +294,9 @@ export class WorkflowDiagramComponent {
 
   onCloseSideBarClick(): void {
     this.sidebar?.hide();
-    this.addNodeAndConnect('1');
+    this.addNodeAndConnect('node1');
+    this.sidebarInput = ''; // Reset the question text
+    this.buttons = [];
   }
 
   public onSideBarCreated(args: any) {
@@ -271,5 +307,17 @@ export class WorkflowDiagramComponent {
   onFormSubmit(): void {
     // this.addNodeAndConnect('1');
     this.sidebar?.hide();
+  }
+
+  addButton(label: string, value: string, labelInput: HTMLInputElement, valueInput: HTMLInputElement): void {
+     if (label.trim() && value.trim()) {
+      this.buttons.push({ label, value });
+      labelInput.value = '';
+      valueInput.value = '';
+    }
+  }
+
+  removeButton(index: number): void {
+    this.buttons.splice(index, 1);
   }
 }
