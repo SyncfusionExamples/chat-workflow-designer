@@ -1,14 +1,3 @@
-<div id="dialogContainer">
-  <ejs-dialog #dialog id="dialog" header="Choose an option" target="#diagram" visible='false' isModal='true' (close)="onCloseDialog()" closeOnEscape='false' width='200px' (created)="onDialogCreated()" [position]="dialogPosition">
-    <div>
-      <button ejs-button (click)="handleEvent()">Event</button>
-      <button ejs-button (click)="handleAction()">Action</button>
-      <button ejs-button (click)="handleCondition()">Condition</button>
-      <button ejs-button (click)="handleExit()">Exit</button>
-    </div>
-  </ejs-dialog>
-</div>
-
 <ejs-diagram class="diagram-container" #diagram  id="diagram"
   [width]="'100%'"
   [height]="649"
@@ -19,4 +8,14 @@
   [getConnectorDefaults]="getConnectorDefaults"
   (created)="onDiagramCreated()"
   [selectedItems]="selectedItems" (onUserHandleMouseDown)="onUserHandleMouseDown($event)" (click)="onNodeClick($event)"
-></ejs-diagram>
+  [snapSettings]="snapSettings"
+>
+  <ng-template #userHandleTemplate >
+    <div class="dropDown-container">
+      <button #dropdownbutton id="dropdownbutton" ejs-dropdownbutton  target="#listview" (open)="onOpenDropDownButton($event)" iconCss='e-icons e-plus' cssClass='e-caret-hide' (beforeClose)="onBeforeCloseDropDownButton($event)"
+      (beforeOpen)="onBeforeOpenDropDownButton()"></button>
+    </div>
+  </ng-template>
+</ejs-diagram>
+
+<ejs-listview #listview id='listview' [dataSource]='listdata' [fields]='fields' [showHeader]='true' [headerTitle]='headertitle' [animation]='animation' (select)="onSelectListView($event)"></ejs-listview>

@@ -1,40 +1,47 @@
 import { Component, ViewChild } from '@angular/core';
-import { ComplexHierarchicalTree, ConnectionPointOrigin, Connector, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, IClickEventArgs, LayoutModel, LineDistribution, Node, NodeModel, SelectorConstraints, SelectorModel, TextModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
+import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, IClickEventArgs, LayoutModel, LineDistribution, Node, NodeModel, SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
 import { RuleData } from '../../models/appModel';
 import { RULE_DATA } from '../../data/rule-data';
-import { DialogComponent, DialogModule } from '@syncfusion/ej2-angular-popups';
+import { DialogModule } from '@syncfusion/ej2-angular-popups';
+import { BeforeOpenCloseMenuEventArgs, DropDownButtonComponent, DropDownButtonModule, ItemModel, OpenCloseMenuEventArgs } from '@syncfusion/ej2-angular-splitbuttons';
+import { CommonModule } from '@angular/common';
+import { ListViewComponent, ListViewModule, SelectEventArgs } from '@syncfusion/ej2-angular-lists';
+import { LIST_DATA } from '../../data/list-data';
 
 Diagram.Inject(ComplexHierarchicalTree, LineDistribution);
 
 @Component({
   selector: 'app-workflow-diagram',
   standalone: true,
-  imports: [DiagramModule, DialogModule],
+  imports: [DiagramModule, DialogModule, DropDownButtonModule, CommonModule, ListViewModule],
   templateUrl: './workflow-diagram.component.html',
   styleUrl: './workflow-diagram.component.scss'
 })
 export class WorkflowDiagramComponent {
   @ViewChild('diagram') diagram!: DiagramComponent;
-  @ViewChild('dialog') dialog!: DialogComponent;
+  @ViewChild('dropdownbutton') dropdownbutton!: DropDownButtonComponent;
+  @ViewChild('listview') listView!: ListViewComponent;
 
   public data: RuleData[] = RULE_DATA;
-
   public nodes: NodeModel[] = [];
   public connectors: ConnectorModel[] = [];
-  public dialogPosition : object={ X: 'center', Y: 'center' };
 
   public handles: UserHandleModel[] = [
     {
       name: 'plusIcon',
-      pathData:
-        'M12 0C11.4477 0 11 0.447715 11 1V11H1C0.447715 11 0 11.4477 0 12C0 12.5523 0.447715 13 1 13H11V23C11 23.5523 11.4477 24 12 24C12.5523 24 13 23.5523 13 23V13H23C23.5523 13 24 12.5523 24 12C24 11.4477 23.5523 11 23 11H13V1C13 0.447715 12.5523 0 12 0Z',
       visible: false,
-      offset: 0.5,
+      offset: 0.4,
       side: 'Bottom',
       margin: { top: 0, bottom: 0, left: 0, right: 0 },
       backgroundColor: 'skyblue',
     }
   ];
+
+  public listdata: { [key: string]: any }[] = LIST_DATA;
+  public fields: {[key: string]: string} ={ tooltip: 'text'};
+  public headertitle = 'Continent';
+  public animation: Object  = { duration: 0};
+  public isParentListItem : boolean = false;
 
   constructor() {
     // Initialize nodes and connectors based on the data
@@ -74,14 +81,17 @@ export class WorkflowDiagramComponent {
     (this.diagram as DiagramComponent).fitToPage();
   };
 
+  // Configure snapSettings to hide grid lines
+  public snapSettings: SnapSettingsModel = {
+    horizontalGridlines: { lineColor: 'transparent', lineIntervals: [] },
+    verticalGridlines: { lineColor: 'transparent', lineIntervals: [] },
+    constraints: 0 // Disable all snapping
+  };
+
   public selectedItems: SelectorModel = {
     constraints: SelectorConstraints.UserHandle,
     userHandles: this.handles,
   };
-
-  onDialogCreated(): void {
-    this.dialog.hide();
-  }
 
   public layout: LayoutModel = {
     type: 'ComplexHierarchicalTree',
@@ -103,7 +113,6 @@ export class WorkflowDiagramComponent {
       strokeColor: 'none',
       strokeWidth: 2,
     };
-    obj.borderColor = 'black';
     obj.backgroundColor = '#6BA5D7';
     obj.borderWidth = 1;
     (obj.shape as TextModel).margin = {
@@ -118,6 +127,7 @@ export class WorkflowDiagramComponent {
   public getConnectorDefaults(connector: ConnectorModel): ConnectorModel {
     connector.type = 'Orthogonal';
     connector.cornerRadius = 7;
+    connector.constraints = ConnectorConstraints.Default & ~ConnectorConstraints.Select;
     (
       (connector as ConnectorModel).targetDecorator as DecoratorModel
     ).height = 5;
@@ -128,60 +138,39 @@ export class WorkflowDiagramComponent {
 
   public onNodeClick(args: IClickEventArgs): void {
     if (args.actualObject instanceof Node) {
-      console.log('Node:', args.actualObject);
       if(this.diagram.selectedItems.userHandles) {
         this.diagram.selectedItems.userHandles[0].visible = true;
       }
-    } else if (args.actualObject instanceof Connector){
-      console.log('Connector:', args.actualObject);
-      if(this.diagram.selectedItems.userHandles) 
-        this.diagram.selectedItems.userHandles[0].visible = false;
-      this.dialog.visible = false;
-    }
-    this.diagram.dataBind();
+    } 
   }
 
   public onUserHandleMouseDown(event: UserHandleEventsArgs) {
     if(event.element.name === 'plusIcon') {
-      if (this.diagram.selectedItems.nodes && this.dialog)
-      {
-        const selectedNode = this.diagram.selectedItems.nodes[0];
-        if (selectedNode && selectedNode.wrapper) {
-          const nodeBounds = selectedNode.wrapper.bounds;
-          const dialogWidth = this.dialog.width as number;  // Ensure width is a number
-          this.dialogPosition = {
-            X: (nodeBounds.x + nodeBounds.width / 2 - dialogWidth / 2) + 'px',
-            Y: (nodeBounds.y + nodeBounds.height + 30) + 'px'
-          };
-        }
-      }
-      this.dialog.visible = true;
+      this.dropdownbutton.toggle();
     }
-    this.diagram.dataBind();
   }
 
-  // Dialog option handlers
-  handleEvent() {
-    console.log('Event selected');
-    // Add logic for event
+  onOpenDropDownButton(args: OpenCloseMenuEventArgs) {
+    let dropDownContainer = document.querySelector('.dropDown-container') as HTMLElement;
+    args.element.parentElement!.style.top = dropDownContainer.getBoundingClientRect().top + dropDownContainer.offsetHeight +'px';
+
+    let ulElement = document.querySelector('ul') as HTMLElement;
+    args.element.parentElement!.style.left = dropDownContainer.getBoundingClientRect().left - (ulElement.getBoundingClientRect().width / 2)+ (dropDownContainer.getBoundingClientRect().width / 2)+'px' ;
   }
 
-  handleAction() {
-    console.log('Action selected');
-    // Add logic for action
+  onBeforeCloseDropDownButton(args: BeforeOpenCloseMenuEventArgs) {
+    args.cancel = this.isParentListItem;
   }
 
-  handleCondition() {
-    console.log('Condition selected');
-    // Add logic for condition
+  onSelectListView(args: SelectEventArgs) {
+    this.isParentListItem = args.item.classList.contains("e-has-child");
   }
 
-  handleExit() {
-    // Hide the dialog and remove the user handle
-    console.log('Exit selected');
-  }
-
-  public onCloseDialog(): void {
-    this.dialog.visible = false;
+  onBeforeOpenDropDownButton() {
+    // Reset ListView to its initial state before opening
+    if (this.listView) {
+      this.listView.dataSource = this.listdata; // Reset data
+      this.listView.refresh();
+    }
   }
 }
