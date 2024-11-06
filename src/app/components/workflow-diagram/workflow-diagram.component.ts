@@ -320,12 +320,4 @@ export class WorkflowDiagramComponent {
   removeButton(index: number): void {
     this.buttons.splice(index, 1);
   }
-
-  onBeforeOpenDropDownButton() {
-    // Reset ListView to its initial state before opening
-    if (this.listView) {
-      this.listView.dataSource = this.listdata; // Reset data
-      this.listView.refresh();
-    }
-  }
 }
