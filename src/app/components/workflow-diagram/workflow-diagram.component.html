@@ -16,6 +16,59 @@
         <button #dropdownbutton id="dropdownbutton" ejs-dropdownbutton  target="#listview" (open)="onOpenDropDownButton($event)" iconCss='e-icons e-plus' cssClass='e-caret-hide' (beforeClose)="onBeforeCloseDropDownButton($event)" (beforeOpen)="onBeforeOpenDropDownButton()"></button>
       </div>
     </ng-template>
+    <ng-template #nodeTemplate let-data >
+      <ng-container *ngIf="nodeType == 'Boolean'">
+        <div>
+          <label style="padding: 5px;">{{ data.addInfo.fieldDetails.label }}</label>
+        </div>
+        <div>
+          <button type="button" ejs-button style="width: 85%;" class="e-btn e-success">Yes</button>
+        </div>
+        <div>
+          <button type="button" ejs-button style="width: 85%;" class="e-btn e-danger">No</button>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="nodeType == 'Buttons'">
+        <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
+        <div *ngFor="let option of data.addInfo.fieldOptionDetails; let i = index" class="button-item">
+          <button ejs-button cssClass="e-primary" style="width: 85%;">{{option.label}}</button>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="nodeType == 'Single'">
+        <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
+        <ejs-dropdownlist [dataSource]="data.addInfo.fieldOptionDetails" [fields]="ddlFields" [placeholder]="data.addInfo.fieldDetails.placeholder" cssClass="e-primary" width="85%">
+        </ejs-dropdownlist>
+      </ng-container>
+      <ng-container *ngIf="nodeType == 'Multi'">
+        <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
+        <ejs-multiselect [dataSource]="data.addInfo.fieldOptionDetails" [fields]="ddlFields" [placeholder]="data.addInfo.fieldDetails.placeholder" [maximumSelectionLength]="data.addInfo.fieldDetails.fieldValidation.max" cssClass="e-primary" width="85%">
+        </ejs-multiselect>
+      </ng-container>
+      <ng-container *ngIf="nodeType == 'List'">
+        <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
+        <ejs-listview id='sample-list' [dataSource]='data.addInfo.fieldOptionDetails' [fields]='ddlFields'></ejs-listview>
+      </ng-container>
+      <ng-container *ngIf="nodeType == 'Number'">
+        <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
+        <ejs-numerictextbox format='n0' [min]="'data.addInfo.fieldDetails.fieldValidation.min'" [max]="'data.addInfo.fieldDetails.fieldValidation.max'" [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true" floatLabelType= 'Auto'></ejs-numerictextbox>
+      </ng-container>
+      <ng-container *ngIf="nodeType == 'Decimal'">
+        <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
+        <ejs-numerictextbox [min]="'data.addInfo.fieldDetails.fieldValidation.min'" [max]="'data.addInfo.fieldDetails.fieldValidation.max'" [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true" floatLabelType= 'Auto'></ejs-numerictextbox>
+      </ng-container>
+      <ng-container *ngIf="nodeType == 'Text'">
+        <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
+        <ejs-textbox [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true"></ejs-textbox>
+      </ng-container>
+      <ng-container *ngIf="nodeType == 'Text Area'">
+        <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
+        <ejs-textarea [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true" [maxLength]="data.addInfo.fieldDetails.fieldValidation.max"></ejs-textarea>
+      </ng-container>
+      <ng-container *ngIf="nodeType == 'Regex'">
+        <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
+        <ejs-textbox [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true" ></ejs-textbox>
+      </ng-container>
+    </ng-template>
   </ejs-diagram>
 
   <ejs-listview #listview id='listview' [dataSource]='listdata' [fields]='fields' [showHeader]='true' [headerTitle]='headertitle' [animation]='animation' (select)="onSelectListView($event)"></ejs-listview>
@@ -29,18 +82,18 @@
         <div class="form-header">
           {{sidebarHeader}}
         </div>
-          @if (nodeType == 'Boolean') {
-              <div class="content boolean-controls">
-              <input type="text" [(ngModel)]="sidebarInput" name="question" placeholder="Enter question..." class="description-box" required/>
-              <span>
-                <button type="button" ejs-button class="e-btn yes-btn">Yes</button>
-                <button type="button" ejs-button class="e-btn no-btn">No</button>
-              </span>
+          <!-- Boolean NodeType -->
+          <div class="content boolean-controls" *ngIf="nodeType === 'Boolean'">
+            <input type="text" [(ngModel)]="sideBarLabel" name="question" placeholder="Enter question..." class="description-box" required/>
+            <div>
+              <div><button type="button"  ejs-button class="e-btn e-success">Yes</button></div>
+              <div><button type="button" ejs-button class="e-btn e-danger">No</button></div>
             </div>
-          }
+          </div>
 
-          @if (nodeType == 'Buttons') {
-            <input type="text" [(ngModel)]="sidebarInput" name="question" placeholder="Enter your question..." class="description-box" required/>
+          <!-- Buttons NodeType -->
+          <div *ngIf="nodeType === 'Buttons'">
+            <input type="text" [(ngModel)]="sideBarLabel" name="question" placeholder="Enter your question..." class="description-box" required/>
 
             <div class="button-list">
               <div *ngFor="let button of buttons; let i = index" class="button-item">
@@ -57,10 +110,243 @@
                 <input #buttonValue type="text" placeholder="Button Value" class="button-input" />
               </div>
               <div>
-                <button type="button" style="width: 100%;" (click)="addButton(buttonLabel.value, buttonValue.value, buttonLabel, buttonValue)" class="e-btn">Add Option</button>
+                <button type="button" style="width: 100%;" (click)="addButton(buttonLabel.value, buttonValue.value, null, buttonLabel, buttonValue, null)" class="e-btn">Add Option</button>
               </div>
             </div>
-          }
+          </div>
+
+          <!-- Single DropDown NodeType -->
+          <div *ngIf="nodeType === 'Single'">
+            <label>
+              Label:
+              <input type="text" [(ngModel)]="sideBarLabel" name="singleLabel" placeholder="Enter label..." class="description-box" required/>
+            </label>
+            <label>
+              Description:
+              <input type="text" [(ngModel)]="sideBarDescription" name="singleDescription" placeholder="Enter description..." class="description-box"/>
+            </label>
+          
+            <label>
+              Placeholder:
+              <input type="text" [(ngModel)]="sideBarPlaceholder" name="singlePlaceholder" placeholder="Enter placeholder..." class="description-box"/>
+            </label>
+          
+            <div class="button-list">
+              <div *ngFor="let button of buttons; let i = index" class="button-item">
+                <button ejs-button cssClass="e-primary" style="width: 75%;">{{button.label}}</button>
+                <button ejs-button type="button" cssClass="e-danger remove-icon" (click)="removeButton(i)">✖</button>
+              </div>
+            </div>
+            <div class="add-button-form">
+              <div>
+                <input #optionLabel type="text" placeholder="Option Label" class="button-input" />
+              </div>
+              <div>
+                <input #optionValue type="text" placeholder="Option Value" class="button-input" />
+              </div>
+              <div>
+                <button type="button" style="width: 100%;" (click)="addButton(optionLabel.value, optionValue.value, null, optionLabel, optionValue, null)" class="e-btn">Add Option</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- MultiSelect DropDown NodeType -->
+          <div *ngIf="nodeType === 'Multi'">
+            <label>
+              Label:
+              <input type="text" [(ngModel)]="sideBarLabel" name="multiLabel" placeholder="Enter label..." class="description-box" required/>
+            </label>
+            <label>
+              Description:
+              <input type="text" [(ngModel)]="sideBarDescription" name="multiDescription" placeholder="Enter description..." class="description-box"/>
+            </label>
+          
+            <label>
+              Placeholder:
+              <input type="text" [(ngModel)]="sideBarPlaceholder" name="multiPlaceholder" placeholder="Enter placeholder..." class="description-box"/>
+            </label>
+          
+            <div class="button-list">
+              <div *ngFor="let button of buttons; let i = index" class="button-item">
+                <button ejs-button cssClass="e-primary" style="width: 75%;">{{button.label}}</button>
+                <button ejs-button type="button" cssClass="e-danger remove-icon" (click)="removeButton(i)">✖</button>
+              </div>
+            </div>
+            <div class="add-button-form">
+              <div>
+                <input #optionLabel type="text" placeholder="Option Label" class="button-input" />
+              </div>
+              <div>
+                <input #optionValue type="text" placeholder="Option Value" class="button-input" />
+              </div>
+              <div>
+                <button type="button" style="width: 100%;" (click)="addButton(optionLabel.value, optionValue.value, null, optionLabel, optionValue, null)" class="e-btn">Add Option</button>
+              </div>
+            </div>
+            <label>
+              Minimum Value:
+              <input type="number" [(ngModel)]="fieldOptionMinValue" name="fieldOptionMinValue" placeholder="Enter Minimum value here" class="description-box"/>
+            </label>
+            <label>
+              Maximum Value:
+              <input type="number" [(ngModel)]="fieldOptionMaxValue" name="fieldOptionMaxValue" placeholder="Enter Maximum value here" class="description-box"/>
+            </label>
+          </div>
+
+          <!-- List -->
+          <div *ngIf="nodeType === 'List'">
+            <label>
+              Label:
+              <input type="text" [(ngModel)]="sideBarLabel" name="listLabel" placeholder="Enter label..." class="description-box" required/>
+            </label>
+            <label>
+              Description:
+              <input type="text" [(ngModel)]="sideBarDescription" name="listDescription" placeholder="Enter description..." class="description-box"/>
+            </label>
+          
+            <label>
+              Placeholder:
+              <input type="text" [(ngModel)]="sideBarPlaceholder" name="listPlaceholder" placeholder="Enter placeholder..." class="description-box"/>
+            </label>
+          
+            <div class="button-list">
+              <div *ngFor="let button of buttons; let i = index" class="button-item">
+                <button ejs-button cssClass="e-primary" style="width: 75%;">{{button.label}}</button>
+                <button ejs-button type="button" cssClass="e-danger remove-icon" (click)="removeButton(i)">✖</button>
+              </div>
+            </div>
+            <div class="add-button-form">
+              <div>
+                <input #optionLabel type="text" placeholder="Option Label" class="button-input" />
+              </div>
+              <div>
+                <input #optionValue type="text" placeholder="Option Value" class="button-input" />
+              </div>
+              <div>
+                <input #optionDescription type="text" placeholder="Option Description" class="button-input" />
+              </div>
+              <div>
+                <button type="button" style="width: 100%;" (click)="addButton(optionLabel.value, optionValue.value, optionDescription.value, optionLabel, optionValue, optionDescription)" class="e-btn">Add Option</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Number -->
+          <div *ngIf="nodeType === 'Number'">
+            <label>
+              Label:
+              <input type="text" [(ngModel)]="sideBarLabel" name="inputNumberLabel" placeholder="Enter label..." class="description-box" required/>
+            </label>
+            <label>
+              Description:
+              <input type="text" [(ngModel)]="sideBarDescription" name="inputNumberDescription" placeholder="Enter description..." class="description-box"/>
+            </label>
+          
+            <label>
+              Placeholder:
+              <input type="text" [(ngModel)]="sideBarPlaceholder" name="inputNumberPlaceholder" placeholder="Enter placeholder..." class="description-box"/>
+            </label>
+                      
+            <label>
+              Minimum Value:
+              <input type="number" [(ngModel)]="fieldOptionMinValue" name="fieldOptionMinValue" placeholder="Enter Minimum value here" class="description-box"/>
+            </label>
+            <label>
+              Maximum Value:
+              <input type="number" [(ngModel)]="fieldOptionMaxValue" name="fieldOptionMaxValue" placeholder="Enter Maximum value here" class="description-box"/>
+            </label>
+          </div>
+
+          <!-- Decimal -->
+          <div *ngIf="nodeType === 'Decimal'">
+            <label>
+              Label:
+              <input type="text" [(ngModel)]="sideBarLabel" name="inputDecimalLabel" placeholder="Enter label..." class="description-box" required/>
+            </label>
+            <label>
+              Description:
+              <input type="text" [(ngModel)]="sideBarDescription" name="inputDecimalDescription" placeholder="Enter description..." class="description-box"/>
+            </label>
+          
+            <label>
+              Placeholder:
+              <input type="text" [(ngModel)]="sideBarPlaceholder" name="inputDecimalPlaceholder" placeholder="Enter placeholder..." class="description-box"/>
+            </label>
+                      
+            <label>
+              Minimum Value:
+              <input type="number" [(ngModel)]="fieldOptionMinValue" name="fieldOptionMinValue" placeholder="Enter Minimum value here" class="description-box" step="0.01"/>
+            </label>
+            <label>
+              Maximum Value:
+              <input type="number" [(ngModel)]="fieldOptionMaxValue" name="fieldOptionMaxValue" placeholder="Enter Maximum value here" class="description-box" step="0.01"/>
+            </label>
+          </div>
+
+          <!-- Text -->
+          <div *ngIf="nodeType === 'Text'">
+            <label>
+              Label:
+              <input type="text" [(ngModel)]="sideBarLabel" name="inputTextLabel" placeholder="Enter label..." class="description-box" required/>
+            </label>
+            <label>
+              Description:
+              <input type="text" [(ngModel)]="sideBarDescription" name="inputTextDescription" placeholder="Enter description..." class="description-box"/>
+            </label>
+          
+            <label>
+              Placeholder:
+              <input type="text" [(ngModel)]="sideBarPlaceholder" name="inputTextPlaceholder" placeholder="Enter placeholder..." class="description-box"/>
+            </label>
+                      
+            <label>
+              Maximum Characters:
+              <input type="number" [(ngModel)]="fieldOptionMaxValue" name="fieldOptionMaxValue" placeholder="Enter Maximum value here" class="description-box" />
+            </label>
+          </div>
+
+          <!-- TextArea -->
+          <div *ngIf="nodeType === 'Text Area'">
+            <label>
+              Label:
+              <input type="text" [(ngModel)]="sideBarLabel" name="inputTextAreaLabel" placeholder="Enter label..." class="description-box" required/>
+            </label>
+            <label>
+              Description:
+              <input type="text" [(ngModel)]="sideBarDescription" name="inputTextAreaDescription" placeholder="Enter description..." class="description-box"/>
+            </label>
+          
+            <label>
+              Placeholder:
+              <input type="text" [(ngModel)]="sideBarPlaceholder" name="inputTextAreaPlaceholder" placeholder="Enter placeholder..." class="description-box"/>
+            </label>
+                      
+            <label>
+              Maximum Characters:
+              <input type="number" [(ngModel)]="fieldOptionMaxValue" name="fieldOptionMaxValue" placeholder="Enter Maximum value here" class="description-box" />
+            </label>
+          </div>
+          <!-- Regex -->
+          <div *ngIf="nodeType === 'Regex'">
+            <label>
+              Label:
+              <input type="text" [(ngModel)]="sideBarLabel" name="inputRegexLabel" placeholder="Enter label..." class="description-box" required/>
+            </label>
+            <label>
+              Description:
+              <input type="text" [(ngModel)]="sideBarDescription" name="inputRegexDescription" placeholder="Enter description..." class="description-box"/>
+            </label>
+          
+            <label>
+              Placeholder:
+              <input type="text" [(ngModel)]="sideBarPlaceholder" name="inputRegexPlaceholder" placeholder="Enter placeholder..." class="description-box"/>
+            </label>
+                      
+            <label>
+              Regex:
+              <input type="text" [(ngModel)]="fieldOptionRegexValue" name="fieldOptionRegexValue" placeholder="Enter regex here" class="description-box" />
+            </label>
+          </div>
        </form>      
   </div>
   <div class="center-align">
