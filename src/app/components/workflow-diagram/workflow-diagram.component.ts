@@ -658,9 +658,9 @@ export class WorkflowDiagramComponent implements AfterViewInit{
 
   onBeforeCloseDropDownButton(args: BeforeOpenCloseMenuEventArgs) {
     args.cancel = this.isParentListItem;
-    // if (!this.isParentListItem) {
-    //   this.sidebar?.show();
-    // }
+    if (!this.isParentListItem) {
+      this.sidebar?.show();
+    }
   }
 
   onSelectListView(args: SelectEventArgs) {

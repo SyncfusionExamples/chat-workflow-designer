@@ -35,7 +35,7 @@
       </div>
     </ng-template>
     <ng-template #nodeTemplate let-data >
-      <ng-container *ngIf="nodeType == 'Boolean' || data.addInfo.chatWorkflowEditorTypeId == 1">
+      <ng-container *ngIf="data.addInfo.chatWorkflowEditorTypeId == 1">
         <div>
           <label style="padding: 5px;">{{ data.addInfo.fieldDetails.label }}</label>
         </div>
@@ -46,51 +46,51 @@
           <button type="button" ejs-button style="width: 85%;" class="e-btn e-danger">No</button>
         </div>
       </ng-container>
-      <ng-container *ngIf="nodeType == 'Buttons' || data.addInfo.chatWorkflowEditorTypeId == 2">
+      <ng-container *ngIf="data.addInfo.chatWorkflowEditorTypeId == 2">
         <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
         <div *ngFor="let option of data.addInfo.fieldOptionDetails; let i = index" class="button-item">
           <button ejs-button cssClass="e-primary" style="width: 85%;">{{option.label}}</button>
         </div>
       </ng-container>
-      <ng-container *ngIf="nodeType == 'Single' || data.addInfo.chatWorkflowEditorTypeId == 3">
+      <ng-container *ngIf="data.addInfo.chatWorkflowEditorTypeId == 3">
         <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
         <ejs-dropdownlist [dataSource]="data.addInfo.fieldOptionDetails" [fields]="ddlFields" [placeholder]="data.addInfo.fieldDetails.placeholder" cssClass="e-primary" width="85%">
         </ejs-dropdownlist>
       </ng-container>
-      <ng-container *ngIf="nodeType == 'Multi' || data.addInfo.chatWorkflowEditorTypeId == 4">
+      <ng-container *ngIf="data.addInfo.chatWorkflowEditorTypeId == 4">
         <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
         <ejs-multiselect [dataSource]="data.addInfo.fieldOptionDetails" [fields]="ddlFields" [placeholder]="data.addInfo.fieldDetails.placeholder" [maximumSelectionLength]="data.addInfo.fieldDetails.fieldValidation.max" cssClass="e-primary" width="85%">
         </ejs-multiselect>
       </ng-container>
-      <ng-container *ngIf="nodeType == 'List' || data.addInfo.chatWorkflowEditorTypeId == 5">
+      <ng-container *ngIf="data.addInfo.chatWorkflowEditorTypeId == 5">
         <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
         <ejs-listview id='sample-list' [dataSource]='data.addInfo.fieldOptionDetails' [fields]='ddlFields'></ejs-listview>
       </ng-container>
-      <ng-container *ngIf="nodeType == 'Date' || data.addInfo.chatWorkflowEditorTypeId == 9">
+      <ng-container *ngIf="data.addInfo.chatWorkflowEditorTypeId == 9">
         <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
         <ejs-datepicker [placeholder]="data.addInfo.fieldDetails.placeholder" [readonly]="true"></ejs-datepicker>
       </ng-container>
-      <ng-container *ngIf="nodeType == 'DateTime' || data.addInfo.chatWorkflowEditorTypeId == 10">
+      <ng-container *ngIf="data.addInfo.chatWorkflowEditorTypeId == 10">
         <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
         <ejs-datetimepicker [placeholder]="data.addInfo.fieldDetails.placeholder" [readonly]="true" ></ejs-datetimepicker>
       </ng-container>
-      <ng-container *ngIf="nodeType == 'Number' || data.addInfo.chatWorkflowEditorTypeId == 11">
+      <ng-container *ngIf="data.addInfo.chatWorkflowEditorTypeId == 11">
         <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
         <ejs-numerictextbox format='n0' [min]="'data.addInfo.fieldDetails.fieldValidation.min'" [max]="'data.addInfo.fieldDetails.fieldValidation.max'" [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true" floatLabelType= 'Auto'></ejs-numerictextbox>
       </ng-container>
-      <ng-container *ngIf="nodeType == 'Decimal' || data.addInfo.chatWorkflowEditorTypeId == 12">
+      <ng-container *ngIf="data.addInfo.chatWorkflowEditorTypeId == 12">
         <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
         <ejs-numerictextbox [min]="'data.addInfo.fieldDetails.fieldValidation.min'" [max]="'data.addInfo.fieldDetails.fieldValidation.max'" [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true" floatLabelType= 'Auto'></ejs-numerictextbox>
       </ng-container>
-      <ng-container *ngIf="nodeType == 'Text' || data.addInfo.chatWorkflowEditorTypeId == 7">
+      <ng-container *ngIf="data.addInfo.chatWorkflowEditorTypeId == 7">
         <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
         <ejs-textbox [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true"></ejs-textbox>
       </ng-container>
-      <ng-container *ngIf="nodeType == 'Text Area' || data.addInfo.chatWorkflowEditorTypeId == 8">
+      <ng-container *ngIf="data.addInfo.chatWorkflowEditorTypeId == 8">
         <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
         <ejs-textarea [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true" [maxLength]="data.addInfo.fieldDetails.fieldValidation.max"></ejs-textarea>
       </ng-container>
-      <ng-container *ngIf="nodeType == 'Regex' || data.addInfo.chatWorkflowEditorTypeId == 13">
+      <ng-container *ngIf="data.addInfo.chatWorkflowEditorTypeId == 13">
         <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
         <ejs-textbox [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true" ></ejs-textbox>
       </ng-container>
