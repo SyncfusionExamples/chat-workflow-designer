@@ -1,32 +1,39 @@
-import { Component, ViewChild } from '@angular/core';
-import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, HtmlModel, IClickEventArgs, LayoutModel, LineDistribution, Node, NodeModel, SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
-import { FieldDetails, FieldOptionDetail, FieldValidation, RuleData, RuleData2 } from '../../models/appModel';
+import { AfterViewInit, Component, viewChild, ViewChild } from '@angular/core';
+import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, HtmlModel, IClickEventArgs, IExportOptions, LayoutModel, LineDistribution, Node, NodeModel, PrintAndExport, SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
+import { FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData, RuleData2 } from '../../models/appModel';
 import { RULE_DATA, RULE_DATA2, RULE_DATA3 } from '../../data/rule-data';
 import { DialogModule } from '@syncfusion/ej2-angular-popups';
 import { BeforeOpenCloseMenuEventArgs, DropDownButtonComponent, DropDownButtonModule, ItemModel, OpenCloseMenuEventArgs } from '@syncfusion/ej2-angular-splitbuttons';
 import { CommonModule } from '@angular/common';
 import { ListViewComponent, ListViewModule, SelectEventArgs } from '@syncfusion/ej2-angular-lists';
 import { LIST_DATA } from '../../data/list-data';
-import { SidebarComponent, SidebarModule } from '@syncfusion/ej2-angular-navigations';
+import { ClickEventArgs, SidebarComponent, SidebarModule, ToolbarModule } from '@syncfusion/ej2-angular-navigations';
 import { FormsModule } from '@angular/forms';
 import workflowData from '../../data/workflow-data.json'; // Adjust the path as needed
-import { DropDownList, DropDownListModule, MultiSelectModule } from '@syncfusion/ej2-angular-dropdowns';
-import { NumericTextBoxModule, TextAreaModule, TextBoxModule } from '@syncfusion/ej2-angular-inputs';
+import { DropDownList, DropDownListComponent, DropDownListModule, MultiSelectModule } from '@syncfusion/ej2-angular-dropdowns';
+import { NumericTextBoxModule, TextAreaModule, TextBoxModule, UploaderModule } from '@syncfusion/ej2-angular-inputs';
+import { DatePickerModule, DateTimePickerModule } from '@syncfusion/ej2-angular-calendars';
+import { TextFormatEnum } from '../../models/enum';
+import { SwitchModule } from '@syncfusion/ej2-angular-buttons';
+import sampleWorkflowData from '../../data/sample-workflow-data.json'; // Adjust the path as needed
+import { AsyncSettingsModel, FileInfo, Uploader } from '@syncfusion/ej2-inputs';
 
-Diagram.Inject(ComplexHierarchicalTree, LineDistribution);
+
+Diagram.Inject(ComplexHierarchicalTree, LineDistribution, PrintAndExport);
 
 @Component({
   selector: 'app-workflow-diagram',
   standalone: true,
-  imports: [DiagramModule, DialogModule, DropDownButtonModule, CommonModule, ListViewModule, SidebarModule, FormsModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule],
+  imports: [DiagramModule, DialogModule, DropDownButtonModule, CommonModule, ListViewModule, SidebarModule, FormsModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule, DatePickerModule, DateTimePickerModule, SwitchModule, ToolbarModule, UploaderModule],
   templateUrl: './workflow-diagram.component.html',
   styleUrl: './workflow-diagram.component.scss'
 })
-export class WorkflowDiagramComponent {
+export class WorkflowDiagramComponent implements AfterViewInit{
   @ViewChild('diagram') diagram!: DiagramComponent;
   @ViewChild('dropdownbutton') dropdownbutton!: DropDownButtonComponent;
   @ViewChild('listview') listView!: ListViewComponent;
   @ViewChild('sidebar') sidebar?: SidebarComponent;
+  @ViewChild('ddlTextFormat') ddlTextFormat!: DropDownListComponent
 
   // public data: RuleData[] = RULE_DATA;
   public data: RuleData2[] = RULE_DATA3;
@@ -71,21 +78,57 @@ export class WorkflowDiagramComponent {
   public fieldOptionMinValue: number = 1;
   public fieldOptionMaxValue: number = 1;
   public fieldOptionRegexValue: string = '';
+  public fromDate: Date = new Date();
+  public toDate: Date = new Date();
+  textFormatDDLOptions: Array<{ text: string, value: number }>;
+  ddlTextFormatFields: Object = { text: 'text', value: 'value' };
+  public checkedIsPrivate: boolean = false;
+  public customMessage: string = '';
+  public uploadObject: Uploader;
 
+  // // Async settings for file upload
+  // public asyncSettings: AsyncSettingsModel = {
+  //   saveUrl: 'https://services.syncfusion.com/angular/production/api/FileUploader/Save',
+  //   removeUrl: 'https://services.syncfusion.com/angular/production/api/FileUploader/Remove'
+  // };
   constructor() {
+    this.uploadObject = new Uploader({
+      asyncSettings: {
+        saveUrl:
+          'https://services.syncfusion.com/js/production/api/FileUploader/Save',
+        removeUrl:
+          'https://services.syncfusion.com/js/production/api/FileUploader/Remove',
+      },
+      success: this.onUploadSuccess.bind(this),
+    });
     // Initialize nodes and connectors based on the data
     this.initializeDiagramElements();
+    this.textFormatDDLOptions = this.enumToArray(TextFormatEnum);
+  }
+
+  ngAfterViewInit() {
+    this.uploadObject.appendTo('#fileupload');
+  }
+
+  // Convert enum to array of objects
+  private enumToArray(enumObj: any): Array<{ text: string, value: number }> {
+    return Object.keys(enumObj)
+      .filter(key => isNaN(Number(key)))
+      .map(key => {
+        return {
+          text: key,
+          value: enumObj[key as keyof typeof enumObj]
+        }
+      });
   }
   
   private initializeDiagramElements(): void {
-    this.data.forEach(item => {
+    sampleWorkflowData.forEach(item => {
       // Create nodes based on the data
       this.nodes.push({
         id: `node${item.id}`,
-        annotations: [{ content: `Node ${item['id']}` }],
-        addInfo: { // Store the JSON data in addInfo
-          workflowData: item
-        }
+        // annotations: [{ content: `Node ${item['id']}` }],
+        addInfo: item
       });
 
       // Create connectors from success_rule_id
@@ -94,21 +137,21 @@ export class WorkflowDiagramComponent {
           id: `connector${item['id']}-s${item['successRuleId']}`,
           sourceID: `node${item['id']}`,
           targetID: `node${item['successRuleId']}`,
-          annotations: [{ content: 'success', alignment: 'Center'}]
+          // annotations: [{ content: 'success', alignment: 'Center'}]
         });
       }
-      if (item.branchDetails) {
-        item.branchDetails.forEach(branch => {
-          if (branch.successRuleId) {
-            this.connectors.push({
-              id: `connector${item.id}-s${branch.successRuleId}`,
-              sourceID: `node${item.id}`,
-              targetID: `node${branch.successRuleId}`,
-              annotations: [{ content: 'success', alignment: 'Center' }]
-            });
-          }
-        });
-      }
+      // if (item.branchDetails) {
+      //   item.branchDetails.forEach(branch: any => {
+      //     if (branch.successRuleId) {
+      //       this.connectors.push({
+      //         id: `connector${item.id}-s${branch.successRuleId}`,
+      //         sourceID: `node${item.id}`,
+      //         targetID: `node${branch.successRuleId}`,
+      //         annotations: [{ content: 'success', alignment: 'Center' }]
+      //       });
+      //     }
+      //   });
+      // }
     });
   }
 
@@ -145,13 +188,11 @@ export class WorkflowDiagramComponent {
       strokeColor: '#0f2c60',
       strokeWidth: 5,
     };
-    obj.borderWidth = 1;
-    (obj.shape as TextModel).margin = {
-      left: 5,
-      right: 5,
-      top: 5,
-      bottom: 5,
-    };
+    obj.width = 200,
+    obj.height = 150,
+    obj.borderWidth = 1,
+    obj.borderColor = '#0f2c60',
+    (obj.shape as HtmlModel).type = 'HTML'
     return obj;
   }
 
@@ -179,7 +220,6 @@ export class WorkflowDiagramComponent {
 
   // Method to add a new node and connect it
   addNodeAndConnect(sourceNodeId: string): void {
-    let htmlContent = '';
     if (this.nodeType === 'Boolean') {
       let fieldsDetail: FieldDetails = {
         description : this.sideBarDescription ,
@@ -203,7 +243,7 @@ export class WorkflowDiagramComponent {
 
       this.newNodeHeight= 100; // Set a default height for the new node
       this.newNodeWidth = 150;
-      this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, htmlContent, newNodeInfo);
+      this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
     
     } else if (this.nodeType == 'Buttons') {
       
@@ -237,7 +277,7 @@ export class WorkflowDiagramComponent {
 
       this.newNodeHeight= 100 + (this.buttons.length * 20); // Set a default height for the new node
       this.newNodeWidth = 200;
-      this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, htmlContent, newNodeInfo);      
+      this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);      
     } else if(this.nodeType == 'Single') {
         let fieldInfo: FieldDetails = {
           description : this.sideBarDescription ,
@@ -269,7 +309,7 @@ export class WorkflowDiagramComponent {
   
         this.newNodeHeight= 100; // Set a default height for the new node
         this.newNodeWidth = 200;
-        this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, htmlContent, newNodeInfo);
+        this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
 
     } else if(this.nodeType == 'Multi') {
         let fieldValidationInfo: FieldValidation = {
@@ -307,7 +347,7 @@ export class WorkflowDiagramComponent {
 
         this.newNodeHeight= 100; // Set a default height for the new node
         this.newNodeWidth = 200;
-        this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, htmlContent, newNodeInfo);
+        this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
     } else if(this.nodeType == 'List') {
         let fieldInfo: FieldDetails = {
           description : this.sideBarDescription ,
@@ -340,7 +380,7 @@ export class WorkflowDiagramComponent {
 
         this.newNodeHeight= 100 + (this.buttons.length * 25); // Set a default height for the new node
         this.newNodeWidth = 200;
-        this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, htmlContent, newNodeInfo);
+        this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
     } else if(this.nodeType == 'Number') {
         let fieldValidationInfo: FieldValidation = {
           min: this.fieldOptionMinValue.toString(),
@@ -369,7 +409,7 @@ export class WorkflowDiagramComponent {
 
         this.newNodeHeight= 100; // Set a default height for the new node
         this.newNodeWidth = 200;
-        this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, htmlContent, newNodeInfo);
+        this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
     } else if(this.nodeType == 'Decimal') {
         let fieldValidationInfo: FieldValidation = {
           min: this.fieldOptionMinValue.toString(),
@@ -398,7 +438,7 @@ export class WorkflowDiagramComponent {
 
         this.newNodeHeight= 100; // Set a default height for the new node
         this.newNodeWidth = 200;
-        this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, htmlContent, newNodeInfo);
+        this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
     } else if(this.nodeType == 'Text') {
         let fieldValidationInfo: FieldValidation = {
           max: this.fieldOptionMaxValue.toString()
@@ -426,7 +466,7 @@ export class WorkflowDiagramComponent {
 
         this.newNodeHeight= 100; // Set a default height for the new node
         this.newNodeWidth = 200;
-        this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, htmlContent, newNodeInfo);
+        this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
     } else if(this.nodeType == 'Text Area') {
         let fieldValidationInfo: FieldValidation = {
           max: this.fieldOptionMaxValue.toString()
@@ -454,7 +494,7 @@ export class WorkflowDiagramComponent {
 
         this.newNodeHeight= 100; // Set a default height for the new node
         this.newNodeWidth = 200;
-        this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, htmlContent, newNodeInfo);
+        this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
     } else if(this.nodeType == 'Regex') {
         let fieldValidationInfo: FieldValidation = {
           regex: this.fieldOptionRegexValue
@@ -473,7 +513,7 @@ export class WorkflowDiagramComponent {
           successRuleId : null,
           isActive : true,
           chatWorkflowBlockId : 5,
-          chatWorkflowEditorTypeId : 8,
+          chatWorkflowEditorTypeId : 13,
           fieldDetails : fieldInfo,
           branchDetails: null,
           messageDetails: null,
@@ -482,10 +522,88 @@ export class WorkflowDiagramComponent {
 
         this.newNodeHeight= 100; // Set a default height for the new node
         this.newNodeWidth = 200;
-        this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, htmlContent, newNodeInfo);
-    } else {
-        htmlContent = `<div><p>Default Content</p></div>`;
-    }
+        this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
+    } else if(this.nodeType == 'Date') {
+        const today = new Date();
+        // Format today's date as YYYY-MM-DD
+        const minDate = today.toISOString().split('T')[0];
+
+        // Calculate max date, e.g., 30 days from today
+        const maxDateObj = new Date(today);
+        maxDateObj.setDate(today.getDate() + 30);
+        const maxDate = maxDateObj.toISOString().split('T')[0];
+
+        let fieldValidationInfo: FieldValidation = {
+          // min: this.fromDate.toString(),
+          // max: this.toDate.toString()
+          
+          min: minDate,
+          max: maxDate
+        };
+        let fieldInfo: FieldDetails = {
+          description : this.sideBarDescription ,
+          label : this.sideBarLabel,
+          placeholder : this.sideBarPlaceholder,
+          fieldValidation: fieldValidationInfo
+        };
+
+        let newNodeInfo: RuleData2 = {
+          id : this.diagram.nodes.length + 1,
+          chatWorkflowId : 1,
+          successWorkflowId : null,
+          successRuleId : null,
+          isActive : true,
+          chatWorkflowBlockId : 5,
+          chatWorkflowEditorTypeId : 9,
+          fieldDetails : fieldInfo,
+          branchDetails: null,
+          messageDetails: null,
+          fieldOptionDetails: null
+        };
+
+        this.newNodeHeight= 100; // Set a default height for the new node
+        this.newNodeWidth = 200;
+        this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
+    } else if(this.nodeType == 'DateTime') {
+        const now = new Date();
+        // Current datetime formatted as ISO string
+        const minDateTime = now.toISOString();
+      
+        // Max datetime, e.g., 30 days from now
+        const maxDateTimeObj = new Date(now);
+        maxDateTimeObj.setDate(now.getDate() + 30);
+        const maxDateTime = maxDateTimeObj.toISOString();
+
+        let fieldValidationInfo: FieldValidation = {
+          min: minDateTime,
+          max: maxDateTime
+        };
+        let fieldInfo: FieldDetails = {
+          description : this.sideBarDescription ,
+          label : this.sideBarLabel,
+          placeholder : this.sideBarPlaceholder,
+          fieldValidation: fieldValidationInfo
+        };
+
+        let newNodeInfo: RuleData2 = {
+          id : this.diagram.nodes.length + 1,
+          chatWorkflowId : 1,
+          successWorkflowId : null,
+          successRuleId : null,
+          isActive : true,
+          chatWorkflowBlockId : 5,
+          chatWorkflowEditorTypeId : 10,
+          fieldDetails : fieldInfo,
+          branchDetails: null,
+          messageDetails: null,
+          fieldOptionDetails: null
+        };
+
+        this.newNodeHeight= 100; // Set a default height for the new node
+        this.newNodeWidth = 200;
+        this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
+    } 
+    console.log('newNode: '+ this.newNode.addInfo);
 
     // const newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, htmlContent, newNodeInfo); // Width and height as parameters
 
@@ -506,7 +624,7 @@ export class WorkflowDiagramComponent {
     this.diagram.addConnector(newConnector);
   }
 
-  createNode(width: number, height: number, content: string, nodeInfo: RuleData2): NodeModel {
+  createNode(width: number, height: number, nodeInfo: RuleData2): NodeModel {
     return {
       id: `node${nodeInfo.id}`,
       annotations: [],
@@ -540,9 +658,9 @@ export class WorkflowDiagramComponent {
 
   onBeforeCloseDropDownButton(args: BeforeOpenCloseMenuEventArgs) {
     args.cancel = this.isParentListItem;
-    if (!this.isParentListItem) {
-      this.sidebar?.show();
-    }
+    // if (!this.isParentListItem) {
+    //   this.sidebar?.show();
+    // }
   }
 
   onSelectListView(args: SelectEventArgs) {
@@ -571,7 +689,6 @@ export class WorkflowDiagramComponent {
   onCloseSideBarClick(): void {
     this.sidebar?.hide();
     this.addNodeAndConnect('node1');
-    this.sidebarInput = ''; // Reset the question text
     this.buttons = [];
   }
 
@@ -599,4 +716,68 @@ export class WorkflowDiagramComponent {
   removeButton(index: number): void {
     this.buttons.splice(index, 1);
   }
+
+  onClicked(args: ClickEventArgs) {
+    if (args.item.text === 'Save') {
+      this.download(this.diagram.saveDiagram());
+    }
+  }
+
+  // Save the diagram object as a JSON file.
+  public download(data: string): void {
+    // MIME type for JSON data.
+    let mimeType='data:text/json;charset=utf-8,';
+    // Checks for MS browser to use the msSaveBlob method.
+    if ((window.navigator as any).msSaveBlob) {
+        // Creates a new Blob object containing the JSON data.
+        let blob: Blob = new Blob([data], { type: mimeType });
+        // Saves or opens the blob depending on the browser capability.
+        (window.navigator as any).msSaveOrOpenBlob(blob, 'Diagram.json');
+    } else {
+        // Encodes the JSON data as a data URL.
+        let dataStr: string = 'data:text/json;charset=utf-8,' + encodeURIComponent(data);
+        // Creates an anchor element to facilitate downloading.
+        let downloadAnchor: HTMLAnchorElement = document.createElement('a');
+        downloadAnchor.href = dataStr;
+        downloadAnchor.download = 'Diagram.json';
+        document.body.appendChild(downloadAnchor);
+        // Triggers the download process.
+        downloadAnchor.click();
+        // Removes the anchor element from the document.
+        downloadAnchor.remove();
+    } 
+  }
+
+  //  // Handle file upload success
+  //  public onUploadSuccess1(args: { [key: string]: Object }): void {
+  //   // Extracts the file from the upload success event arguments.
+  //   let files: { [key: string]: Object } = args['file'] as { [key: string]: Object };
+  //   let file: Blob = files['rawFile'] as Blob;
+  //   // Creates a FileReader to read the content of the file.
+  //   let reader: FileReader = new FileReader();
+  //   // Reads the content of the file as a text string.
+  //   reader.readAsText(file);
+  //   // Assigns the loadDiagram function to execute when the file read operation completes.
+  //   reader.onloadend = this.loadDiagram.bind(this);
+  // }
+
+  // // Load the diagram object from a JSON string.
+  // public loadDiagram1(event: ProgressEvent<FileReader>): void {
+  //   // Extracts the text content from the FileReader event.
+  //   const jsonString = event.target?.result as string;
+  //   this.diagram.loadDiagram(jsonString);    
+  // }
+
+  onUploadSuccess(args: { file: FileInfo }) {
+    const file: any = args.file.rawFile;
+    const reader = new FileReader();
+    reader.readAsText(file);
+    reader.onloadend = this.loadDiagram.bind(this);
+  }
+
+  loadDiagram(event: ProgressEvent<FileReader>) {
+    const jsonString = event.target?.result as string;
+    this.diagram.loadDiagram(jsonString);
+  }
+
 }

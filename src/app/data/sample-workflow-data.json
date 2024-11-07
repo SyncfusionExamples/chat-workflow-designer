@@ -1,0 +1,279 @@
+[
+  {
+    "id": 1,
+    "chatWorkflowId": 1,
+    "successWorkflowId": 1,
+    "successRuleId": 2,
+    "isActive": true,
+    "chatWorkflowBlockId": 4,
+    "chatWorkflowEditorTypeId": 1,
+    "fieldDetails": {
+      "description": "description for boolean",
+      "label": "Select yes/no for custom field",
+      "apiName": "cf_",
+      "maskForAgent": false,
+      "isOptional": false
+    },
+    "branchDetails": null,
+    "messageDetails": null,
+    "fieldOptionDetails": null
+  },
+  {
+    "id": 2,
+    "chatWorkflowId": 1,
+    "successWorkflowId": 1,
+    "successRuleId": 3,
+    "isActive": true,
+    "chatWorkflowBlockId": 4,
+    "chatWorkflowEditorTypeId": 2,
+    "fieldDetails": {
+      "description": "description for buttons",
+      "label": "Select any of the buttons to update custom field",
+      "placeholder": "description for buttons",
+      "apiName": "cf_",
+      "maskForAgent": false,
+      "isOptional": false
+    },
+    "branchDetails": null,
+    "messageDetails": null,
+    "fieldOptionDetails": [
+      {
+        "label": "Button 1",
+        "value": "1"
+      },
+      {
+        "label": "Button 2",
+        "value": "2"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "chatWorkflowId": 1,
+    "successWorkflowId": 1,
+    "successRuleId": 4,
+    "isActive": true,
+    "chatWorkflowBlockId": 4,
+    "chatWorkflowEditorTypeId": 3,
+    "fieldDetails": {
+      "description": "description for dropdown",
+      "label": "Select an item from dropdown",
+      "placeholder": "placeholder for dropdown",
+      "apiName": "cf_",
+      "maskForAgent": false,
+      "useAPI": false,
+      "isOptional": false
+    },
+    "branchDetails": null,
+    "messageDetails": null,
+    "fieldOptionDetails": [
+      {
+        "label": "Item 1",
+        "value": "1"
+      },
+      {
+        "label": "Item 2",
+        "value": "2"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "chatWorkflowId": 1,
+    "successWorkflowId": 1,
+    "successRuleId": 5,
+    "isActive": true,
+    "chatWorkflowBlockId": 4,
+    "chatWorkflowEditorTypeId": 4,
+    "fieldDetails": {
+      "description": "description for multi select",
+      "label": "Select multi-select items to update field",
+      "placeholder": "placeholder for multi select",
+      "apiName": "cf_",
+      "fieldValidation": {
+        "max": "2",
+        "min": "1"
+      },
+      "maskForAgent": false,
+      "useAPI": false,
+      "isOptional": false
+    },
+    "branchDetails": null,
+    "messageDetails": null,
+    "fieldOptionDetails": [
+      {
+        "label": "Item 1",
+        "value": "1"
+      },
+      {
+        "label": "Item 2",
+        "value": "2"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "chatWorkflowId": 1,
+    "successWorkflowId": 1,
+    "successRuleId": 6,
+    "isActive": true,
+    "chatWorkflowBlockId": 5,
+    "chatWorkflowEditorTypeId": 9,
+    "fieldDetails": {
+      "description": "description for date",
+      "label": "Pick a date for field update",
+      "placeholder": "placeholder for date",
+      "apiName": "cf_",
+      "fieldValidation": {
+        "max": "2024-10-25T00:00:00Z",
+        "min": "2000-10-25T00:00:00Z"
+      },
+      "maskForAgent": false,
+      "isOptional": false
+    },
+    "branchDetails": null,
+    "messageDetails": null,
+    "fieldOptionDetails": null
+  },
+  {
+    "id": 6,
+    "chatWorkflowId": 1,
+    "successWorkflowId": 1,
+    "successRuleId": 7,
+    "isActive": true,
+    "chatWorkflowBlockId": 5,
+    "chatWorkflowEditorTypeId": 10,
+    "fieldDetails": {
+      "description": "description for date",
+      "label": "Pick a date with time for field update",
+      "placeholder": "placeholder for date",
+      "apiName": "cf_",
+      "fieldValidation": {
+        "max": "2024-10-25T14:30:00Z",
+        "min": "2000-10-25T14:30:00Z"
+      },
+      "maskForAgent": false,
+      "isOptional": false
+    },
+    "branchDetails": null,
+    "messageDetails": null,
+    "fieldOptionDetails": null
+  },
+  {
+    "id": 7,
+    "chatWorkflowId": 1,
+    "successWorkflowId": 1,
+    "successRuleId": 8,
+    "isActive": true,
+    "chatWorkflowBlockId": 5,
+    "chatWorkflowEditorTypeId": 11,
+    "fieldDetails": {
+      "description": "description for number",
+      "label": "Provide a number to update field",
+      "placeholder": "placeholder for number",
+      "apiName": "cf_",
+      "fieldValidation": {
+        "max": "100",
+        "min": "1"
+      },
+      "maskForAgent": false,
+      "isOptional": false
+    },
+    "branchDetails": null,
+    "messageDetails": null,
+    "fieldOptionDetails": null
+  },
+  {
+    "id": 8,
+    "chatWorkflowId": 1,
+    "successWorkflowId": 1,
+    "successRuleId": 9,
+    "isActive": true,
+    "chatWorkflowBlockId": 5,
+    "chatWorkflowEditorTypeId": 12,
+    "fieldDetails": {
+      "description": "description for decimal",
+      "label": "Enter decimal value",
+      "placeholder": "placeholder for decimal",
+      "apiName": "cf_",
+      "fieldValidation": {
+        "max": "100",
+        "min": "1"
+      },
+      "maskForAgent": false,
+      "isOptional": false
+    },
+    "branchDetails": null,
+    "messageDetails": null,
+    "fieldOptionDetails": null
+  },
+  {
+    "id": 9,
+    "chatWorkflowId": 1,
+    "successWorkflowId": 1,
+    "successRuleId": 10,
+    "isActive": true,
+    "chatWorkflowBlockId": 5,
+    "chatWorkflowEditorTypeId": 7,
+    "fieldDetails": {
+      "description": "description for text",
+      "label": "Enter a valid text",
+      "placeholder": "placeholder for text",
+      "apiName": "cf_",
+      "fieldValidation": {
+        "max": "100"
+      },
+      "maskForAgent": false,
+      "isOptional": false
+    },
+    "branchDetails": null,
+    "messageDetails": null,
+    "fieldOptionDetails": null
+  },
+  {
+    "id": 10,
+    "chatWorkflowId": 1,
+    "successWorkflowId": 1,
+    "successRuleId": null,
+    "isActive": true,
+    "chatWorkflowBlockId": 5,
+    "chatWorkflowEditorTypeId": 8,
+    "fieldDetails": {
+      "description": "description for text area",
+      "label": "Enter the description about your requirement",
+      "placeholder": "placeholder for text area",
+      "apiName": "cf_",
+      "fieldValidation": {
+        "max": "100"
+      },
+      "maskForAgent": false,
+      "isOptional": false
+    },
+    "branchDetails": null,
+    "messageDetails": null,
+    "fieldOptionDetails": null
+  },
+  {
+    "id": 11,
+    "chatWorkflowId": 1,
+    "successWorkflowId": 1,
+    "successRuleId": null,
+    "isActive": true,
+    "chatWorkflowBlockId": 5,
+    "chatWorkflowEditorTypeId": 13,
+    "fieldDetails": {
+      "description": "Enter regex format",
+      "label": "Label for regex",
+      "placeholder": "Enter regex",
+      "apiName": "cf_regex",
+      "fieldValidation": {
+        "regex": "^abc"
+      },
+      "maskForAgent": false,
+      "isOptional": false
+    },
+    "branchDetails": null,
+    "messageDetails": null,
+    "fieldOptionDetails": null
+  }
+]
