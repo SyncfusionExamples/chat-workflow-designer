@@ -94,6 +94,9 @@
         <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
         <ejs-textbox [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true" ></ejs-textbox>
       </ng-container>
+      <ng-container *ngIf="data.addInfo.chatWorkflowBlockId == 6">
+        <div><label style="padding: 5px;">{{data.addInfo.messageDetails.text}}</label></div>
+      </ng-container>
     </ng-template>
   </ejs-diagram>
 
@@ -425,7 +428,27 @@
               <input type="text" [(ngModel)]="fieldOptionRegexValue" name="fieldOptionRegexValue" placeholder="Enter regex here" class="description-box" />
             </label>
           </div>
-       </form>      
+
+          <!-- Custom Message -->
+          <div *ngIf="nodeType === 'Custom Message'">
+            <label>
+              Message:
+              <input type="text" [(ngModel)]="customMessage" name="customMessageText" placeholder="Enter Message..." class="description-box" required/>
+            </label>
+          
+            <label>
+              Text Format:
+            </label>
+            <ejs-dropdownlist #ddlTextFormat style="padding-bottom: 20px;" [dataSource]="textFormatDDLOptions" [fields]="ddlTextFormatFields" placeholder="Select" cssClass="e-primary" width="85%">
+            </ejs-dropdownlist>
+
+            <div>
+              <label style="text-align: center;"> Is Private: </label>
+              <ejs-switch [(ngModel)]="checkedIsPrivate" name="customMessageIsPrivate" id="isPrivateCustomMessage" cssClass="custom-iOS" [checked]="false" ></ejs-switch>
+            </div>
+          </div>
+
+        </form>      
   </div>
   <div class="center-align">
       <button ejs-button id="close" (click)="onCloseSideBarClick()" class="e-btn close-btn">Save & Close</button>

@@ -230,7 +230,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
       let newNodeInfo: RuleData2 = {
         id : this.diagram.nodes.length + 1,
         chatWorkflowId : 1,
-        successWorkflowId : null,
+        successWorkflowId : 1,
         successRuleId : null,
         isActive : true,
         chatWorkflowBlockId : 4,
@@ -264,7 +264,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
       let newNodeInfo: RuleData2 = {
         id : this.diagram.nodes.length + 1,
         chatWorkflowId : 1,
-        successWorkflowId : null,
+        successWorkflowId : 1,
         successRuleId : null,
         isActive : true,
         chatWorkflowBlockId : 4,
@@ -296,7 +296,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         let newNodeInfo: RuleData2 = {
           id : this.diagram.nodes.length + 1,
           chatWorkflowId : 1,
-          successWorkflowId : null,
+          successWorkflowId : 1,
           successRuleId : null,
           isActive : true,
           chatWorkflowBlockId : 4,
@@ -334,7 +334,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         let newNodeInfo: RuleData2 = {
           id : this.diagram.nodes.length + 1,
           chatWorkflowId : 1,
-          successWorkflowId : null,
+          successWorkflowId : 1,
           successRuleId : null,
           isActive : true,
           chatWorkflowBlockId : 4,
@@ -367,7 +367,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         let newNodeInfo: RuleData2 = {
           id : this.diagram.nodes.length + 1,
           chatWorkflowId : 1,
-          successWorkflowId : null,
+          successWorkflowId : 1,
           successRuleId : null,
           isActive : true,
           chatWorkflowBlockId : 4,
@@ -396,7 +396,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         let newNodeInfo: RuleData2 = {
           id : this.diagram.nodes.length + 1,
           chatWorkflowId : 1,
-          successWorkflowId : null,
+          successWorkflowId : 1,
           successRuleId : null,
           isActive : true,
           chatWorkflowBlockId : 5,
@@ -425,7 +425,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         let newNodeInfo: RuleData2 = {
           id : this.diagram.nodes.length + 1,
           chatWorkflowId : 1,
-          successWorkflowId : null,
+          successWorkflowId : 1,
           successRuleId : null,
           isActive : true,
           chatWorkflowBlockId : 5,
@@ -453,7 +453,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         let newNodeInfo: RuleData2 = {
           id : this.diagram.nodes.length + 1,
           chatWorkflowId : 1,
-          successWorkflowId : null,
+          successWorkflowId : 1,
           successRuleId : null,
           isActive : true,
           chatWorkflowBlockId : 5,
@@ -481,7 +481,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         let newNodeInfo: RuleData2 = {
           id : this.diagram.nodes.length + 1,
           chatWorkflowId : 1,
-          successWorkflowId : null,
+          successWorkflowId : 1,
           successRuleId : null,
           isActive : true,
           chatWorkflowBlockId : 5,
@@ -509,7 +509,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         let newNodeInfo: RuleData2 = {
           id : this.diagram.nodes.length + 1,
           chatWorkflowId : 1,
-          successWorkflowId : null,
+          successWorkflowId : 1,
           successRuleId : null,
           isActive : true,
           chatWorkflowBlockId : 5,
@@ -550,7 +550,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         let newNodeInfo: RuleData2 = {
           id : this.diagram.nodes.length + 1,
           chatWorkflowId : 1,
-          successWorkflowId : null,
+          successWorkflowId : 1,
           successRuleId : null,
           isActive : true,
           chatWorkflowBlockId : 5,
@@ -588,7 +588,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         let newNodeInfo: RuleData2 = {
           id : this.diagram.nodes.length + 1,
           chatWorkflowId : 1,
-          successWorkflowId : null,
+          successWorkflowId : 1,
           successRuleId : null,
           isActive : true,
           chatWorkflowBlockId : 5,
@@ -602,6 +602,30 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         this.newNodeHeight= 100; // Set a default height for the new node
         this.newNodeWidth = 200;
         this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
+    } else if(this.nodeType == 'Custom Message') {
+
+      let messageInfo: MessageDetails = {
+        text: this.customMessage,
+        isPrivate: this.checkedIsPrivate,
+        textFormat: this.ddlTextFormat.value as TextFormatEnum
+      }
+      let newNodeInfo: RuleData2 = {
+        id : this.diagram.nodes.length + 1,
+        chatWorkflowId : 1,
+        successWorkflowId : null,
+        successRuleId : null,
+        isActive : true,
+        chatWorkflowBlockId : 6,
+        chatWorkflowEditorTypeId : null,
+        fieldDetails : null,
+        branchDetails: null,
+        messageDetails: messageInfo,
+        fieldOptionDetails: null
+      };
+
+      this.newNodeHeight= 100; // Set a default height for the new node
+      this.newNodeWidth = 200;
+      this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
     } 
     console.log('newNode: '+ this.newNode.addInfo);
 
