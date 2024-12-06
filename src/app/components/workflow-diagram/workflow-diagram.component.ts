@@ -230,7 +230,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
 
   // Method to add a new node and connect it
   addNodeAndConnect(sourceNodeId: string): void {
-    if (this.nodeType === 'Boolean') {
+    if (this.nodeEditType === ChatWorkflowEditorTypeEnum.Boolean) {
       let fieldsDetail: FieldDetails = {
         description : this.sideBarDescription ,
         label : this.sideBarLabel,
@@ -255,7 +255,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
       this.newNodeWidth = 150;
       this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
     
-    } else if (this.nodeType == 'Buttons') {
+    } else if (this.nodeEditType == this.chatWorkflowEditorTypeEnum.Buttons) {
       
       let fieldInfo: FieldDetails = {
         description : this.sideBarDescription ,
@@ -288,7 +288,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
       this.newNodeHeight= 100 + (this.buttons.length * 20); // Set a default height for the new node
       this.newNodeWidth = 200;
       this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);      
-    } else if(this.nodeType == 'Single') {
+    } else if(this.nodeEditType == this.chatWorkflowEditorTypeEnum.DropDown) {
         let fieldInfo: FieldDetails = {
           description : this.sideBarDescription ,
           label : this.sideBarLabel,
@@ -321,7 +321,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         this.newNodeWidth = 200;
         this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
 
-    } else if(this.nodeType == 'Multi') {
+    } else if(this.nodeEditType == this.chatWorkflowEditorTypeEnum.MultiSelect) {
         let fieldValidationInfo: FieldValidation = {
           min: this.fieldOptionMinValue.toString(),
           max: this.fieldOptionMaxValue.toString()
@@ -358,7 +358,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         this.newNodeHeight= 100; // Set a default height for the new node
         this.newNodeWidth = 200;
         this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
-    } else if(this.nodeType == 'List') {
+    } else if(this.nodeEditType == this.chatWorkflowEditorTypeEnum.List) {
         let fieldInfo: FieldDetails = {
           description : this.sideBarDescription ,
           label : this.sideBarLabel,
@@ -391,7 +391,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         this.newNodeHeight= 100 + (this.buttons.length * 25); // Set a default height for the new node
         this.newNodeWidth = 200;
         this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
-    } else if(this.nodeType == 'Number') {
+    } else if(this.nodeEditType == this.chatWorkflowEditorTypeEnum.Number) {
         let fieldValidationInfo: FieldValidation = {
           min: this.fieldOptionMinValue.toString(),
           max: this.fieldOptionMaxValue.toString()
@@ -420,7 +420,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         this.newNodeHeight= 100; // Set a default height for the new node
         this.newNodeWidth = 200;
         this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
-    } else if(this.nodeType == 'Decimal') {
+    } else if(this.nodeEditType == this.chatWorkflowEditorTypeEnum.Decimal) {
         let fieldValidationInfo: FieldValidation = {
           min: this.fieldOptionMinValue.toString(),
           max: this.fieldOptionMaxValue.toString()
@@ -449,7 +449,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         this.newNodeHeight= 100; // Set a default height for the new node
         this.newNodeWidth = 200;
         this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
-    } else if(this.nodeType == 'Text') {
+    } else if(this.nodeEditType == this.chatWorkflowEditorTypeEnum.Text) {
         let fieldValidationInfo: FieldValidation = {
           max: this.fieldOptionMaxValue.toString()
         };
@@ -477,7 +477,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         this.newNodeHeight= 100; // Set a default height for the new node
         this.newNodeWidth = 200;
         this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
-    } else if(this.nodeType == 'Text Area') {
+    } else if(this.nodeEditType == this.chatWorkflowEditorTypeEnum.TextArea) {
         let fieldValidationInfo: FieldValidation = {
           max: this.fieldOptionMaxValue.toString()
         };
@@ -505,7 +505,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         this.newNodeHeight= 100; // Set a default height for the new node
         this.newNodeWidth = 200;
         this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
-    } else if(this.nodeType == 'Regex') {
+    } else if(this.nodeEditType == this.chatWorkflowEditorTypeEnum.Regex) {
         let fieldValidationInfo: FieldValidation = {
           regex: this.fieldOptionRegexValue
         };
@@ -533,7 +533,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         this.newNodeHeight= 100; // Set a default height for the new node
         this.newNodeWidth = 200;
         this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
-    } else if(this.nodeType == 'Date') {
+    } else if(this.nodeEditType == this.chatWorkflowEditorTypeEnum.Date) {
         const today = new Date();
         // Format today's date as YYYY-MM-DD
         const minDate = today.toISOString().split('T')[0];
@@ -574,7 +574,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         this.newNodeHeight= 100; // Set a default height for the new node
         this.newNodeWidth = 200;
         this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
-    } else if(this.nodeType == 'DateTime') {
+    } else if(this.nodeEditType == this.chatWorkflowEditorTypeEnum.DateTime) {
         const now = new Date();
         // Current datetime formatted as ISO string
         const minDateTime = now.toISOString();
@@ -612,7 +612,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         this.newNodeHeight= 100; // Set a default height for the new node
         this.newNodeWidth = 200;
         this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
-    } else if(this.nodeType == 'Custom Message') {
+    } else if(this.nodeBlockType == this.chatWorkflowBlockTypeEnum.SendTextMessage) {
 
       let messageInfo: MessageDetails = {
         text: this.customMessage,
@@ -707,8 +707,9 @@ export class WorkflowDiagramComponent implements AfterViewInit{
     if (selectedItemId && /^0[1-3]$/.test(selectedItemId)) { // Check if the ID is '01', '02', or '03'
       this.sidebarHeader = selectedItemText ? selectedItemText.trim() + ' Block' : '';
     }
-    if(!this.isParentListItem) {
-      this.nodeType = selectedItemText || '';
+    if(!this.isParentListItem && typeof args?.data === 'object' && 'editId' in args.data) {
+      this.nodeBlockType = (args.data as { blockid: number })['blockid'];
+      this.nodeEditType = (args.data as { editId: number })['editId'];
     }
   }
 
