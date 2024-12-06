@@ -13,7 +13,7 @@ import workflowData from '../../data/workflow-data.json'; // Adjust the path as 
 import { DropDownList, DropDownListComponent, DropDownListModule, MultiSelectModule } from '@syncfusion/ej2-angular-dropdowns';
 import { NumericTextBoxModule, TextAreaModule, TextBoxModule, UploaderModule } from '@syncfusion/ej2-angular-inputs';
 import { DatePickerModule, DateTimePickerModule } from '@syncfusion/ej2-angular-calendars';
-import { TextFormatEnum } from '../../models/enum';
+import { TextFormatEnum, ChatWorkflowEditorTypeEnum, ChatWorkflowBlockTypeEnum } from '../../models/enum';
 import { SwitchModule } from '@syncfusion/ej2-angular-buttons';
 import sampleWorkflowData from '../../data/sample-workflow-data.json'; // Adjust the path as needed
 import { AsyncSettingsModel, FileInfo, Uploader } from '@syncfusion/ej2-inputs';
@@ -66,7 +66,10 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   public type: string = 'Push';
   public width: string ='280px';
   public sidebarHeader: string = '';
+  public nodeBlockType: number = 0;
+  public nodeEditType: number = 0;
   public nodeType: string = '';
+
   private nodeIdCounter: number = 0;
   private connectorIdCounter: number = 0;
   public buttons: Array<{ label: string, value: string, description:string|null }> = [];
@@ -80,6 +83,8 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   public fieldOptionRegexValue: string = '';
   public fromDate: Date = new Date();
   public toDate: Date = new Date();
+  public chatWorkflowEditorTypeEnum = ChatWorkflowEditorTypeEnum; 
+  public chatWorkflowBlockTypeEnum = ChatWorkflowBlockTypeEnum;
   textFormatDDLOptions: Array<{ text: string, value: number }>;
   ddlTextFormatFields: Object = { text: 'text', value: 'value' };
   public checkedIsPrivate: boolean = false;
@@ -210,8 +215,13 @@ export class WorkflowDiagramComponent implements AfterViewInit{
 
   public onNodeClick(args: IClickEventArgs): void {
     if (args.actualObject instanceof Node) {
-      if(this.diagram.selectedItems.userHandles) {
+      const clickedNode = args.actualObject as Node;
+      let isLastNode = clickedNode.outEdges.length == 0;
+      if(isLastNode && this.diagram.selectedItems.userHandles) {
         this.diagram.selectedItems.userHandles[0].visible = true;
+      }
+      else if(this.diagram.selectedItems.userHandles){
+        this.diagram.selectedItems.userHandles[0].visible = false;
       }
       // const clickedNodeId = args.actualObject.id;
       // this.addNodeAndConnect(clickedNodeId); // Add and connect a new node
@@ -682,7 +692,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
 
   onBeforeCloseDropDownButton(args: BeforeOpenCloseMenuEventArgs) {
     args.cancel = this.isParentListItem;
-    if (!this.isParentListItem) {
+    if (!(this.isParentListItem || ((args.event.target as HTMLElement).closest(".bc-block-option.e-listview")==null))) {
       this.sidebar?.show();
     }
   }
@@ -703,6 +713,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   }
 
   onBeforeOpenDropDownButton() {
+    this.isParentListItem = false; // The value is reset here, to handle document click case of dropdown
     // Reset ListView to its initial state before opening
     if (this.listView) {
       this.listView.dataSource = this.listdata; // Reset data

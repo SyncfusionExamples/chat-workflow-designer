@@ -22,7 +22,7 @@ export enum ChatWorkflowEditorTypeEnum
     None = 0,
     Boolean = 1,
     Buttons = 2,
-    Dropdown = 3,
+    DropDown = 3,
     MultiSelect = 4,
     List = 5,
     Card = 6,
