@@ -90,6 +90,11 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   public checkedIsPrivate: boolean = false;
   public customMessage: string = '';
   public uploadObject: Uploader;
+  emailDetails = { label: '', description: '', placeholder: '' };
+  nameDetails = { label: '', description: '', placeholder: '' };
+  phoneDetails = { label: '', description: '', placeholder: '' };
+  showName: boolean = false;
+  showPhoneNumber: boolean = false;
 
   // // Async settings for file upload
   // public asyncSettings: AsyncSettingsModel = {
@@ -133,7 +138,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
       this.nodes.push({
         id: `node${item.id}`,
         // annotations: [{ content: `Node ${item['id']}` }],
-        addInfo: item
+        addInfo: [item]
       });
 
       // Create connectors from success_rule_id
@@ -238,19 +243,21 @@ export class WorkflowDiagramComponent implements AfterViewInit{
           isPrivate: this.checkedIsPrivate,
           textFormat: this.ddlTextFormat.value as TextFormatEnum
         }
-        let newNodeInfo: RuleData2 = {
-          id : this.diagram.nodes.length + 1,
-          chatWorkflowId : 1,
-          successWorkflowId : null,
-          successRuleId : null,
-          isActive : true,
-          chatWorkflowBlockId : 6,
-          chatWorkflowEditorTypeId : null,
-          fieldDetails : null,
-          branchDetails: null,
-          messageDetails: messageInfo,
-          fieldOptionDetails: null
-        };
+        let newNodeInfo: RuleData2[] = [
+          {
+            id : this.diagram.nodes.length + 1,
+            chatWorkflowId : 1,
+            successWorkflowId : null,
+            successRuleId : null,
+            isActive : true,
+            chatWorkflowBlockId : 6,
+            chatWorkflowEditorTypeId : null,
+            fieldDetails : null,
+            branchDetails: null,
+            messageDetails: messageInfo,
+            fieldOptionDetails: null
+          }
+        ]
 
         this.newNodeHeight= 100; // Set a default height for the new node
         this.newNodeWidth = 200;
@@ -265,19 +272,21 @@ export class WorkflowDiagramComponent implements AfterViewInit{
               label : this.sideBarLabel,
               placeholder : this.sideBarPlaceholder
             };
-            let newNodeInfo: RuleData2 = {
-              id : this.diagram.nodes.length + 1,
-              chatWorkflowId : 1,
-              successWorkflowId : 1,
-              successRuleId : null,
-              isActive : true,
-              chatWorkflowBlockId : 4,
-              chatWorkflowEditorTypeId : 1,
-              fieldDetails : fieldInfo,
-              branchDetails: null,
-              messageDetails: null,
-              fieldOptionDetails: null
-            };
+            let newNodeInfo: RuleData2[] = [
+              {
+                id : this.diagram.nodes.length + 1,
+                chatWorkflowId : 1,
+                successWorkflowId : 1,
+                successRuleId : null,
+                isActive : true,
+                chatWorkflowBlockId : 4,
+                chatWorkflowEditorTypeId : 1,
+                fieldDetails : fieldInfo,
+                branchDetails: null,
+                messageDetails: null,
+                fieldOptionDetails: null
+              }
+            ];
     
             this.newNodeHeight= 100; // Set a default height for the new node
             this.newNodeWidth = 150;
@@ -299,19 +308,21 @@ export class WorkflowDiagramComponent implements AfterViewInit{
               };
             });
     
-            let newNodeInfo: RuleData2 = {
-              id : this.diagram.nodes.length + 1,
-              chatWorkflowId : 1,
-              successWorkflowId : 1,
-              successRuleId : null,
-              isActive : true,
-              chatWorkflowBlockId : 4,
-              chatWorkflowEditorTypeId : 2,
-              fieldDetails : fieldInfo,
-              branchDetails: null,
-              messageDetails: null,
-              fieldOptionDetails: fieldOptionInfo
-            };
+            let newNodeInfo: RuleData2[] = [
+              {
+                id : this.diagram.nodes.length + 1,
+                chatWorkflowId : 1,
+                successWorkflowId : 1,
+                successRuleId : null,
+                isActive : true,
+                chatWorkflowBlockId : 4,
+                chatWorkflowEditorTypeId : 2,
+                fieldDetails : fieldInfo,
+                branchDetails: null,
+                messageDetails: null,
+                fieldOptionDetails: fieldOptionInfo
+              }
+            ];
     
             this.newNodeHeight= 100 + (this.buttons.length * 20); // Set a default height for the new node
             this.newNodeWidth = 200;
@@ -333,19 +344,21 @@ export class WorkflowDiagramComponent implements AfterViewInit{
                 };
               });
         
-              let newNodeInfo: RuleData2 = {
-                id : this.diagram.nodes.length + 1,
-                chatWorkflowId : 1,
-                successWorkflowId : 1,
-                successRuleId : null,
-                isActive : true,
-                chatWorkflowBlockId : 4,
-                chatWorkflowEditorTypeId : 3,
-                fieldDetails : fieldInfo,
-                branchDetails: null,
-                messageDetails: null,
-                fieldOptionDetails: fieldOptionInfo
-              };
+              let newNodeInfo: RuleData2[] = [
+                {
+                  id : this.diagram.nodes.length + 1,
+                  chatWorkflowId : 1,
+                  successWorkflowId : 1,
+                  successRuleId : null,
+                  isActive : true,
+                  chatWorkflowBlockId : 4,
+                  chatWorkflowEditorTypeId : 3,
+                  fieldDetails : fieldInfo,
+                  branchDetails: null,
+                  messageDetails: null,
+                  fieldOptionDetails: fieldOptionInfo
+                }
+              ];
         
               this.newNodeHeight= 100; // Set a default height for the new node
               this.newNodeWidth = 200;
@@ -372,19 +385,21 @@ export class WorkflowDiagramComponent implements AfterViewInit{
                 };
               });
     
-              let newNodeInfo: RuleData2 = {
-                id : this.diagram.nodes.length + 1,
-                chatWorkflowId : 1,
-                successWorkflowId : 1,
-                successRuleId : null,
-                isActive : true,
-                chatWorkflowBlockId : 4,
-                chatWorkflowEditorTypeId : 4,
-                fieldDetails : fieldInfo,
-                branchDetails: null,
-                messageDetails: null,
-                fieldOptionDetails: fieldOptionInfo
-              };
+              let newNodeInfo: RuleData2[] = [
+                {
+                  id : this.diagram.nodes.length + 1,
+                  chatWorkflowId : 1,
+                  successWorkflowId : 1,
+                  successRuleId : null,
+                  isActive : true,
+                  chatWorkflowBlockId : 4,
+                  chatWorkflowEditorTypeId : 4,
+                  fieldDetails : fieldInfo,
+                  branchDetails: null,
+                  messageDetails: null,
+                  fieldOptionDetails: fieldOptionInfo
+                }
+              ];
     
               this.newNodeHeight= 100; // Set a default height for the new node
               this.newNodeWidth = 200;
@@ -407,19 +422,21 @@ export class WorkflowDiagramComponent implements AfterViewInit{
                 };
               });
     
-              let newNodeInfo: RuleData2 = {
-                id : this.diagram.nodes.length + 1,
-                chatWorkflowId : 1,
-                successWorkflowId : 1,
-                successRuleId : null,
-                isActive : true,
-                chatWorkflowBlockId : 4,
-                chatWorkflowEditorTypeId : 5,
-                fieldDetails : fieldInfo,
-                branchDetails: null,
-                messageDetails: null,
-                fieldOptionDetails: fieldOptionInfo
-              };
+              let newNodeInfo: RuleData2[] = [
+                {
+                  id : this.diagram.nodes.length + 1,
+                  chatWorkflowId : 1,
+                  successWorkflowId : 1,
+                  successRuleId : null,
+                  isActive : true,
+                  chatWorkflowBlockId : 4,
+                  chatWorkflowEditorTypeId : 5,
+                  fieldDetails : fieldInfo,
+                  branchDetails: null,
+                  messageDetails: null,
+                  fieldOptionDetails: fieldOptionInfo
+                }
+              ];
     
               this.newNodeHeight= 100 + (this.buttons.length * 25); // Set a default height for the new node
               this.newNodeWidth = 200;
@@ -442,19 +459,21 @@ export class WorkflowDiagramComponent implements AfterViewInit{
               fieldValidation: fieldValidationInfo
             };
   
-            let newNodeInfo: RuleData2 = {
-              id : this.diagram.nodes.length + 1,
-              chatWorkflowId : 1,
-              successWorkflowId : 1,
-              successRuleId : null,
-              isActive : true,
-              chatWorkflowBlockId : 5,
-              chatWorkflowEditorTypeId : 7,
-              fieldDetails : fieldInfo,
-              branchDetails: null,
-              messageDetails: null,
-              fieldOptionDetails: null
-            };
+            let newNodeInfo: RuleData2[] = [
+              {
+                id : this.diagram.nodes.length + 1,
+                chatWorkflowId : 1,
+                successWorkflowId : 1,
+                successRuleId : null,
+                isActive : true,
+                chatWorkflowBlockId : 5,
+                chatWorkflowEditorTypeId : 7,
+                fieldDetails : fieldInfo,
+                branchDetails: null,
+                messageDetails: null,
+                fieldOptionDetails: null
+              }
+            ];
   
             this.newNodeHeight= 100; // Set a default height for the new node
             this.newNodeWidth = 200;
@@ -472,19 +491,21 @@ export class WorkflowDiagramComponent implements AfterViewInit{
                 fieldValidation: fieldValidationInfo
               };
     
-              let newNodeInfo: RuleData2 = {
-                id : this.diagram.nodes.length + 1,
-                chatWorkflowId : 1,
-                successWorkflowId : 1,
-                successRuleId : null,
-                isActive : true,
-                chatWorkflowBlockId : 5,
-                chatWorkflowEditorTypeId : 8,
-                fieldDetails : fieldInfo,
-                branchDetails: null,
-                messageDetails: null,
-                fieldOptionDetails: null
-              };
+              let newNodeInfo: RuleData2[] = [
+                {
+                  id : this.diagram.nodes.length + 1,
+                  chatWorkflowId : 1,
+                  successWorkflowId : 1,
+                  successRuleId : null,
+                  isActive : true,
+                  chatWorkflowBlockId : 5,
+                  chatWorkflowEditorTypeId : 8,
+                  fieldDetails : fieldInfo,
+                  branchDetails: null,
+                  messageDetails: null,
+                  fieldOptionDetails: null
+                }
+              ];
     
               this.newNodeHeight= 100; // Set a default height for the new node
               this.newNodeWidth = 200;
@@ -515,19 +536,21 @@ export class WorkflowDiagramComponent implements AfterViewInit{
               fieldValidation: fieldValidationInfo
             };
   
-            let newNodeInfo: RuleData2 = {
-              id : this.diagram.nodes.length + 1,
-              chatWorkflowId : 1,
-              successWorkflowId : 1,
-              successRuleId : null,
-              isActive : true,
-              chatWorkflowBlockId : 5,
-              chatWorkflowEditorTypeId : 9,
-              fieldDetails : fieldInfo,
-              branchDetails: null,
-              messageDetails: null,
-              fieldOptionDetails: null
-            };
+            let newNodeInfo: RuleData2[] = [
+              {
+                id : this.diagram.nodes.length + 1,
+                chatWorkflowId : 1,
+                successWorkflowId : 1,
+                successRuleId : null,
+                isActive : true,
+                chatWorkflowBlockId : 5,
+                chatWorkflowEditorTypeId : 9,
+                fieldDetails : fieldInfo,
+                branchDetails: null,
+                messageDetails: null,
+                fieldOptionDetails: null
+              }
+            ];
   
             this.newNodeHeight= 100; // Set a default height for the new node
             this.newNodeWidth = 200;
@@ -555,19 +578,21 @@ export class WorkflowDiagramComponent implements AfterViewInit{
                 fieldValidation: fieldValidationInfo
               };
     
-              let newNodeInfo: RuleData2 = {
-                id : this.diagram.nodes.length + 1,
-                chatWorkflowId : 1,
-                successWorkflowId : 1,
-                successRuleId : null,
-                isActive : true,
-                chatWorkflowBlockId : 5,
-                chatWorkflowEditorTypeId : 10,
-                fieldDetails : fieldInfo,
-                branchDetails: null,
-                messageDetails: null,
-                fieldOptionDetails: null
-              };
+              let newNodeInfo: RuleData2[] = [
+                {
+                  id : this.diagram.nodes.length + 1,
+                  chatWorkflowId : 1,
+                  successWorkflowId : 1,
+                  successRuleId : null,
+                  isActive : true,
+                  chatWorkflowBlockId : 5,
+                  chatWorkflowEditorTypeId : 10,
+                  fieldDetails : fieldInfo,
+                  branchDetails: null,
+                  messageDetails: null,
+                  fieldOptionDetails: null
+                }
+              ];
     
               this.newNodeHeight= 100; // Set a default height for the new node
               this.newNodeWidth = 200;
@@ -586,19 +611,21 @@ export class WorkflowDiagramComponent implements AfterViewInit{
               fieldValidation: fieldValidationInfo
             };
   
-            let newNodeInfo: RuleData2 = {
-              id : this.diagram.nodes.length + 1,
-              chatWorkflowId : 1,
-              successWorkflowId : 1,
-              successRuleId : null,
-              isActive : true,
-              chatWorkflowBlockId : 5,
-              chatWorkflowEditorTypeId : 11,
-              fieldDetails : fieldInfo,
-              branchDetails: null,
-              messageDetails: null,
-              fieldOptionDetails: null
-            };
+            let newNodeInfo: RuleData2[] = [
+              {
+                id : this.diagram.nodes.length + 1,
+                chatWorkflowId : 1,
+                successWorkflowId : 1,
+                successRuleId : null,
+                isActive : true,
+                chatWorkflowBlockId : 5,
+                chatWorkflowEditorTypeId : 11,
+                fieldDetails : fieldInfo,
+                branchDetails: null,
+                messageDetails: null,
+                fieldOptionDetails: null
+              }
+            ];
   
             this.newNodeHeight= 100; // Set a default height for the new node
             this.newNodeWidth = 200;
@@ -617,19 +644,21 @@ export class WorkflowDiagramComponent implements AfterViewInit{
                 fieldValidation: fieldValidationInfo
               };
     
-              let newNodeInfo: RuleData2 = {
-                id : this.diagram.nodes.length + 1,
-                chatWorkflowId : 1,
-                successWorkflowId : 1,
-                successRuleId : null,
-                isActive : true,
-                chatWorkflowBlockId : 5,
-                chatWorkflowEditorTypeId : 12,
-                fieldDetails : fieldInfo,
-                branchDetails: null,
-                messageDetails: null,
-                fieldOptionDetails: null
-              };
+              let newNodeInfo: RuleData2[] = [
+                {
+                  id : this.diagram.nodes.length + 1,
+                  chatWorkflowId : 1,
+                  successWorkflowId : 1,
+                  successRuleId : null,
+                  isActive : true,
+                  chatWorkflowBlockId : 5,
+                  chatWorkflowEditorTypeId : 12,
+                  fieldDetails : fieldInfo,
+                  branchDetails: null,
+                  messageDetails: null,
+                  fieldOptionDetails: null
+                }
+              ];
     
               this.newNodeHeight= 100; // Set a default height for the new node
               this.newNodeWidth = 200;
@@ -647,19 +676,21 @@ export class WorkflowDiagramComponent implements AfterViewInit{
                 fieldValidation: fieldValidationInfo
               };
     
-              let newNodeInfo: RuleData2 = {
-                id : this.diagram.nodes.length + 1,
-                chatWorkflowId : 1,
-                successWorkflowId : 1,
-                successRuleId : null,
-                isActive : true,
-                chatWorkflowBlockId : 5,
-                chatWorkflowEditorTypeId : 13,
-                fieldDetails : fieldInfo,
-                branchDetails: null,
-                messageDetails: null,
-                fieldOptionDetails: null
-              };
+              let newNodeInfo: RuleData2[] = [
+                {
+                  id : this.diagram.nodes.length + 1,
+                  chatWorkflowId : 1,
+                  successWorkflowId : 1,
+                  successRuleId : null,
+                  isActive : true,
+                  chatWorkflowBlockId : 5,
+                  chatWorkflowEditorTypeId : 13,
+                  fieldDetails : fieldInfo,
+                  branchDetails: null,
+                  messageDetails: null,
+                  fieldOptionDetails: null
+                }
+              ];
     
               this.newNodeHeight= 100; // Set a default height for the new node
               this.newNodeWidth = 200;
@@ -669,11 +700,93 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         }
         break;
       }
+      case (this.chatWorkflowBlockTypeEnum.GetCustomerDetails): {
+        let emailFieldInfo: FieldDetails = {
+          description : this.emailDetails.description ,
+          label : this.emailDetails.label,
+          placeholder : this.emailDetails.placeholder,
+          fieldValidation: null
+        };
+        let newNodeInfo: RuleData2[] = [
+          {
+            id : this.diagram.nodes.length + 1,
+            chatWorkflowId : 1,
+            successWorkflowId : null,
+            successRuleId : null,
+            isActive : true,
+            chatWorkflowBlockId : 3,
+            chatWorkflowEditorTypeId : 19,
+            fieldDetails : emailFieldInfo,
+            branchDetails: null,
+            messageDetails: null,
+            fieldOptionDetails: null
+          },
+          {
+            id : this.diagram.nodes.length + 2,
+            chatWorkflowId : 1,
+            successWorkflowId : null,
+            successRuleId : null,
+            isActive : true,
+            chatWorkflowBlockId : 3,
+            chatWorkflowEditorTypeId : 21,
+            fieldDetails : null,
+            branchDetails: null,
+            messageDetails: null,
+            fieldOptionDetails: null
+          }
+        ];
+  
+        if (this.showPhoneNumber) {
+          let phoneNumberFieldInfo: FieldDetails = {
+            description: this.phoneDetails.description,
+            label: this.phoneDetails.label,
+            placeholder: this.phoneDetails.placeholder,
+            fieldValidation: null
+          };
+          newNodeInfo.push({
+            id: this.diagram.nodes.length + 3,
+            chatWorkflowId: 1,
+            successWorkflowId: null,
+            successRuleId: null,
+            isActive: true,
+            chatWorkflowBlockId: 3,
+            chatWorkflowEditorTypeId: 20,
+            fieldDetails: phoneNumberFieldInfo,
+            branchDetails: null,
+            messageDetails: null,
+            fieldOptionDetails: null
+          });
+        }
+  
+        if (this.showName) {
+          let nameFieldInfo: FieldDetails = {
+            description: this.nameDetails.description,
+            label: this.nameDetails.label,
+            placeholder: this.nameDetails.placeholder,
+            fieldValidation: null
+          };
+          newNodeInfo.push({
+            id: this.diagram.nodes.length + 4,
+            chatWorkflowId: 1,
+            successWorkflowId: null,
+            successRuleId: null,
+            isActive: true,
+            chatWorkflowBlockId: 3,
+            chatWorkflowEditorTypeId: 18,
+            fieldDetails: nameFieldInfo,
+            branchDetails: null,
+            messageDetails: null,
+            fieldOptionDetails: null
+          });
+        }
+        this.newNodeHeight= 100;
+        this.newNodeWidth = 200;
+        this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
+        break;
+      }
     }
 
     console.log('newNode: '+ this.newNode.addInfo);
-
-    // const newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, htmlContent, newNodeInfo); // Width and height as parameters
 
     // Add the new node to the diagram
     this.diagram.addNode(this.newNode);
@@ -692,9 +805,14 @@ export class WorkflowDiagramComponent implements AfterViewInit{
     this.diagram.addConnector(newConnector);
   }
 
-  createNode(width: number, height: number, nodeInfo: RuleData2): NodeModel {
+  // Method to check if all required email details are valid
+  isEmailValid(): boolean {
+    return this.emailDetails.label != '' && this.emailDetails.placeholder != '';
+  }
+
+  createNode(width: number, height: number, nodesInfo: RuleData2[]): NodeModel {
     return {
-      id: `node${nodeInfo.id}`,
+      id: `node${nodesInfo[0].id}`,
       annotations: [],
       offsetX: 100,
       offsetY: 70,
@@ -706,7 +824,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
       shape: { 
         type: 'HTML',
       },
-      addInfo: nodeInfo
+      addInfo: nodesInfo
     };
   }
 

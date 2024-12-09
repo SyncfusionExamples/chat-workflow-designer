@@ -39,6 +39,8 @@ export const LIST_DATA: { [key: string]: any }[] = [
         {
             'text': 'Custom Message',
             'id': '2',
+            'blockid': 6,
+            'editerTypeId': null,
             'category': 'Action',
         },
         {
