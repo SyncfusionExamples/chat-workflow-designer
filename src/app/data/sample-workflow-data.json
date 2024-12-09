@@ -234,7 +234,7 @@
     "id": 10,
     "chatWorkflowId": 1,
     "successWorkflowId": 1,
-    "successRuleId": null,
+    "successRuleId": 11,
     "isActive": true,
     "chatWorkflowBlockId": 5,
     "chatWorkflowEditorTypeId": 8,
