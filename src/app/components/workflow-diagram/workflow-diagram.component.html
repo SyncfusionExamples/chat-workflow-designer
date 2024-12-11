@@ -135,7 +135,7 @@
     [headerTitle]='headertitle' [animation]='animation' (select)="onSelectListView($event)"></ejs-listview>
 </div>
 
-<app-workflow-sidebar #workflowSidebar [nodeEditType]="nodeEditType" [nodeBlockType]="nodeBlockType" [sidebarHeader]="sidebarHeader" [clickedNodeId]="clickedNodeId" (addNodeAndConnect)="onaddNodeAndConnect($event)"></app-workflow-sidebar>
+<app-workflow-sidebar #workflowSidebar [nodeEditType]="nodeEditType" [nodeBlockType]="nodeBlockType" [sidebarHeader]="sidebarHeader" [selectedBlockId]="selectedBlockId" [selectedWorkFlowId]="selectedWorkFlowId" [successWorkflowId]="successWorkflowId" (addNodeAndConnect)="onaddNodeAndConnect($event)"></app-workflow-sidebar>
 
 <!-- <div style="display: none;">
   <ejs-uploader #defaultupload id='fileupload' (success)='onUploadSuccess($event)' [asyncSettings]='asyncSettings'></ejs-uploader>

@@ -75,7 +75,9 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   public sidebarHeader!: string;
   public nodeBlockType!: number;
   public nodeEditType!: number;
-  public clickedNodeId!: string;
+  public selectedBlockId!: string;
+  public selectedWorkFlowId!: number;
+  public successWorkflowId!: number;
 
   // // Async settings for file upload
   // public asyncSettings: AsyncSettingsModel = {
@@ -114,6 +116,8 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   }
   
   private initializeDiagramElements(): void {
+    this.selectedWorkFlowId = 1; // Get from DB
+    this.successWorkflowId = 1; // Get from DB and Need to set when node click
     sampleWorkflowData.forEach(item => {
       // Create nodes based on the data
       this.nodes.push({
@@ -201,15 +205,15 @@ export class WorkflowDiagramComponent implements AfterViewInit{
 
   public onNodeClick(args: IClickEventArgs): void {
     if (args.actualObject instanceof Node) {
-      const clickedNode = args.actualObject as Node;
-      let isLastNode = clickedNode.outEdges.length == 0;
+      const clickedBlock = args.actualObject as Node;
+      let isLastNode = clickedBlock.outEdges.length == 0;
       if(isLastNode && this.diagram.selectedItems.userHandles) {
         this.diagram.selectedItems.userHandles[0].visible = true;
       }
       else if(this.diagram.selectedItems.userHandles){
         this.diagram.selectedItems.userHandles[0].visible = false;
       }
-       this.clickedNodeId = clickedNode.id;
+       this.selectedBlockId = clickedBlock.id;
     }
   }
 
