@@ -219,12 +219,8 @@ export class WorkflowDiagramComponent implements AfterViewInit{
 
   // Method to add a new node and connect it
   public onaddNodeAndConnect([sourceNodeId, newNode]: [string, NodeModel]): void {
-
-    this.nodes.push(newNode);
-    // const newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, htmlContent, newNodeInfo); // Width and height as parameters
     // Add the new node to the diagram
     this.diagram.addNode(newNode);
-
     // Create a new connector to link the new node to the source node
     const newConnectorId = `connector${++this.connectorIdCounter}`;
     const newConnector: ConnectorModel = {
@@ -234,7 +230,6 @@ export class WorkflowDiagramComponent implements AfterViewInit{
       type: 'Orthogonal',
       style: { strokeColor: '#6BA5D7', strokeWidth: 1 }
     };
-
     // Add the connector to the diagram
     this.diagram.addConnector(newConnector);
   }
@@ -265,8 +260,6 @@ export class WorkflowDiagramComponent implements AfterViewInit{
     const selectedItem = args.item;
     const selectedItemId = selectedItem.getAttribute('data-uid');
     const selectedItemText = args.item ? args.item.textContent : null;
-    // Perform actions with the selectedItemId
-    console.log('Selected Item ID:', selectedItemId);
     if (selectedItemId && /^0[1-3]$/.test(selectedItemId)) { // Check if the ID is '01', '02', or '03'
       this.sidebarHeader = selectedItemText ? selectedItemText.trim() + ' Block' : '';
     }
