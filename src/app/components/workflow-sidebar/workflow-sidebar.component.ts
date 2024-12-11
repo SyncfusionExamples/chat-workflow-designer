@@ -3,16 +3,16 @@ import { ClickEventArgs, SidebarComponent, SidebarModule, ToolbarModule } from '
 import { TextFormatEnum, ChatWorkflowEditorTypeEnum, ChatWorkflowBlockTypeEnum } from '../../models/enum';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import {WorkflowDiagramComponent} from '../workflow-diagram/workflow-diagram.component';
 import { FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData2 } from '../../models/appModel';
 import { NodeModel } from '@syncfusion/ej2-angular-diagrams';
 import { DropDownListComponent } from '@syncfusion/ej2-angular-dropdowns';
+import { DatePickerModule, DateTimePickerModule } from '@syncfusion/ej2-angular-calendars';
 
 
 @Component({
   selector: 'app-workflow-sidebar',
   standalone: true,
-  imports: [SidebarModule, FormsModule, CommonModule, WorkflowDiagramComponent],
+  imports: [SidebarModule, FormsModule, CommonModule, DatePickerModule, DateTimePickerModule],
   templateUrl: './workflow-sidebar.component.html',
   styleUrl: './workflow-sidebar.component.scss'
 })
@@ -32,6 +32,8 @@ export class WorkflowSidebarComponent {
   public fieldOptionRegexValue: string = '';
   public fromDate: Date = new Date();
   public toDate: Date = new Date();
+  public fromDateTime: Date = new Date();
+  public toDateTime: Date = new Date();
 
   public type: string = 'Push';
   public width: string ='280px';
@@ -55,6 +57,10 @@ export class WorkflowSidebarComponent {
     this.sidebar?.hide();
     this.addNodeAndUpdate(this.clickedNodeId);
     this.buttons = [];
+  }
+
+  onCancelSideBarClick(): void {
+    this.sidebar?.hide();
   }
 
   public onSideBarCreated(args: any) {
@@ -83,7 +89,6 @@ export class WorkflowSidebarComponent {
 
   addNodeAndUpdate(sourceNodeId: string){
     let nodeLength = 11;
-    // console.log(this.workflowDiagramComponent.getDiagramLength());
     switch(this.nodeBlockType){
       case (this.chatWorkflowBlockTypeEnum.SendTextMessage): {
 
