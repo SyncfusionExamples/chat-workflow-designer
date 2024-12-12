@@ -34,7 +34,7 @@ export class WorkflowSidebarComponent {
   public toDate: Date = new Date();
   public fromDateTime: Date = new Date();
   public toDateTime: Date = new Date();
-
+  public static nodeLength: number = 12;
   public type: string = 'Push';
   public width: string = '280px';
   public checkedIsPrivate: boolean = false;
@@ -49,6 +49,7 @@ export class WorkflowSidebarComponent {
   @Input() selectedBlockId!: string;
   @Input() selectedWorkFlowId!: number;
   @Input() successWorkflowId!: number;
+  @Input() nextOffsetY!: number;
   @Output() addNodeAndConnect = new EventEmitter<[string, NodeModel]>();
 
   constructor() {
@@ -205,11 +206,14 @@ export class WorkflowSidebarComponent {
       }
     }
     this.addNodeAndConnect.emit([sourceNodeId, this.newNode]);
+    this.sideBarLabel = "";
+    this.sideBarDescription = "";
+    this.sideBarPlaceholder = "";
   }
 
   public createNodeInfo(editorTypeId: number | null, blockId: number, workflowId: number, fieldInfo: FieldDetails | null, fieldOptionInfo: FieldOptionDetail[] | null, messageInfo: MessageDetails | null): RuleData2 {
     return {
-      id: 12, // Need to set value dynamically
+      id: WorkflowSidebarComponent.nodeLength++, // Need to set value dynamically
       chatWorkflowId: workflowId,
       successWorkflowId: this.successWorkflowId,
       successRuleId: null,
@@ -253,7 +257,7 @@ export class WorkflowSidebarComponent {
       id: `node${nodeInfo.id}`,
       annotations: [],
       offsetX: 100,
-      offsetY: 2200,
+      offsetY: this.nextOffsetY,
       style: { fill: '#FFFFFF', strokeColor: '#0f2c60', strokeWidth: 5 },
       height: height,
       width: width,

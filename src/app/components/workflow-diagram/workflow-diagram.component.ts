@@ -78,6 +78,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   public selectedBlockId!: string;
   public selectedWorkFlowId!: number;
   public successWorkflowId!: number;
+  public nextOffsetY!: number;
 
   // // Async settings for file upload
   // public asyncSettings: AsyncSettingsModel = {
@@ -214,6 +215,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         this.diagram.selectedItems.userHandles[0].visible = false;
       }
        this.selectedBlockId = clickedBlock.id;
+       this.nextOffsetY = clickedBlock.offsetY + clickedBlock.height + 40;
     }
   }
 
@@ -245,6 +247,9 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   }
 
   public onOpenDropDownButton(args: OpenCloseMenuEventArgs) {
+    if(this.diagram.selectedItems.userHandles){
+      this.diagram.selectedItems.userHandles[0].visible = false;
+    }
     let dropDownContainer = document.querySelector('.dropDown-container') as HTMLElement;
     args.element.parentElement!.style.top = dropDownContainer.getBoundingClientRect().top + dropDownContainer.offsetHeight +'px';
 
