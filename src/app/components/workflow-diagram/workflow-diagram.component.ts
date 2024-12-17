@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, EventEmitter, Input, Output, viewChild, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, viewChild, ViewChild } from '@angular/core';
 import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, HierarchicalTree, HierarchicalTreeService, HtmlModel, IClickEventArgs, IExportOptions, LayoutModel, LineDistribution, Node, NodeModel, PrintAndExport, SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
 import { FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData, RuleData2 } from '../../models/appModel';
 import { RULE_DATA, RULE_DATA2, RULE_DATA3 } from '../../data/rule-data';
@@ -20,7 +20,6 @@ import { AsyncSettingsModel, FileInfo, Uploader } from '@syncfusion/ej2-inputs';
 import { WorkflowSidebarComponent } from '../workflow-sidebar/workflow-sidebar.component';  // Import child component
 
 
-
 Diagram.Inject(HierarchicalTree, LineDistribution, PrintAndExport);
 
 @Component({
@@ -36,6 +35,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   @ViewChild('dropdownbutton') dropdownbutton!: DropDownButtonComponent;
   @ViewChild('listview') listView!: ListViewComponent;
   @ViewChild('workflowSidebar') sidebarComponent!: WorkflowSidebarComponent;
+  @ViewChild('fileInput', { static: false }) fileInput!: ElementRef;
 
   public chatWorkflowEditorTypeEnum = ChatWorkflowEditorTypeEnum; 
   public chatWorkflowBlockTypeEnum = ChatWorkflowBlockTypeEnum;
@@ -71,36 +71,19 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   textFormatDDLOptions: Array<{ text: string, value: number }>;
   ddlTextFormatFields: Object = { text: 'text', value: 'value' };
 
-  public uploadObject: Uploader;
-
   public sidebarHeader!: string;
   public nodeBlockType!: number;
   public nodeEditType!: number;
   public selectedBlockId!: string;
   public selectedWorkFlowId!: number;
 
-  // // Async settings for file upload
-  // public asyncSettings: AsyncSettingsModel = {
-  //   saveUrl: 'https://services.syncfusion.com/angular/production/api/FileUploader/Save',
-  //   removeUrl: 'https://services.syncfusion.com/angular/production/api/FileUploader/Remove'
-  // };
   constructor() {
-    this.uploadObject = new Uploader({
-      asyncSettings: {
-        saveUrl:
-          'https://services.syncfusion.com/js/production/api/FileUploader/Save',
-        removeUrl:
-          'https://services.syncfusion.com/js/production/api/FileUploader/Remove',
-      },
-      success: this.onUploadSuccess.bind(this),
-    });
     // Initialize nodes and connectors based on the data
     this.initializeDiagramElements();
     this.textFormatDDLOptions = this.enumToArray(TextFormatEnum);
   }
 
   ngAfterViewInit() {
-    this.uploadObject.appendTo('#fileupload');
   }
 
   // Convert enum to array of objects
@@ -290,8 +273,11 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   }
 
   public onClicked(args: ClickEventArgs) {
-    if (args.item.text === 'Save') {
+    if (args.item.id === 'save') {
       this.download(this.diagram.saveDiagram());
+    }
+    if (args.item.id === 'open') {
+      this.fileInput.nativeElement.click();
     }
   }
 
@@ -320,28 +306,10 @@ export class WorkflowDiagramComponent implements AfterViewInit{
     } 
   }
 
-  //  // Handle file upload success
-  //  public onUploadSuccess1(args: { [key: string]: Object }): void {
-  //   // Extracts the file from the upload success event arguments.
-  //   let files: { [key: string]: Object } = args['file'] as { [key: string]: Object };
-  //   let file: Blob = files['rawFile'] as Blob;
-  //   // Creates a FileReader to read the content of the file.
-  //   let reader: FileReader = new FileReader();
-  //   // Reads the content of the file as a text string.
-  //   reader.readAsText(file);
-  //   // Assigns the loadDiagram function to execute when the file read operation completes.
-  //   reader.onloadend = this.loadDiagram.bind(this);
-  // }
-
-  // // Load the diagram object from a JSON string.
-  // public loadDiagram1(event: ProgressEvent<FileReader>): void {
-  //   // Extracts the text content from the FileReader event.
-  //   const jsonString = event.target?.result as string;
-  //   this.diagram.loadDiagram(jsonString);    
-  // }
-
-  onUploadSuccess(args: { file: FileInfo }) {
-    const file: any = args.file.rawFile;
+  onFileSelected(event: any) {
+    // console.log(event);
+    // const file: any = event.target.files[0];
+    const file: any = this.fileInput.nativeElement.files[0];
     const reader = new FileReader();
     reader.readAsText(file);
     reader.onloadend = this.loadDiagram.bind(this);
@@ -350,6 +318,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   loadDiagram(event: ProgressEvent<FileReader>) {
     const jsonString = event.target?.result as string;
     this.diagram.loadDiagram(jsonString);
+    this.fileInput.nativeElement.value = '';
   }
 
 }
