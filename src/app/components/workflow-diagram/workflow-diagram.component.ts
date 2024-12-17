@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, viewChild, ViewChild } from '@angular/core';
-import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, HtmlModel, IClickEventArgs, IExportOptions, LayoutModel, LineDistribution, Node, NodeModel, PrintAndExport, SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
+import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, HierarchicalTree, HierarchicalTreeService, HtmlModel, IClickEventArgs, IExportOptions, LayoutModel, LineDistribution, Node, NodeModel, PrintAndExport, SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
 import { FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData, RuleData2 } from '../../models/appModel';
 import { RULE_DATA, RULE_DATA2, RULE_DATA3 } from '../../data/rule-data';
 import { DialogModule } from '@syncfusion/ej2-angular-popups';
@@ -20,11 +20,12 @@ import { AsyncSettingsModel, FileInfo, Uploader } from '@syncfusion/ej2-inputs';
 import { WorkflowSidebarComponent } from '../workflow-sidebar/workflow-sidebar.component';  // Import child component
 
 
-Diagram.Inject(ComplexHierarchicalTree, LineDistribution, PrintAndExport);
+Diagram.Inject(HierarchicalTree, LineDistribution, PrintAndExport);
 
 @Component({
   selector: 'app-workflow-diagram',
   standalone: true,
+  providers: [HierarchicalTreeService],
   imports: [DiagramModule, DialogModule, DropDownButtonModule, CommonModule, ListViewModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule, DatePickerModule, DateTimePickerModule, SwitchModule, ToolbarModule, UploaderModule, WorkflowSidebarComponent],
   templateUrl: './workflow-diagram.component.html',
   styleUrl: './workflow-diagram.component.scss'
@@ -73,7 +74,8 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   public sidebarHeader!: string;
   public nodeBlockType!: number;
   public nodeEditType!: number;
-  public clickedNodeId!: string;
+  public selectedBlockId!: string;
+  public selectedWorkFlowId!: number;
 
   constructor() {
     // Initialize nodes and connectors based on the data
@@ -97,11 +99,18 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   }
   
   private initializeDiagramElements(): void {
+    this.selectedWorkFlowId = 1; // Get from DB
     sampleWorkflowData.forEach(item => {
+      let buttonCount = 0;
+      if(item.chatWorkflowEditorTypeId == 2){
+        buttonCount = item.fieldOptionDetails?.length || 0;
+      }
       // Create nodes based on the data
       this.nodes.push({
         id: `node${item.id}`,
-        // annotations: [{ content: `Node ${item['id']}` }],
+        // annotations: [{ content: `node${item['id']}` }],
+        width: 200,
+        height: 150 + (buttonCount * 25),
         addInfo: item
       });
 
@@ -146,7 +155,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   };
 
   public layout: LayoutModel = {
-    type: 'ComplexHierarchicalTree',
+    type: 'HierarchicalTree',
     connectionPointOrigin: ConnectionPointOrigin.DifferentPoint,
     horizontalSpacing: 40,
     verticalSpacing: 40,
@@ -162,8 +171,6 @@ export class WorkflowDiagramComponent implements AfterViewInit{
       strokeColor: '#0f2c60',
       strokeWidth: 5,
     };
-    obj.width = 200,
-    obj.height = 150,
     obj.borderWidth = 1,
     obj.borderColor = '#0f2c60',
     (obj.shape as HtmlModel).type = 'HTML'
@@ -184,15 +191,15 @@ export class WorkflowDiagramComponent implements AfterViewInit{
 
   public onNodeClick(args: IClickEventArgs): void {
     if (args.actualObject instanceof Node) {
-      const clickedNode = args.actualObject as Node;
-      let isLastNode = clickedNode.outEdges.length == 0;
+      const clickedBlock = args.actualObject as Node;
+      let isLastNode = clickedBlock.outEdges.length == 0;
       if(isLastNode && this.diagram.selectedItems.userHandles) {
         this.diagram.selectedItems.userHandles[0].visible = true;
       }
       else if(this.diagram.selectedItems.userHandles){
         this.diagram.selectedItems.userHandles[0].visible = false;
       }
-       this.clickedNodeId = clickedNode.id;
+       this.selectedBlockId = clickedBlock.id;
     }
   }
 
@@ -215,6 +222,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
     };
     // Add the connector to the diagram
     this.diagram.addConnector(newConnector);
+    this.diagram.doLayout();
   }
 
   public onUserHandleMouseDown(event: UserHandleEventsArgs) {
@@ -224,6 +232,9 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   }
 
   public onOpenDropDownButton(args: OpenCloseMenuEventArgs) {
+    if(this.diagram.selectedItems.userHandles){
+      this.diagram.selectedItems.userHandles[0].visible = false;
+    }
     let dropDownContainer = document.querySelector('.dropDown-container') as HTMLElement;
     args.element.parentElement!.style.top = dropDownContainer.getBoundingClientRect().top + dropDownContainer.offsetHeight +'px';
 

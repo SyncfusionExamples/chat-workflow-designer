@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, ViewChild} from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { ClickEventArgs, SidebarComponent, SidebarModule, ToolbarModule } from '@syncfusion/ej2-angular-navigations';
 import { TextFormatEnum, ChatWorkflowEditorTypeEnum, ChatWorkflowBlockTypeEnum } from '../../models/enum';
 import { FormsModule } from '@angular/forms';
@@ -20,9 +20,9 @@ export class WorkflowSidebarComponent {
   @ViewChild('sidebar') sidebar?: SidebarComponent;
   @ViewChild('ddlTextFormat') ddlTextFormat!: DropDownListComponent;
 
-  public chatWorkflowEditorTypeEnum = ChatWorkflowEditorTypeEnum; 
+  public chatWorkflowEditorTypeEnum = ChatWorkflowEditorTypeEnum;
   public chatWorkflowBlockTypeEnum = ChatWorkflowBlockTypeEnum;
-  public buttons: Array<{ label: string, value: string, description:string|null }> = [];
+  public buttons: Array<{ label: string, value: string, description: string | null }> = [];
   public options: Array<{ label: string, value: string }> = [];
   public sideBarLabel: string = '';
   public sideBarDescription: string = '';
@@ -34,28 +34,28 @@ export class WorkflowSidebarComponent {
   public toDate: Date = new Date();
   public fromDateTime: Date = new Date();
   public toDateTime: Date = new Date();
-
+  public static nodeLength: number = 12;
   public type: string = 'Push';
-  public width: string ='280px';
-  // public nodeLength: number = 0;
+  public width: string = '280px';
   public checkedIsPrivate: boolean = false;
   public customMessage: string = '';
   public newNodeWidth: number = 200;
-  public newNodeHeight: number = 100;
-  public newNode : NodeModel = {};
+  public newNodeHeight: number = 150;
+  public newNode: NodeModel = {};
 
   @Input() nodeEditType!: number;
   @Input() nodeBlockType!: number;
   @Input() sidebarHeader!: string;
-  @Input() clickedNodeId!: string;
+  @Input() selectedBlockId!: string;
+  @Input() selectedWorkFlowId!: number;
   @Output() addNodeAndConnect = new EventEmitter<[string, NodeModel]>();
- 
+
   constructor() {
   }
-  
+
   onCloseSideBarClick(): void {
     this.sidebar?.hide();
-    this.addNodeAndUpdate(this.clickedNodeId);
+    this.addBlock(this.selectedBlockId);
     this.buttons = [];
   }
 
@@ -73,7 +73,7 @@ export class WorkflowSidebarComponent {
   }
 
   addButton(label: string, value: string, description: string | null, labelInput: HTMLInputElement, valueInput: HTMLInputElement, descriptionInput: HTMLInputElement | null): void {
-     if (label.trim() && value.trim()) {
+    if (label.trim() && value.trim()) {
       this.buttons.push({ label, value, description });
       labelInput.value = '';
       valueInput.value = '';
@@ -87,464 +87,178 @@ export class WorkflowSidebarComponent {
     this.buttons.splice(index, 1);
   }
 
-  addNodeAndUpdate(sourceNodeId: string){
-    let nodeLength = 11;
-    switch(this.nodeBlockType){
+  addBlock(sourceNodeId: string) {
+    switch (this.nodeBlockType) {
       case (this.chatWorkflowBlockTypeEnum.SendTextMessage): {
-
         let messageInfo: MessageDetails = {
           text: this.customMessage,
           isPrivate: this.checkedIsPrivate,
           textFormat: this.ddlTextFormat.value as TextFormatEnum
         }
-        let newNodeInfo: RuleData2 = {
-          id : nodeLength + 1,
-          chatWorkflowId : 1,
-          successWorkflowId : null,
-          successRuleId : null,
-          isActive : true,
-          chatWorkflowBlockId : 6,
-          chatWorkflowEditorTypeId : null,
-          fieldDetails : null,
-          branchDetails: null,
-          messageDetails: messageInfo,
-          fieldOptionDetails: null
-        };
-
-        this.newNodeHeight= 100; // Set a default height for the new node
-        this.newNodeWidth = 200;
+        let newNodeInfo = this.createNodeInfo(null, this.nodeBlockType, this.selectedWorkFlowId, null, null, messageInfo);
         this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
         break;
-      } 
-      case (this.chatWorkflowBlockTypeEnum.GetPickerInput):{
-        switch(this.nodeEditType){
+      }
+      case (this.chatWorkflowBlockTypeEnum.GetPickerInput): {
+        switch (this.nodeEditType) {
           case (this.chatWorkflowEditorTypeEnum.Boolean): {
-            let fieldInfo: FieldDetails = {
-              description : this.sideBarDescription ,
-              label : this.sideBarLabel,
-              placeholder : this.sideBarPlaceholder
-            };
-            let newNodeInfo: RuleData2 = {
-              id : nodeLength + 1,
-              chatWorkflowId : 1,
-              successWorkflowId : 1,
-              successRuleId : null,
-              isActive : true,
-              chatWorkflowBlockId : 4,
-              chatWorkflowEditorTypeId : 1,
-              fieldDetails : fieldInfo,
-              branchDetails: null,
-              messageDetails: null,
-              fieldOptionDetails: null
-            };
-    
-            this.newNodeHeight= 100; // Set a default height for the new node
-            this.newNodeWidth = 150;
-            this.newNode =  this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
+            let fieldInfo = this.createFieldInfo(null);
+            let newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
+            this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
             break;
           }
-          case(this.chatWorkflowEditorTypeEnum.Buttons): {
-            let fieldInfo: FieldDetails = {
-              description : this.sideBarDescription ,
-              label : this.sideBarLabel,
-              placeholder : this.sideBarPlaceholder
-            };
-    
-            // Mapping buttons to fieldOptionInfo
-            let fieldOptionInfo: FieldOptionDetail[] = this.buttons.map(button => {
-              return {
-                label: button.label,
-                value: button.value
-              };
-            });
-    
-            let newNodeInfo: RuleData2 = {
-              id : nodeLength + 1,
-              chatWorkflowId : 1,
-              successWorkflowId : 1,
-              successRuleId : null,
-              isActive : true,
-              chatWorkflowBlockId : 4,
-              chatWorkflowEditorTypeId : 2,
-              fieldDetails : fieldInfo,
-              branchDetails: null,
-              messageDetails: null,
-              fieldOptionDetails: fieldOptionInfo
-            };
-    
-            this.newNodeHeight= 100 + (this.buttons.length * 20); // Set a default height for the new node
-            this.newNodeWidth = 200;
-            this.newNode =  this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
+          case (this.chatWorkflowEditorTypeEnum.Buttons): {
+            let fieldOptionInfo = this.mapButtonsToFieldOptions();
+            let fieldInfo = this.createFieldInfo(null);
+            let newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, fieldOptionInfo, null);
+            this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight + (this.buttons.length * 25), newNodeInfo);
             break;
           }
           case this.chatWorkflowEditorTypeEnum.DropDown: {
-              let fieldInfo: FieldDetails = {
-                description : this.sideBarDescription ,
-                label : this.sideBarLabel,
-                placeholder : this.sideBarPlaceholder
-              };
-        
-              // Mapping buttons to fieldOptionInfo
-              let fieldOptionInfo: FieldOptionDetail[] = this.buttons.map(button => {
-                return {
-                  label: button.label,
-                  value: button.value
-                };
-              });
-        
-              let newNodeInfo: RuleData2 = {
-                id : nodeLength + 1,
-                chatWorkflowId : 1,
-                successWorkflowId : 1,
-                successRuleId : null,
-                isActive : true,
-                chatWorkflowBlockId : 4,
-                chatWorkflowEditorTypeId : 3,
-                fieldDetails : fieldInfo,
-                branchDetails: null,
-                messageDetails: null,
-                fieldOptionDetails: fieldOptionInfo
-              };
-        
-              this.newNodeHeight= 100; // Set a default height for the new node
-              this.newNodeWidth = 200;
-              this.newNode =  this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
-              break;
+            let fieldOptionInfo = this.mapButtonsToFieldOptions();
+            let fieldInfo = this.createFieldInfo(null);
+            let newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, fieldOptionInfo, null);
+            this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight + (this.buttons.length * 25), newNodeInfo);
+            break;
           }
           case (this.chatWorkflowEditorTypeEnum.MultiSelect): {
-              let fieldValidationInfo: FieldValidation = {
-                min: this.fieldOptionMinValue.toString(),
-                max: this.fieldOptionMaxValue.toString()
-              };
-              let fieldInfo: FieldDetails = {
-                description : this.sideBarDescription ,
-                label : this.sideBarLabel,
-                placeholder : this.sideBarPlaceholder,
-                fieldValidation: fieldValidationInfo
-              };
-    
-              // Mapping buttons to fieldOptionInfo
-              let fieldOptionInfo: FieldOptionDetail[] = this.buttons.map(button => {
-                return {
-                  label: button.label,
-                  value: button.value
-                };
-              });
-    
-              let newNodeInfo: RuleData2 = {
-                id : nodeLength + 1,
-                chatWorkflowId : 1,
-                successWorkflowId : 1,
-                successRuleId : null,
-                isActive : true,
-                chatWorkflowBlockId : 4,
-                chatWorkflowEditorTypeId : 4,
-                fieldDetails : fieldInfo,
-                branchDetails: null,
-                messageDetails: null,
-                fieldOptionDetails: fieldOptionInfo
-              };
-    
-              this.newNodeHeight= 100; // Set a default height for the new node
-              this.newNodeWidth = 200;
-              this.newNode =  this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
-              break;
-          } 
+            let fieldValidationInfo = this.createFieldValidationInfo(this.fieldOptionMinValue.toString(), this.fieldOptionMaxValue.toString(), null);
+            let fieldOptionInfo = this.mapButtonsToFieldOptions();
+            let fieldInfo = this.createFieldInfo(fieldValidationInfo);
+            let newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, fieldOptionInfo, null);
+            this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight + (this.buttons.length * 25), newNodeInfo);
+            break;
+          }
           case (this.chatWorkflowEditorTypeEnum.List): {
-              let fieldInfo: FieldDetails = {
-                description : this.sideBarDescription ,
-                label : this.sideBarLabel,
-                placeholder : this.sideBarPlaceholder,
-              };
-    
-              // Mapping buttons to fieldOptionInfo
-              let fieldOptionInfo: FieldOptionDetail[] = this.buttons.map(button => {
-                return {
-                  label: button.label,
-                  value: button.value,
-                  description: button.description !== null ? button.description : null
-                };
-              });
-    
-              let newNodeInfo: RuleData2 = {
-                id : nodeLength + 1,
-                chatWorkflowId : 1,
-                successWorkflowId : 1,
-                successRuleId : null,
-                isActive : true,
-                chatWorkflowBlockId : 4,
-                chatWorkflowEditorTypeId : 5,
-                fieldDetails : fieldInfo,
-                branchDetails: null,
-                messageDetails: null,
-                fieldOptionDetails: fieldOptionInfo
-              };
-    
-              this.newNodeHeight= 100 + (this.buttons.length * 25); // Set a default height for the new node
-              this.newNodeWidth = 200;
-              this.newNode =  this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
-              break;
-          } 
+            let fieldOptionInfo = this.mapButtonsToFieldOptions();
+            let fieldInfo = this.createFieldInfo(null);
+            let newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, fieldOptionInfo, null);
+            this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight + (this.buttons.length * 25), newNodeInfo);
+            break;
+          }
         }
         break;
       }
-      case (this.chatWorkflowBlockTypeEnum.GetTextInput):{
-        switch(this.nodeEditType){
+      case (this.chatWorkflowBlockTypeEnum.GetTextInput): {
+        switch (this.nodeEditType) {
           case (this.chatWorkflowEditorTypeEnum.Text): {
-            let fieldValidationInfo: FieldValidation = {
-              max: this.fieldOptionMaxValue.toString()
-            };
-            let fieldInfo: FieldDetails = {
-              description : this.sideBarDescription ,
-              label : this.sideBarLabel,
-              placeholder : this.sideBarPlaceholder,
-              fieldValidation: fieldValidationInfo
-            };
-  
-            let newNodeInfo: RuleData2 = {
-              id : nodeLength + 1,
-              chatWorkflowId : 1,
-              successWorkflowId : 1,
-              successRuleId : null,
-              isActive : true,
-              chatWorkflowBlockId : 5,
-              chatWorkflowEditorTypeId : 7,
-              fieldDetails : fieldInfo,
-              branchDetails: null,
-              messageDetails: null,
-              fieldOptionDetails: null
-            };
-  
-            this.newNodeHeight= 100; // Set a default height for the new node
-            this.newNodeWidth = 200;
-            this.newNode =  this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
+            let fieldValidationInfo = this.createFieldValidationInfo(null, this.fieldOptionMaxValue.toString(), null);
+            let fieldInfo = this.createFieldInfo(fieldValidationInfo);
+            let newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
+            this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
             break;
-          } 
+          }
           case (this.chatWorkflowEditorTypeEnum.TextArea): {
-              let fieldValidationInfo: FieldValidation = {
-                max: this.fieldOptionMaxValue.toString()
-              };
-              let fieldInfo: FieldDetails = {
-                description : this.sideBarDescription ,
-                label : this.sideBarLabel,
-                placeholder : this.sideBarPlaceholder,
-                fieldValidation: fieldValidationInfo
-              };
-    
-              let newNodeInfo: RuleData2 = {
-                id : nodeLength + 1,
-                chatWorkflowId : 1,
-                successWorkflowId : 1,
-                successRuleId : null,
-                isActive : true,
-                chatWorkflowBlockId : 5,
-                chatWorkflowEditorTypeId : 8,
-                fieldDetails : fieldInfo,
-                branchDetails: null,
-                messageDetails: null,
-                fieldOptionDetails: null
-              };
-    
-              this.newNodeHeight= 100; // Set a default height for the new node
-              this.newNodeWidth = 200;
-              this.newNode =  this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
-              break;
-          } 
+            let fieldValidationInfo = this.createFieldValidationInfo(null, this.fieldOptionMaxValue.toString(), null);
+            let fieldInfo = this.createFieldInfo(fieldValidationInfo);
+            let newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
+            this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
+            break;
+          }
           case (this.chatWorkflowEditorTypeEnum.Date): {
             const today = new Date();
-            // Format today's date as YYYY-MM-DD
-            const minDate = today.toISOString().split('T')[0];
-  
-            // Calculate max date, e.g., 30 days from today
-            const maxDateObj = new Date(today);
-            maxDateObj.setDate(today.getDate() + 30);
-            const maxDate = maxDateObj.toISOString().split('T')[0];
-  
-            let fieldValidationInfo: FieldValidation = {
-              // min: this.fromDate.toString(),
-              // max: this.toDate.toString()
-              
-              min: minDate,
-              max: maxDate
-            };
-            let fieldInfo: FieldDetails = {
-              description : this.sideBarDescription ,
-              label : this.sideBarLabel,
-              placeholder : this.sideBarPlaceholder,
-              fieldValidation: fieldValidationInfo
-            };
-  
-            let newNodeInfo: RuleData2 = {
-              id : nodeLength + 1,
-              chatWorkflowId : 1,
-              successWorkflowId : 1,
-              successRuleId : null,
-              isActive : true,
-              chatWorkflowBlockId : 5,
-              chatWorkflowEditorTypeId : 9,
-              fieldDetails : fieldInfo,
-              branchDetails: null,
-              messageDetails: null,
-              fieldOptionDetails: null
-            };
-  
-            this.newNodeHeight= 100; // Set a default height for the new node
-            this.newNodeWidth = 200;
-            this.newNode =  this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
+            const minDate = today.toISOString().split('T')[0]; // Format today's date as YYYY-MM-DD
+            today.getDate() + 30; // Calculate 30 days from today
+            const maxDate = today.toISOString().split('T')[0]; // Max date in YYYY-MM-DD format
+
+            let fieldValidationInfo = this.createFieldValidationInfo(minDate, maxDate, null);
+            let fieldInfo = this.createFieldInfo(fieldValidationInfo);
+            let newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
+            this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
             break;
-          } 
+          }
           case (this.chatWorkflowEditorTypeEnum.DateTime): {
-              const now = new Date();
-              // Current datetime formatted as ISO string
-              const minDateTime = now.toISOString();
-            
-              // Max datetime, e.g., 30 days from now
-              const maxDateTimeObj = new Date(now);
-              maxDateTimeObj.setDate(now.getDate() + 30);
-              const maxDateTime = maxDateTimeObj.toISOString();
-    
-              let fieldValidationInfo: FieldValidation = {
-                min: minDateTime,
-                max: maxDateTime
-              };
-              let fieldInfo: FieldDetails = {
-                description : this.sideBarDescription ,
-                label : this.sideBarLabel,
-                placeholder : this.sideBarPlaceholder,
-                fieldValidation: fieldValidationInfo
-              };
-    
-              let newNodeInfo: RuleData2 = {
-                id : nodeLength + 1,
-                chatWorkflowId : 1,
-                successWorkflowId : 1,
-                successRuleId : null,
-                isActive : true,
-                chatWorkflowBlockId : 5,
-                chatWorkflowEditorTypeId : 10,
-                fieldDetails : fieldInfo,
-                branchDetails: null,
-                messageDetails: null,
-                fieldOptionDetails: null
-              };
-    
-              this.newNodeHeight= 100; // Set a default height for the new node
-              this.newNodeWidth = 200;
-              this.newNode =  this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
-              break;
+            const now = new Date();
+            const minDateTime = now.toISOString(); // Current datetime in ISO format
+            const maxDateTime = new Date(now.setDate(now.getDate() + 30)).toISOString(); // Max datetime, 30 days from now
+
+            let fieldValidationInfo = this.createFieldValidationInfo(minDateTime, maxDateTime, null);
+            let fieldInfo = this.createFieldInfo(fieldValidationInfo);
+            let newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
+            this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
+            break;
           }
           case (this.chatWorkflowEditorTypeEnum.Number): {
-            let fieldValidationInfo: FieldValidation = {
-              min: this.fieldOptionMinValue.toString(),
-              max: this.fieldOptionMaxValue.toString()
-            };
-            let fieldInfo: FieldDetails = {
-              description : this.sideBarDescription ,
-              label : this.sideBarLabel,
-              placeholder : this.sideBarPlaceholder,
-              fieldValidation: fieldValidationInfo
-            };
-  
-            let newNodeInfo: RuleData2 = {
-              id : nodeLength + 1,
-              chatWorkflowId : 1,
-              successWorkflowId : 1,
-              successRuleId : null,
-              isActive : true,
-              chatWorkflowBlockId : 5,
-              chatWorkflowEditorTypeId : 11,
-              fieldDetails : fieldInfo,
-              branchDetails: null,
-              messageDetails: null,
-              fieldOptionDetails: null
-            };
-  
-            this.newNodeHeight= 100; // Set a default height for the new node
-            this.newNodeWidth = 200;
-            this.newNode =  this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
+            let fieldValidationInfo = this.createFieldValidationInfo(this.fieldOptionMinValue.toString(), this.fieldOptionMaxValue.toString(), null);
+            let fieldInfo = this.createFieldInfo(fieldValidationInfo);
+            let newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
+            this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
             break;
-          } 
+          }
           case (this.chatWorkflowEditorTypeEnum.Decimal): {
-              let fieldValidationInfo: FieldValidation = {
-                min: this.fieldOptionMinValue.toString(),
-                max: this.fieldOptionMaxValue.toString()
-              };
-              let fieldInfo: FieldDetails = {
-                description : this.sideBarDescription ,
-                label : this.sideBarLabel,
-                placeholder : this.sideBarPlaceholder,
-                fieldValidation: fieldValidationInfo
-              };
-    
-              let newNodeInfo: RuleData2 = {
-                id : nodeLength + 1,
-                chatWorkflowId : 1,
-                successWorkflowId : 1,
-                successRuleId : null,
-                isActive : true,
-                chatWorkflowBlockId : 5,
-                chatWorkflowEditorTypeId : 12,
-                fieldDetails : fieldInfo,
-                branchDetails: null,
-                messageDetails: null,
-                fieldOptionDetails: null
-              };
-    
-              this.newNodeHeight= 100; // Set a default height for the new node
-              this.newNodeWidth = 200;
-              this.newNode =  this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
-              break;
-          } 
+            let fieldValidationInfo = this.createFieldValidationInfo(this.fieldOptionMinValue.toString(), this.fieldOptionMaxValue.toString(), null);
+            let fieldInfo = this.createFieldInfo(fieldValidationInfo);
+            let newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
+            this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
+            break;
+          }
           case (this.chatWorkflowEditorTypeEnum.Regex): {
-              let fieldValidationInfo: FieldValidation = {
-                regex: this.fieldOptionRegexValue
-              };
-              let fieldInfo: FieldDetails = {
-                description : this.sideBarDescription ,
-                label : this.sideBarLabel,
-                placeholder : this.sideBarPlaceholder,
-                fieldValidation: fieldValidationInfo
-              };
-    
-              let newNodeInfo: RuleData2 = {
-                id : nodeLength + 1,
-                chatWorkflowId : 1,
-                successWorkflowId : 1,
-                successRuleId : null,
-                isActive : true,
-                chatWorkflowBlockId : 5,
-                chatWorkflowEditorTypeId : 13,
-                fieldDetails : fieldInfo,
-                branchDetails: null,
-                messageDetails: null,
-                fieldOptionDetails: null
-              };
-    
-              this.newNodeHeight= 100; // Set a default height for the new node
-              this.newNodeWidth = 200;
-              this.newNode =  this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
-              break;
-          } 
+            let fieldValidationInfo = this.createFieldValidationInfo(null, null, this.fieldOptionRegexValue);
+            let fieldInfo = this.createFieldInfo(fieldValidationInfo);
+            let newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
+            this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, newNodeInfo);
+            break;
+          }
         }
         break;
       }
     }
-
     this.addNodeAndConnect.emit([sourceNodeId, this.newNode]);
+    this.sideBarLabel = "";
+    this.sideBarDescription = "";
+    this.sideBarPlaceholder = "";
+  }
+
+  public createNodeInfo(editorTypeId: number | null, blockId: number, workflowId: number, fieldInfo: FieldDetails | null, fieldOptionInfo: FieldOptionDetail[] | null, messageInfo: MessageDetails | null): RuleData2 {
+    return {
+      id: WorkflowSidebarComponent.nodeLength++, // Need to set value dynamically
+      chatWorkflowId: workflowId,
+      successWorkflowId: null,
+      successRuleId: null,
+      isActive: true,
+      chatWorkflowBlockId: blockId,
+      chatWorkflowEditorTypeId: editorTypeId,
+      fieldDetails: fieldInfo,
+      branchDetails: null,
+      messageDetails: messageInfo,
+      fieldOptionDetails: fieldOptionInfo
+    };
+  }
+
+  public mapButtonsToFieldOptions(): FieldOptionDetail[] {
+    return this.buttons.map(button => ({
+      label: button.label,
+      value: button.value,
+      description: button.description ?? null
+    }));
+  }
+
+  public createFieldValidationInfo(minValue: string | null, maxValue: string | null, regexValue: string | null): FieldValidation {
+    return {
+      min: minValue,
+      max: maxValue,
+      regex: regexValue
+    }
+  }
+
+  public createFieldInfo(fieldValidationInfo: FieldValidation | null): FieldDetails {
+    return {
+      description: this.sideBarDescription,
+      label: this.sideBarLabel,
+      placeholder: this.sideBarPlaceholder,
+      fieldValidation: fieldValidationInfo
+    }
   }
 
   public createNode(width: number, height: number, nodeInfo: RuleData2): NodeModel {
     return {
       id: `node${nodeInfo.id}`,
-      annotations: [],
-      offsetX: 100,
-      offsetY: 70,
       style: { fill: '#FFFFFF', strokeColor: '#0f2c60', strokeWidth: 5 },
       height: height,
       width: width,
       borderColor: '#0f2c60',
       borderWidth: 3,
-      shape: { 
+      shape: {
         type: 'HTML',
       },
       addInfo: nodeInfo
