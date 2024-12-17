@@ -25,13 +25,14 @@ export interface RuleData {
 export interface FieldOptionDetail {
   label: string;
   value: string;
+  description?: string | null;
 }
 
 // Define FieldValidation interface
 export interface FieldValidation {
-  max?: string;
-  min?: string;
-  regex?: string;
+  max?: string | null;
+  min?: string | null; 
+  regex?: string | null;
 }
 
 // Define FieldDetails interface
