@@ -15,8 +15,8 @@
       <div> <input id="fileupload" type="file" /></div>
     </div>
   </div>
-
-  <ejs-diagram class="diagram-container" #diagram 
+  <div>
+    <ejs-diagram class="diagram-container" #diagram 
     id="diagram" [width]="'100%'" [height]="649" [nodes]="nodes"
     [connectors]="connectors" [layout]="layout" [getNodeDefaults]="getNodeDefaults"
     [getConnectorDefaults]="getConnectorDefaults" (created)="onDiagramCreated()" [selectedItems]="selectedItems"
@@ -133,9 +133,11 @@
 
   <ejs-listview #listview id='listview' [dataSource]='listdata' cssClass='bc-block-option' [fields]='fields' [showHeader]='true'
     [headerTitle]='headertitle' [animation]='animation' (select)="onSelectListView($event)"></ejs-listview>
+  </div>
+
 </div>
 
-<app-workflow-sidebar #workflowSidebar [nodeEditType]="nodeEditType" [nodeBlockType]="nodeBlockType" [sidebarHeader]="sidebarHeader" [nextOffsetY]="nextOffsetY" [selectedBlockId]="selectedBlockId" [selectedWorkFlowId]="selectedWorkFlowId" [successWorkflowId]="successWorkflowId" (addNodeAndConnect)="onaddNodeAndConnect($event)"></app-workflow-sidebar>
+<app-workflow-sidebar #workflowSidebar [nodeEditType]="nodeEditType" [nodeBlockType]="nodeBlockType" [sidebarHeader]="sidebarHeader" [selectedBlockId]="selectedBlockId" [selectedWorkFlowId]="selectedWorkFlowId" (addNodeAndConnect)="onaddNodeAndConnect($event)"></app-workflow-sidebar>
 
 <!-- <div style="display: none;">
   <ejs-uploader #defaultupload id='fileupload' (success)='onUploadSuccess($event)' [asyncSettings]='asyncSettings'></ejs-uploader>

@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, EventEmitter, Input, Output, viewChild, ViewChild } from '@angular/core';
-import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, HtmlModel, IClickEventArgs, IExportOptions, LayoutModel, LineDistribution, Node, NodeModel, PrintAndExport, SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
+import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, HierarchicalTreeService, HtmlModel, IClickEventArgs, IExportOptions, LayoutModel, LineDistribution, Node, NodeModel, PrintAndExport, SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
 import { FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData, RuleData2 } from '../../models/appModel';
 import { RULE_DATA, RULE_DATA2, RULE_DATA3 } from '../../data/rule-data';
 import { DialogModule } from '@syncfusion/ej2-angular-popups';
@@ -77,8 +77,6 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   public nodeEditType!: number;
   public selectedBlockId!: string;
   public selectedWorkFlowId!: number;
-  public successWorkflowId!: number;
-  public nextOffsetY!: number;
 
   // // Async settings for file upload
   // public asyncSettings: AsyncSettingsModel = {
@@ -118,12 +116,17 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   
   private initializeDiagramElements(): void {
     this.selectedWorkFlowId = 1; // Get from DB
-    this.successWorkflowId = 1; // Get from DB and Need to set when node click
     sampleWorkflowData.forEach(item => {
+      let buttonCount = 0;
+      if(item.chatWorkflowEditorTypeId == 2){
+        buttonCount = item.fieldOptionDetails?.length || 0;
+      }
       // Create nodes based on the data
       this.nodes.push({
         id: `node${item.id}`,
-        // annotations: [{ content: `Node ${item['id']}` }],
+        // annotations: [{ content: `node${item['id']}` }],
+        width: 200,
+        height: 150 + (buttonCount * 25),
         addInfo: item
       });
 
@@ -184,8 +187,6 @@ export class WorkflowDiagramComponent implements AfterViewInit{
       strokeColor: '#0f2c60',
       strokeWidth: 5,
     };
-    obj.width = 200,
-    obj.height = 150,
     obj.borderWidth = 1,
     obj.borderColor = '#0f2c60',
     (obj.shape as HtmlModel).type = 'HTML'
@@ -215,7 +216,6 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         this.diagram.selectedItems.userHandles[0].visible = false;
       }
        this.selectedBlockId = clickedBlock.id;
-       this.nextOffsetY = clickedBlock.offsetY + clickedBlock.height + 40;
     }
   }
 

@@ -40,7 +40,7 @@ export class WorkflowSidebarComponent {
   public checkedIsPrivate: boolean = false;
   public customMessage: string = '';
   public newNodeWidth: number = 200;
-  public newNodeHeight: number = 100;
+  public newNodeHeight: number = 150;
   public newNode: NodeModel = {};
 
   @Input() nodeEditType!: number;
@@ -48,8 +48,6 @@ export class WorkflowSidebarComponent {
   @Input() sidebarHeader!: string;
   @Input() selectedBlockId!: string;
   @Input() selectedWorkFlowId!: number;
-  @Input() successWorkflowId!: number;
-  @Input() nextOffsetY!: number;
   @Output() addNodeAndConnect = new EventEmitter<[string, NodeModel]>();
 
   constructor() {
@@ -57,7 +55,7 @@ export class WorkflowSidebarComponent {
 
   onCloseSideBarClick(): void {
     this.sidebar?.hide();
-    this.addNodeAndUpdate(this.selectedBlockId);
+    this.addBlock(this.selectedBlockId);
     this.buttons = [];
   }
 
@@ -89,7 +87,7 @@ export class WorkflowSidebarComponent {
     this.buttons.splice(index, 1);
   }
 
-  addNodeAndUpdate(sourceNodeId: string) {
+  addBlock(sourceNodeId: string) {
     switch (this.nodeBlockType) {
       case (this.chatWorkflowBlockTypeEnum.SendTextMessage): {
         let messageInfo: MessageDetails = {
@@ -215,7 +213,7 @@ export class WorkflowSidebarComponent {
     return {
       id: WorkflowSidebarComponent.nodeLength++, // Need to set value dynamically
       chatWorkflowId: workflowId,
-      successWorkflowId: this.successWorkflowId,
+      successWorkflowId: null,
       successRuleId: null,
       isActive: true,
       chatWorkflowBlockId: blockId,
@@ -255,9 +253,6 @@ export class WorkflowSidebarComponent {
   public createNode(width: number, height: number, nodeInfo: RuleData2): NodeModel {
     return {
       id: `node${nodeInfo.id}`,
-      annotations: [],
-      offsetX: 100,
-      offsetY: this.nextOffsetY,
       style: { fill: '#FFFFFF', strokeColor: '#0f2c60', strokeWidth: 5 },
       height: height,
       width: width,
