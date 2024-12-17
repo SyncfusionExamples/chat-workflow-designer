@@ -5,14 +5,13 @@
     <div class="diagram-serialization" style="width: 100%;height: 10%">
       <ejs-toolbar width="100%" (clicked)="onClicked($event)">
         <e-items>
-          <e-item text='Save' tooltipText='Save' prefixIcon='e-ddb-icons e-save'></e-item>
+          <e-item text='Save' id='save' tooltipText='Save' prefixIcon='e-ddb-icons e-save'></e-item>
           <e-item type='Separator'></e-item>
-          <!-- <e-item text='Load' tooltipText='Load' prefixIcon='e-ddb-icons e-open'>
-                <div> <input id="fileupload" type="file" /></div>
-              </e-item> -->
+          <e-item text='Open' id='open' tooltipText='Open file' prefixIcon='e-icons e-upload-1'></e-item>
         </e-items>
       </ejs-toolbar>
-      <div> <input id="fileupload" type="file" /></div>
+      <!-- Hidden file input -->
+      <input #fileInput type="file" accept=".json" style="display: none" (change)="onFileSelected($event)"/>
     </div>
   </div>
 
