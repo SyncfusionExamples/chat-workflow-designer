@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, EventEmitter, Input, Output, viewChild, ViewChild } from '@angular/core';
-import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, HierarchicalTreeService, HtmlModel, IClickEventArgs, IExportOptions, LayoutModel, LineDistribution, Node, NodeModel, PrintAndExport, SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
+import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, HierarchicalTree, HierarchicalTreeService, HtmlModel, IClickEventArgs, IExportOptions, LayoutModel, LineDistribution, Node, NodeModel, PrintAndExport, SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
 import { FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData, RuleData2 } from '../../models/appModel';
 import { RULE_DATA, RULE_DATA2, RULE_DATA3 } from '../../data/rule-data';
 import { DialogModule } from '@syncfusion/ej2-angular-popups';
@@ -21,11 +21,12 @@ import { WorkflowSidebarComponent } from '../workflow-sidebar/workflow-sidebar.c
 
 
 
-Diagram.Inject(ComplexHierarchicalTree, LineDistribution, PrintAndExport);
+Diagram.Inject(HierarchicalTree, LineDistribution, PrintAndExport);
 
 @Component({
   selector: 'app-workflow-diagram',
   standalone: true,
+  providers: [HierarchicalTreeService],
   imports: [DiagramModule, DialogModule, DropDownButtonModule, CommonModule, ListViewModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule, DatePickerModule, DateTimePickerModule, SwitchModule, ToolbarModule, UploaderModule, WorkflowSidebarComponent],
   templateUrl: './workflow-diagram.component.html',
   styleUrl: './workflow-diagram.component.scss'
@@ -171,7 +172,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   };
 
   public layout: LayoutModel = {
-    type: 'ComplexHierarchicalTree',
+    type: 'HierarchicalTree',
     connectionPointOrigin: ConnectionPointOrigin.DifferentPoint,
     horizontalSpacing: 40,
     verticalSpacing: 40,
@@ -238,6 +239,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
     };
     // Add the connector to the diagram
     this.diagram.addConnector(newConnector);
+    this.diagram.doLayout();
   }
 
   public onUserHandleMouseDown(event: UserHandleEventsArgs) {
