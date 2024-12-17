@@ -68,3 +68,24 @@
   color: #000000;
   text-align: center;
 }
+
+.add-button-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+  
+.button-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.button-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}

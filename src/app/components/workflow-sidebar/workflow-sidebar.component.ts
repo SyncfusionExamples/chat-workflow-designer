@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { ClickEventArgs, SidebarComponent, SidebarModule, ToolbarModule } from '@syncfusion/ej2-angular-navigations';
 import { TextFormatEnum, ChatWorkflowEditorTypeEnum, ChatWorkflowBlockTypeEnum } from '../../models/enum';
 import { FormsModule } from '@angular/forms';
@@ -7,18 +7,23 @@ import { FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleD
 import { NodeModel } from '@syncfusion/ej2-angular-diagrams';
 import { DropDownListComponent } from '@syncfusion/ej2-angular-dropdowns';
 import { DatePickerModule, DateTimePickerModule } from '@syncfusion/ej2-angular-calendars';
+import { ButtonModule } from '@syncfusion/ej2-angular-buttons';
 
 
 @Component({
   selector: 'app-workflow-sidebar',
   standalone: true,
-  imports: [SidebarModule, FormsModule, CommonModule, DatePickerModule, DateTimePickerModule],
+  imports: [SidebarModule, FormsModule, CommonModule, DatePickerModule, DateTimePickerModule, ButtonModule],
   templateUrl: './workflow-sidebar.component.html',
   styleUrl: './workflow-sidebar.component.scss'
 })
 export class WorkflowSidebarComponent {
   @ViewChild('sidebar') sidebar?: SidebarComponent;
   @ViewChild('ddlTextFormat') ddlTextFormat!: DropDownListComponent;
+  @ViewChild('optionLabel') optionLabelRef!: ElementRef;
+  @ViewChild('optionValue') optionValueRef!: ElementRef;
+  @ViewChild('optionDescription') optionDescriptionRef!: ElementRef;
+
 
   public chatWorkflowEditorTypeEnum = ChatWorkflowEditorTypeEnum;
   public chatWorkflowBlockTypeEnum = ChatWorkflowBlockTypeEnum;
@@ -43,6 +48,10 @@ export class WorkflowSidebarComponent {
   public newNodeHeight: number = 150;
   public newNode: NodeModel = {};
 
+  public isEdit: boolean = false;
+  public isEditButton: boolean = false;
+  public editIndex: number = -1;
+
   @Input() nodeEditType!: number;
   @Input() nodeBlockType!: number;
   @Input() sidebarHeader!: string;
@@ -53,14 +62,19 @@ export class WorkflowSidebarComponent {
   constructor() {
   }
 
-  onCloseSideBarClick(): void {
+  onAddCloseSideBarClick(): void {
     this.sidebar?.hide();
     this.addBlock(this.selectedBlockId);
-    this.buttons = [];
+    this.removeSetBlockValues();
   }
 
   onCancelSideBarClick(): void {
     this.sidebar?.hide();
+    this.removeSetBlockValues();
+    if(this.isEdit){
+      this.isEdit = false;
+      this.isEditButton = false;
+    } 
   }
 
   public onSideBarCreated(args: any) {
@@ -85,6 +99,65 @@ export class WorkflowSidebarComponent {
 
   removeButton(index: number): void {
     this.buttons.splice(index, 1);
+  }
+   
+  setBlockValues(nodeInfo: NodeModel){
+    this.isEdit = true;
+    let nodeDetails = nodeInfo.addInfo as RuleData2;
+    this.nodeBlockType = nodeDetails.chatWorkflowBlockId;
+    this.nodeEditType = nodeDetails.chatWorkflowEditorTypeId ?? 0;
+    this.sideBarLabel = nodeDetails.fieldDetails?.label as string;
+    this.sideBarDescription = nodeDetails.fieldDetails?.description as string;
+    this.sideBarPlaceholder = nodeDetails.fieldDetails?.placeholder as string;
+    this.buttons = nodeDetails?.fieldOptionDetails?.map(fieldOption => ({
+      label: fieldOption.label,
+      value: fieldOption.value,
+      description: fieldOption.description ?? null
+    })) || [];
+    this.fieldOptionMinValue = Number(nodeDetails?.fieldDetails?.fieldValidation?.min);
+    this.fieldOptionMaxValue = Number(nodeDetails?.fieldDetails?.fieldValidation?.max);
+    this.fieldOptionRegexValue = nodeDetails?.fieldDetails?.fieldValidation?.regex ?? "";
+  }
+
+  removeSetBlockValues(){
+    this.sideBarLabel = "";
+    this.sideBarDescription = "";
+    this.sideBarPlaceholder = "";
+    this.buttons = [];
+    this.fieldOptionMinValue = 0;
+    this.fieldOptionMaxValue = 0;
+    this.fieldOptionRegexValue = "";
+  }
+
+  onUpdateCloseSideBarClick(): void{
+    
+  }
+
+  editButton(index: number): void{
+    let button = this.buttons[index];
+    this.optionLabelRef.nativeElement.value = button.label;
+    this.optionValueRef.nativeElement.value = button.value;
+    this.optionDescriptionRef.nativeElement.value = button.value;
+    this.isEditButton = true;
+    this.editIndex = index;
+  }
+
+  editOptionButton(label: string, value: string, description: string | null, labelInput: HTMLInputElement, valueInput: HTMLInputElement, descriptionInput: HTMLInputElement | null){
+    let button = this.buttons[this.editIndex];
+    this.buttons[this.editIndex].label = label;
+    this.buttons[this.editIndex].value = value;
+    this.buttons[this.editIndex].description = description;
+
+    this.cancelOption(labelInput, valueInput, descriptionInput);
+  }
+
+  cancelOption(labelInput: HTMLInputElement, valueInput: HTMLInputElement, descriptionInput: HTMLInputElement | null){
+    labelInput.value = '';
+    valueInput.value = '';
+    if (descriptionInput) {
+      descriptionInput.value = '';
+    }
+    this.isEditButton = false;
   }
 
   addBlock(sourceNodeId: string) {
