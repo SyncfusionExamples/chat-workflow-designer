@@ -221,7 +221,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   public onaddNodeAndConnect([sourceNodeId, newNode]: [string, NodeModel]): void {
     // Add the new node to the diagram
     this.diagram.addNode(newNode);
-    this.nodes.push(newNode);
+    // this.nodes.push(newNode);
     // Create a new connector to link the new node to the source node
     const newConnectorId = `connector${++this.connectorIdCounter}`;
     const newConnector: ConnectorModel = {
@@ -234,6 +234,17 @@ export class WorkflowDiagramComponent implements AfterViewInit{
     // Add the connector to the diagram
     this.diagram.addConnector(newConnector);
     this.diagram.doLayout();
+  }
+
+  public onUpdateNode([sourceNodeId, newNode]: [string, NodeModel]) : void {
+    const index = this.nodes.findIndex(node => node.id === sourceNodeId);
+    const id = (this.nodes[index].addInfo as RuleData2).id;
+    (newNode.addInfo as RuleData2).id = id;
+    this.diagram.nodes[index].addInfo = newNode.addInfo;
+    this.diagram.nodes[index].height = 500;
+    this.nodes[0].addInfo = this.diagram.nodes[0].addInfo;
+    this.diagram.dataBind();
+    console.log(this.nodes[0].addInfo);
   }
 
   public onUserHandleMouseDown(event: UserHandleEventsArgs) {
