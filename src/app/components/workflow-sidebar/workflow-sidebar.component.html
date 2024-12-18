@@ -5,7 +5,7 @@
             <div class="form-header"> {{sidebarHeader}}</div>
             <div>
                 <label>
-                    Label: <input type="text" [(ngModel)]="sideBarLabel" name="sideBarLabel" placeholder="Enter label..." class="description-box" required />
+                    Label: <input type="text" [(ngModel)]="sideBarLabel" name="sideBarLabel" placeholder="Enter label..." class="description-box" (change)="enableSaveButton()" required />
                 </label>
             </div>
 

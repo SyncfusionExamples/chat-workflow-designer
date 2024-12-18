@@ -51,6 +51,8 @@ export class WorkflowSidebarComponent {
   public isEdit: boolean = false;
   public isEditButton: boolean = false;
   public editIndex: number = -1;
+  public isDisabled: boolean = true;
+  public soureId: string = "";
 
   @Input() nodeEditType!: number;
   @Input() nodeBlockType!: number;
@@ -58,6 +60,8 @@ export class WorkflowSidebarComponent {
   @Input() selectedBlockId!: string;
   @Input() selectedWorkFlowId!: number;
   @Output() addNodeAndConnect = new EventEmitter<[string, NodeModel]>();
+  @Output() updateNode = new EventEmitter<[string, NodeModel]>();
+
 
   constructor() {
   }
@@ -101,9 +105,14 @@ export class WorkflowSidebarComponent {
     this.buttons.splice(index, 1);
   }
    
+  enableSaveButton() {
+    this.isDisabled = false;
+  }
+
   setBlockValues(nodeInfo: NodeModel){
     this.isEdit = true;
     let nodeDetails = nodeInfo.addInfo as RuleData2;
+    this.soureId = nodeInfo?.id ?? "";
     this.nodeBlockType = nodeDetails.chatWorkflowBlockId;
     this.nodeEditType = nodeDetails.chatWorkflowEditorTypeId ?? 0;
     this.sideBarLabel = nodeDetails.fieldDetails?.label as string;
@@ -127,10 +136,12 @@ export class WorkflowSidebarComponent {
     this.fieldOptionMinValue = 0;
     this.fieldOptionMaxValue = 0;
     this.fieldOptionRegexValue = "";
+    this.isDisabled = true;
   }
 
   onUpdateCloseSideBarClick(): void{
-    
+    this.addBlock(this.soureId)
+    this.sidebar?.hide();
   }
 
   editButton(index: number): void{
@@ -276,10 +287,12 @@ export class WorkflowSidebarComponent {
         break;
       }
     }
-    this.addNodeAndConnect.emit([sourceNodeId, this.newNode]);
-    this.sideBarLabel = "";
-    this.sideBarDescription = "";
-    this.sideBarPlaceholder = "";
+    if(this.isEdit){
+      this.updateNode.emit([sourceNodeId, this.newNode]);
+    }
+    else{
+      this.addNodeAndConnect.emit([sourceNodeId, this.newNode]);
+    }
   }
 
   public createNodeInfo(editorTypeId: number | null, blockId: number, workflowId: number, fieldInfo: FieldDetails | null, fieldOptionInfo: FieldOptionDetail[] | null, messageInfo: MessageDetails | null): RuleData2 {

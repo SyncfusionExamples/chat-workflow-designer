@@ -131,7 +131,7 @@
 
 </div>
 
-<app-workflow-sidebar #workflowSidebar [nodeEditType]="nodeEditType" [nodeBlockType]="nodeBlockType" [sidebarHeader]="sidebarHeader" [selectedBlockId]="selectedBlockId" [selectedWorkFlowId]="selectedWorkFlowId" (addNodeAndConnect)="onaddNodeAndConnect($event)"></app-workflow-sidebar>
+<app-workflow-sidebar #workflowSidebar [nodeEditType]="nodeEditType" [nodeBlockType]="nodeBlockType" [sidebarHeader]="sidebarHeader" [selectedBlockId]="selectedBlockId" [selectedWorkFlowId]="selectedWorkFlowId" (addNodeAndConnect)="onaddNodeAndConnect($event)" (updateNode)="onUpdateNode($event)"></app-workflow-sidebar>
 
 <!-- <div style="display: none;">
   <ejs-uploader #defaultupload id='fileupload' (success)='onUploadSuccess($event)' [asyncSettings]='asyncSettings'></ejs-uploader>
