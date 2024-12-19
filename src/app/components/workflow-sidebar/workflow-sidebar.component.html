@@ -71,12 +71,7 @@
                     <input #optionDescription type="text" placeholder="Option Description" class="button-input" [style.display]="isVisible ? 'block' : 'none'"/>
                 </div>
                 <div>
-                    @if(editIndex==-1){
-                        <button ejs-button  type="button" iconCss='e-icons e-check' (click)="addAndSaveOption(optionLabel.value, optionValue.value, isVisible ? optionDescription.value : null, optionLabel, optionValue, isVisible ? optionDescription : null)"></button>
-                    }
-                    @else{
-                        <button ejs-button  type="button" iconCss='e-icons e-check' (click)="editAndSaveOption(optionLabel.value, optionValue.value, isVisible ? optionDescription.value : null, optionLabel, optionValue, isVisible ? optionDescription : null)"></button>
-                    }
+                    <button ejs-button  type="button" iconCss='e-icons e-check' (click)="addOrUpdateSaveOption(optionLabel.value, optionValue.value, isVisible ? optionDescription.value : null, optionLabel, optionValue, isVisible ? optionDescription : null)"></button>
                     <button ejs-button  type="button" iconCss='e-icons e-close'  (click)="cancelOption(optionLabel, optionValue, isVisible ? optionDescription : null)"></button>
                 </div>
             </ng-template>
