@@ -1,6 +1,7 @@
 <!-- <ejs-sidebar id="default-sidebar" #sidebar [type]='type' (created)="onSideBarCreated($event)" [width]="width" [showBackdrop]="true" target=".main-content-wrapper"> -->
 
- <ejs-dialog id='dialog' #ejDialog target=".main-content-wrapper" [showCloseIcon]='true' [visible]='true' [header]='header' [width]='width' [isModal]='true' (created)="onSideBarCreated($event)" >
+ <ejs-dialog id='dialog' #ejDialog target="body" [showCloseIcon]='true' [visible]='false' [header]='header' 
+ width='500' height='500' [enableResize]='true' [isModal]='true' (created)="onSideBarCreated($event)" >
 
     <ng-template #header>
     <div class="title sidebar-header">{{sidebarHeader}}</div>

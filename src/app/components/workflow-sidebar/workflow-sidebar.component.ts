@@ -177,6 +177,7 @@ export class WorkflowSidebarComponent {
     this.fieldOptionMinValue = Number(nodeDetails?.fieldDetails?.fieldValidation?.min);
     this.fieldOptionMaxValue = Number(nodeDetails?.fieldDetails?.fieldValidation?.max);
     this.fieldOptionRegexValue = nodeDetails?.fieldDetails?.fieldValidation?.regex ?? "";
+    this.dialog.refresh();
   }
   // Remove the node(block) values
   removeSetBlockValues() {
