@@ -258,7 +258,8 @@ export class WorkflowDiagramComponent implements AfterViewInit{
       }
       let Obje = this.diagram.getNodeObject(this.selectedBlockId);
       this.sidebarComponent?.setBlockValues(Obje);
-      this.sidebarComponent?.sidebar?.show();
+      // this.sidebarComponent?.sidebar?.show();
+      this.sidebarComponent?.dialog.show();
     }
   }
 
