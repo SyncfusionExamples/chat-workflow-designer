@@ -8,6 +8,7 @@ import { NodeModel } from '@syncfusion/ej2-angular-diagrams';
 import { DropDownListComponent } from '@syncfusion/ej2-angular-dropdowns';
 import { DatePickerModule, DateTimePickerModule } from '@syncfusion/ej2-angular-calendars';
 import { ButtonModule } from '@syncfusion/ej2-angular-buttons';
+import { DialogComponent, DialogModule } from '@syncfusion/ej2-angular-popups';
 
 
 @Component({
@@ -18,7 +19,8 @@ import { ButtonModule } from '@syncfusion/ej2-angular-buttons';
   styleUrl: './workflow-sidebar.component.scss'
 })
 export class WorkflowSidebarComponent {
-  @ViewChild('sidebar') sidebar?: SidebarComponent;
+  // @ViewChild('sidebar') sidebar?: SidebarComponent;
+  @ViewChild('ejDialog') dialog!: DialogComponent;
   @ViewChild('ddlTextFormat') ddlTextFormat!: DropDownListComponent;
   @ViewChild('optionLabel', { static: false }) optionLabelRef!: ElementRef;
   @ViewChild('optionValue', { static: false }) optionValueRef!: ElementRef;
@@ -69,12 +71,14 @@ export class WorkflowSidebarComponent {
   }
 
   public onSideBarCreated(args: any) {
-    (this.sidebar as SidebarComponent).hide();
-    (this.sidebar as SidebarComponent).position = "Right";
+    this.dialog.hide();
+    // (this.sidebar as SidebarComponent).hide();
+    // (this.sidebar as SidebarComponent).position = "Right";
   }
 
   onFormSubmit(): void {
-    this.sidebar?.hide();
+    // this.sidebar?.hide();
+    this.dialog.hide();
   }
   
   // Add the new block
