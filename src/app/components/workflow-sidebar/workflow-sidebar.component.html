@@ -42,6 +42,16 @@
                         }
                         <button ejs-button type="button" iconCss='e-icons e-close'  (click)="removeButton($index)"></button>
                     </div>
+                    @if(editIndex==$index){
+                        <div class="add-button-form" *ngTemplateOutlet="addButtonTemplate; context: { visibility: isVisible(nodeEditType) }"></div>
+                    }
+                }
+            </ng-template>
+
+            <ng-template #addOptionTemplate let-isVisible="visibility">
+                <button ejs-button  type="button" iconCss='e-icons e-plus' (click)="addOptionClick()">Add Option</button>
+                @if(addOption){
+                    <div class="add-button-form" *ngTemplateOutlet="addButtonTemplate; context: { visibility: isVisible }"></div>
                 }
             </ng-template>
 
@@ -53,19 +63,12 @@
                     <input #optionValue type="text" placeholder="Option Value" class="button-input" />
                 </div>
                 <div>
-                    <input #optionDescription type="text" placeholder="Option Description" class="button-input" [style.visibility]="isVisible ? 'visible' : 'hidden'" />
+                    <input #optionDescription type="text" placeholder="Option Description" class="button-input" [style.display]="isVisible ? 'block' : 'none'"/>
                 </div>
-                @if(isEditButton){
-                    <div>
-                        <button type="button" (click)="editOptionButton(optionLabel.value, optionValue.value, isVisible ? optionDescription.value : null, optionLabel, optionValue, isVisible ? optionDescription : null)" class="e-btn">Update Option</button>
-                        <button type="button" (click)="cancelOption(optionLabel, optionValue, isVisible ? optionDescription : null)" class="e-btn">Cancel</button>
-                    </div>
-                }
-                @else{
-                    <div>
-                        <button type="button" style="width: 100%;" (click)="addButton(optionLabel.value, optionValue.value, isVisible ? optionDescription.value : null, optionLabel, optionValue, isVisible ? optionDescription : null)" class="e-btn">Add Option</button>
-                    </div>
-                }
+                <div>
+                    <button ejs-button  type="button" iconCss='e-icons e-check' (click)="addButton(optionLabel.value, optionValue.value, isVisible ? optionDescription.value : null, optionLabel, optionValue, isVisible ? optionDescription : null)"></button>
+                    <button ejs-button  type="button" iconCss='e-icons e-close'  (click)="cancelOption(optionLabel, optionValue, isVisible ? optionDescription : null)"></button>
+                </div>
             </ng-template>
 
             @switch(nodeBlockType){
@@ -80,7 +83,7 @@
                         @case(chatWorkflowEditorTypeEnum.Buttons){
                         <div>
                             <div class="button-list" *ngTemplateOutlet="removeButtonTemplate"></div>
-                            <div class="add-button-form" *ngTemplateOutlet="addButtonTemplate"></div>
+                            <div class="add-button-form" *ngTemplateOutlet="addOptionTemplate"></div>
                         </div>
                         }
                         @case(chatWorkflowEditorTypeEnum.DropDown){
@@ -88,7 +91,7 @@
                             <div *ngTemplateOutlet="sideBarDescriptionTemplate"></div>
                             <div *ngTemplateOutlet="sideBarPlaceholderTemplate"></div>
                             <div class="button-list"  *ngTemplateOutlet="removeButtonTemplate"></div>
-                            <div class="add-button-form" *ngTemplateOutlet="addButtonTemplate"></div>
+                            <div class="add-button-form" *ngTemplateOutlet="addOptionTemplate"></div>
                         </div>
                         }
                         @case(chatWorkflowEditorTypeEnum.MultiSelect){
@@ -96,7 +99,7 @@
                             <div *ngTemplateOutlet="sideBarDescriptionTemplate"></div>
                             <div *ngTemplateOutlet="sideBarPlaceholderTemplate"></div>
                             <div class="button-list" *ngTemplateOutlet="removeButtonTemplate"></div>
-                            <div class="add-button-form" *ngTemplateOutlet="addButtonTemplate"></div>
+                            <div class="add-button-form" *ngTemplateOutlet="addOptionTemplate"></div>
                             <div *ngTemplateOutlet="fieldOptionMinValueTemplate"></div>
                             <div *ngTemplateOutlet="fieldOptionMaxValueTemplate"></div>
                         </div>
@@ -106,7 +109,7 @@
                             <div *ngTemplateOutlet="sideBarDescriptionTemplate"></div>
                             <div *ngTemplateOutlet="sideBarPlaceholderTemplate"></div>
                             <div class="button-list"  *ngTemplateOutlet="removeButtonTemplate"></div>
-                            <div class="add-button-form" *ngTemplateOutlet="addButtonTemplate; context: { visibility: true }"></div>
+                            <div class="add-button-form" *ngTemplateOutlet="addOptionTemplate; context: { visibility: true }"></div>
                         </div>
                         }
                     }
