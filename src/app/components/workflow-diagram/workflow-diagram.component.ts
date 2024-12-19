@@ -42,8 +42,6 @@ export class WorkflowDiagramComponent implements AfterViewInit {
   public chatWorkflowBlockTypeEnum = ChatWorkflowBlockTypeEnum;
   // public data: RuleData[] = RULE_DATA;
   public data: RuleData2[] = RULE_DATA3;
-  public nodes: NodeModel[] = [];
-  public connectors: ConnectorModel[] = [];
   public closeOnDocumentClick: boolean = true;
   public sidebarInput: string = '';
   public ddlFields: Object = { text: 'label', value: 'value' };
@@ -147,10 +145,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
         height: 150 + (buttonCount * 25),
         addInfo: item
       };
-      this.nodes.push(nodedata);
       this.diagram.addNode(nodedata);
-
-      console.log("Nodes: ", item.id);
 
       // Create connectors from success_rule_id
       if (item['successRuleId']) {
@@ -160,7 +155,6 @@ export class WorkflowDiagramComponent implements AfterViewInit {
           targetID: `node${item['successRuleId']}`,
           // annotations: [{ content: 'success', alignment: 'Center'}]
         };
-        this.connectors.push(connectorData);
         this.diagram.addConnector(connectorData);
       }
       // if (item.branchDetails) {
