@@ -238,14 +238,10 @@ export class WorkflowDiagramComponent implements AfterViewInit{
 
   public onUpdateNode([sourceNodeId, newNode]: [string, RuleData2]) : void {
     const index = this.nodes.findIndex(node => node.id === sourceNodeId);
-    const id = (this.nodes[index].addInfo as RuleData2).id;
-    newNode.id = id;
+    newNode.id  = (this.nodes[index].addInfo as RuleData2).id;
     this.diagram.nodes[index].addInfo = newNode;
-    this.diagram.nodes[index].height = 500;
-    this.nodes[0].addInfo = this.diagram.nodes[0].addInfo;
-    // this.diagram.dataBind();
-    this.diagram.doLayout();
-    console.log(this.nodes[0].addInfo);
+    this.diagram.refresh();
+    this.diagram.fitToPage();
   }
 
   public onUserHandleMouseDown(event: UserHandleEventsArgs) {

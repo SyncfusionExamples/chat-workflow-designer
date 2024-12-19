@@ -28,8 +28,7 @@ export class WorkflowSidebarComponent {
 
   public chatWorkflowEditorTypeEnum = ChatWorkflowEditorTypeEnum;
   public chatWorkflowBlockTypeEnum = ChatWorkflowBlockTypeEnum;
-  public buttons: Array<{ label: string, value: string, description: string | null }> = [];
-  public options: Array<{ label: string, value: string }> = [];
+  public options: Array<{ label: string, value: string, description: string | null }> = [];
   public sideBarLabel: string = '';
   public sideBarDescription: string = '';
   public sideBarPlaceholder: string = '';
@@ -52,7 +51,6 @@ export class WorkflowSidebarComponent {
   public isEdit: boolean = false;
   public isEditButton: boolean = false;
   public editIndex: number = -1;
-  public isDisabled: boolean = true;
   public soureId: string = "";
   public addOption: boolean = false;
   public newNodeInfo: any;
@@ -70,21 +68,6 @@ export class WorkflowSidebarComponent {
   constructor() {
   }
 
-  onAddCloseSideBarClick(): void {
-    this.sidebar?.hide();
-    this.addBlock(this.selectedBlockId);
-    this.removeSetBlockValues();
-  }
-
-  onCancelSideBarClick(): void {
-    this.sidebar?.hide();
-    this.removeSetBlockValues();
-    if (this.isEdit) {
-      this.isEdit = false;
-      this.isEditButton = false;
-    }
-  }
-
   public onSideBarCreated(args: any) {
     (this.sidebar as SidebarComponent).hide();
     (this.sidebar as SidebarComponent).position = "Right";
@@ -93,98 +76,63 @@ export class WorkflowSidebarComponent {
   onFormSubmit(): void {
     this.sidebar?.hide();
   }
-
-  addButton(label: string, value: string, description: string | null, labelInput: HTMLInputElement, valueInput: HTMLInputElement, descriptionInput: HTMLInputElement | null): void {
+  
+  // Add the new block
+  onAddCloseSideBarClick(): void {
+    this.sidebar?.hide();
+    this.addOrUpdateBlock(this.selectedBlockId);
+    this.removeSetBlockValues();
+  }
+  // Update the existing block
+  onUpdateCloseSideBarClick(): void {
+    this.addOrUpdateBlock(this.soureId)
+    this.sidebar?.hide();
+  }
+  // Cancel the add or update 
+  onCancelSideBarClick(): void {
+    this.sidebar?.hide();
+    this.removeSetBlockValues();
+    if (this.isEdit) {
+      this.isEdit = false;
+      this.isEditButton = false;
+    }
+  }
+  // Add and Save option
+  addAndSaveOption(label: string, value: string, description: string | null, labelInput: HTMLInputElement, valueInput: HTMLInputElement, descriptionInput: HTMLInputElement | null): void {
     if (label.trim() && value.trim()) {
-      this.buttons.push({ label, value, description });
+      this.options.push({ label, value, description });
       this.cancelOption(labelInput, valueInput, descriptionInput);
     }
   }
-
-  addOptionClick() {
-    this.addOption = true;
-    this.editIndex = -1;
+  // Edit and Save option
+  editAndSaveOption(label: string, value: string, description: string | null, labelInput: HTMLInputElement, valueInput: HTMLInputElement, descriptionInput: HTMLInputElement | null) {
+    this.options[this.editIndex].label = label.trim();
+    this.options[this.editIndex].value = value.trim();
+    this.options[this.editIndex].description = description;
+    this.cancelOption(labelInput, valueInput, descriptionInput);
   }
-
-  removeButton(index: number): void {
-    this.buttons.splice(index, 1);
-  }
-
-  enableSaveButton() {
-    this.isDisabled = false;
-  }
-
-  setBlockValues(nodeInfo: NodeModel) {
-    this.isEdit = true;
-    let nodeDetails = nodeInfo.addInfo as RuleData2;
-    this.soureId = nodeInfo?.id ?? "";
-    this.nodeBlockType = nodeDetails.chatWorkflowBlockId;
-    this.nodeEditType = nodeDetails.chatWorkflowEditorTypeId ?? 0;
-    this.sideBarLabel = nodeDetails.fieldDetails?.label as string;
-    this.sideBarDescription = nodeDetails.fieldDetails?.description as string;
-    this.sideBarPlaceholder = nodeDetails.fieldDetails?.placeholder as string;
-    this.buttons = nodeDetails?.fieldOptionDetails?.map(fieldOption => ({
-      label: fieldOption.label,
-      value: fieldOption.value,
-      description: fieldOption.description ?? null
-    })) || [];
-    this.fieldOptionMinValue = Number(nodeDetails?.fieldDetails?.fieldValidation?.min);
-    this.fieldOptionMaxValue = Number(nodeDetails?.fieldDetails?.fieldValidation?.max);
-    this.fieldOptionRegexValue = nodeDetails?.fieldDetails?.fieldValidation?.regex ?? "";
-  }
-
-  removeSetBlockValues() {
-    this.sideBarLabel = "";
-    this.sideBarDescription = "";
-    this.sideBarPlaceholder = "";
-    this.buttons = [];
-    this.fieldOptionMinValue = 0;
-    this.fieldOptionMaxValue = 0;
-    this.fieldOptionRegexValue = "";
-    this.isDisabled = true;
-    this.addOption = false;
-    this.editIndex = -1;
-  }
-
-  onUpdateCloseSideBarClick(): void {
-    this.addBlock(this.soureId)
-    this.sidebar?.hide();
-  }
-
-  editButton(index: number): void {
+  // edit option value loading
+  editOption(index: number): void {
     this.isEditButton = true;
     this.editIndex = index;
     this.addOption = false;
-    this.updatePending = true;
+    this.updatePending = true; 
   }
-
+  // Load the existing value for option
   ngAfterViewChecked(): void {
     if (this.updatePending) {
         this.updatePending = false; // Reset flag to avoid multiple updates
-        if (this.optionLabelRef && this.optionValueRef && this.optionDescriptionRef) {
-            const button = this.buttons[this.editIndex];
-            this.optionLabelRef.nativeElement.value = button.label || '';
-            this.optionValueRef.nativeElement.value = button.value || '';
-            this.optionDescriptionRef.nativeElement.value = button.description || '';
-        } else {
-            console.error('One or more ViewChild references are undefined.');
-        }
+        const button = this.options[this.editIndex];
+        this.optionLabelRef.nativeElement.value = button.label || '';
+        this.optionValueRef.nativeElement.value = button.value || '';
+        this.optionDescriptionRef.nativeElement.value = button.description || '';
     }
   }
-
+  // Check visibility for description show
   isVisible(nodeEditType: ChatWorkflowEditorTypeEnum): boolean {
     return nodeEditType === ChatWorkflowEditorTypeEnum.List;
   }
-
-  editOptionButton(label: string, value: string, description: string | null, labelInput: HTMLInputElement, valueInput: HTMLInputElement, descriptionInput: HTMLInputElement | null) {
-    let button = this.buttons[this.editIndex];
-    this.buttons[this.editIndex].label = label;
-    this.buttons[this.editIndex].value = value;
-    this.buttons[this.editIndex].description = description;
-
-    this.cancelOption(labelInput, valueInput, descriptionInput);
-  }
-
+  // cancel the option
   cancelOption(labelInput: HTMLInputElement, valueInput: HTMLInputElement, descriptionInput: HTMLInputElement | null) {
     labelInput.value = '';
     valueInput.value = '';
@@ -195,8 +143,48 @@ export class WorkflowSidebarComponent {
     this.editIndex = -1;
     this.addOption = false;
   }
-
-  addBlock(sourceNodeId: string) {
+  // on add option click
+  onAddOption() {
+    this.addOption = true;
+    this.editIndex = -1;
+  }
+  // remove the option
+  removeOption(index: number): void {
+    this.options.splice(index, 1);
+  }
+  // Set the node(block) values
+  setBlockValues(nodeInfo: NodeModel) {
+    this.isEdit = true;
+    let nodeDetails = nodeInfo.addInfo as RuleData2;
+    this.soureId = nodeInfo?.id ?? "";
+    this.nodeBlockType = nodeDetails.chatWorkflowBlockId;
+    this.nodeEditType = nodeDetails.chatWorkflowEditorTypeId ?? 0;
+    this.sideBarLabel = nodeDetails.fieldDetails?.label as string;
+    this.sideBarDescription = nodeDetails.fieldDetails?.description as string;
+    this.sideBarPlaceholder = nodeDetails.fieldDetails?.placeholder as string;
+    this.options = nodeDetails?.fieldOptionDetails?.map(fieldOption => ({
+      label: fieldOption.label,
+      value: fieldOption.value,
+      description: fieldOption.description ?? null
+    })) || [];
+    this.fieldOptionMinValue = Number(nodeDetails?.fieldDetails?.fieldValidation?.min);
+    this.fieldOptionMaxValue = Number(nodeDetails?.fieldDetails?.fieldValidation?.max);
+    this.fieldOptionRegexValue = nodeDetails?.fieldDetails?.fieldValidation?.regex ?? "";
+  }
+  // Remove the node(block) values
+  removeSetBlockValues() {
+    this.sideBarLabel = "";
+    this.sideBarDescription = "";
+    this.sideBarPlaceholder = "";
+    this.options = [];
+    this.fieldOptionMinValue = 0;
+    this.fieldOptionMaxValue = 0;
+    this.fieldOptionRegexValue = "";
+    this.addOption = false;
+    this.editIndex = -1;
+  }
+  // Construct the add or update block details
+  addOrUpdateBlock(sourceNodeId: string) {
     switch (this.nodeBlockType) {
       case (this.chatWorkflowBlockTypeEnum.SendTextMessage): {
         let messageInfo: MessageDetails = {
@@ -215,32 +203,32 @@ export class WorkflowSidebarComponent {
             break;
           }
           case (this.chatWorkflowEditorTypeEnum.Buttons): {
-            let fieldOptionInfo = this.mapButtonsToFieldOptions();
+            let fieldOptionInfo = this.mapOptionsToFieldOptions();
             let fieldInfo = this.createFieldInfo(null);
             this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, fieldOptionInfo, null);
-            this.newNodeHeight += (this.buttons.length * 25);
+            this.newNodeHeight += (this.options.length * 25);
             break;
           }
           case this.chatWorkflowEditorTypeEnum.DropDown: {
-            let fieldOptionInfo = this.mapButtonsToFieldOptions();
+            let fieldOptionInfo = this.mapOptionsToFieldOptions();
             let fieldInfo = this.createFieldInfo(null);
             this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, fieldOptionInfo, null);
-            this.newNodeHeight += (this.buttons.length * 25);
+            this.newNodeHeight += (this.options.length * 25);
             break;
           }
           case (this.chatWorkflowEditorTypeEnum.MultiSelect): {
             let fieldValidationInfo = this.createFieldValidationInfo(this.fieldOptionMinValue.toString(), this.fieldOptionMaxValue.toString(), null);
-            let fieldOptionInfo = this.mapButtonsToFieldOptions();
+            let fieldOptionInfo = this.mapOptionsToFieldOptions();
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
             this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, fieldOptionInfo, null);
-            this.newNodeHeight += (this.buttons.length * 25);
+            this.newNodeHeight += (this.options.length * 25);
             break;
           }
           case (this.chatWorkflowEditorTypeEnum.List): {
-            let fieldOptionInfo = this.mapButtonsToFieldOptions();
+            let fieldOptionInfo = this.mapOptionsToFieldOptions();
             let fieldInfo = this.createFieldInfo(null);
             this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, fieldOptionInfo, null);
-            this.newNodeHeight += (this.buttons.length * 25);
+            this.newNodeHeight += (this.options.length * 25);
             break;
           }
         }
@@ -329,8 +317,8 @@ export class WorkflowSidebarComponent {
     };
   }
 
-  public mapButtonsToFieldOptions(): FieldOptionDetail[] {
-    return this.buttons.map(button => ({
+  public mapOptionsToFieldOptions(): FieldOptionDetail[] {
+    return this.options.map(button => ({
       label: button.label,
       value: button.value,
       description: button.description ?? null

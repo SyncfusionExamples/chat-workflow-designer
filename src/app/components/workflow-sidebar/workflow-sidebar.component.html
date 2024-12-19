@@ -5,7 +5,7 @@
             <div class="form-header"> {{sidebarHeader}}</div>
             <div>
                 <label>
-                    Label: <input type="text" [(ngModel)]="sideBarLabel" name="sideBarLabel" placeholder="Enter label..." class="description-box" (change)="enableSaveButton()" required />
+                    Label: <input type="text" [(ngModel)]="sideBarLabel" name="sideBarLabel" placeholder="Enter label..." class="description-box" required />
                 </label>
             </div>
 
@@ -37,10 +37,8 @@
                 @for(button of buttons; track $index){
                     <div class="button-item">
                         <button ejs-button cssClass="e-primary" style="width: 75%;">{{button.label}}</button>
-                        @if(isEdit){
-                            <button ejs-button type="button" iconCss='e-icons e-edit' (click)="editButton($index)"></button>
-                        }
-                        <button ejs-button type="button" iconCss='e-icons e-close'  (click)="removeButton($index)"></button>
+                        <button ejs-button type="button" iconCss='e-icons e-edit' (click)="editOption($index)"></button>
+                        <button ejs-button type="button" iconCss='e-icons e-close'  (click)="removeOption($index)"></button>
                     </div>
                     @if(editIndex==$index){
                         <div class="add-button-form" *ngTemplateOutlet="addButtonTemplate; context: { visibility: isVisible(nodeEditType) }"></div>
@@ -49,7 +47,7 @@
             </ng-template>
 
             <ng-template #addOptionTemplate let-isVisible="visibility">
-                <button ejs-button  type="button" iconCss='e-icons e-plus' (click)="addOptionClick()">Add Option</button>
+                <button ejs-button  type="button" iconCss='e-icons e-plus' (click)="onAddOption()">Add Option</button>
                 @if(addOption){
                     <div class="add-button-form" *ngTemplateOutlet="addButtonTemplate; context: { visibility: isVisible }"></div>
                 }
@@ -67,10 +65,10 @@
                 </div>
                 <div>
                     @if(editIndex==-1){
-                        <button ejs-button  type="button" iconCss='e-icons e-check' (click)="addButton(optionLabel.value, optionValue.value, isVisible ? optionDescription.value : null, optionLabel, optionValue, isVisible ? optionDescription : null)"></button>
+                        <button ejs-button  type="button" iconCss='e-icons e-check' (click)="addAndSaveOption(optionLabel.value, optionValue.value, isVisible ? optionDescription.value : null, optionLabel, optionValue, isVisible ? optionDescription : null)"></button>
                     }
                     @else{
-                        <button ejs-button  type="button" iconCss='e-icons e-check' (click)="editOptionButton(optionLabel.value, optionValue.value, isVisible ? optionDescription.value : null, optionLabel, optionValue, isVisible ? optionDescription : null)"></button>
+                        <button ejs-button  type="button" iconCss='e-icons e-check' (click)="editAndSaveOption(optionLabel.value, optionValue.value, isVisible ? optionDescription.value : null, optionLabel, optionValue, isVisible ? optionDescription : null)"></button>
                     }
                     <button ejs-button  type="button" iconCss='e-icons e-close'  (click)="cancelOption(optionLabel, optionValue, isVisible ? optionDescription : null)"></button>
                 </div>
