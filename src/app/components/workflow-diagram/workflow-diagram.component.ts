@@ -88,9 +88,9 @@ export class WorkflowDiagramComponent implements AfterViewInit {
   ngAfterViewInit() {
   }
 
-
   private loadDiagramData() {
-    this.workflowService.getDiagramData(7).subscribe({
+    var workflowId = 7;
+    this.workflowService.getDiagramData(workflowId).subscribe({
       next: (response) => {
         if (response && response.result) {
           this.initializeDiagramElements(response);
@@ -103,19 +103,6 @@ export class WorkflowDiagramComponent implements AfterViewInit {
       }
     });
   }
-  // private loadDiagramData() {
-  //   try {
-  //     const response = this.workflowService.getDiagramData(7); // Pass the appropriate workflow ID
-  //     console.log('API Response:', response); // Log the response
-  //     if (response != null) {
-  //       this.initializeDiagramElements(response); // Check for Items existence
-  //     } else {
-  //       console.warn('Received unexpected response structure:', response);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching diagram data:', error);
-  //   }
-  // }
 
   // Convert enum to array of objects
   private enumToArray(enumObj: any): Array<{ text: string, value: number }> {
@@ -151,12 +138,14 @@ export class WorkflowDiagramComponent implements AfterViewInit {
 
       // Create connectors from success_rule_id
       if (item['successRuleId']) {
-        this.connectors.push({
+        var connectorData = {
           id: `connector${item['id']}-s${item['successRuleId']}`,
           sourceID: `node${item['id']}`,
           targetID: `node${item['successRuleId']}`,
           // annotations: [{ content: 'success', alignment: 'Center'}]
-        });
+        };
+        this.connectors.push(connectorData);
+        this.diagram.addConnector(connectorData);
       }
       // if (item.branchDetails) {
       //   item.branchDetails.forEach(branch: any => {
@@ -171,7 +160,6 @@ export class WorkflowDiagramComponent implements AfterViewInit {
       //   });
       // }
     });
-    this.diagram.refresh();
   }
 
   public onDiagramCreated(): void {
