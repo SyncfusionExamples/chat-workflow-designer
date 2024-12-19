@@ -7,17 +7,19 @@ import { FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleD
 import { NodeModel } from '@syncfusion/ej2-angular-diagrams';
 import { DropDownListComponent } from '@syncfusion/ej2-angular-dropdowns';
 import { DatePickerModule, DateTimePickerModule } from '@syncfusion/ej2-angular-calendars';
+import { DialogComponent, DialogModule } from '@syncfusion/ej2-angular-popups';
 
 
 @Component({
   selector: 'app-workflow-sidebar',
   standalone: true,
-  imports: [SidebarModule, FormsModule, CommonModule, DatePickerModule, DateTimePickerModule],
+  imports: [SidebarModule, FormsModule, CommonModule, DatePickerModule, DateTimePickerModule, DialogModule],
   templateUrl: './workflow-sidebar.component.html',
   styleUrl: './workflow-sidebar.component.scss'
 })
 export class WorkflowSidebarComponent {
-  @ViewChild('sidebar') sidebar?: SidebarComponent;
+  // @ViewChild('sidebar') sidebar?: SidebarComponent;
+  @ViewChild('ejDialog') dialog!: DialogComponent;
   @ViewChild('ddlTextFormat') ddlTextFormat!: DropDownListComponent;
 
   public chatWorkflowEditorTypeEnum = ChatWorkflowEditorTypeEnum;
@@ -54,22 +56,26 @@ export class WorkflowSidebarComponent {
   }
 
   onCloseSideBarClick(): void {
-    this.sidebar?.hide();
+    // this.sidebar?.hide();
+    this.dialog.hide();
     this.addBlock(this.selectedBlockId);
     this.buttons = [];
   }
 
   onCancelSideBarClick(): void {
-    this.sidebar?.hide();
+    // this.sidebar?.hide();
+    this.dialog.hide();
   }
 
   public onSideBarCreated(args: any) {
-    (this.sidebar as SidebarComponent).hide();
-    (this.sidebar as SidebarComponent).position = "Right";
+    this.dialog.hide();
+    // (this.sidebar as SidebarComponent).hide();
+    // (this.sidebar as SidebarComponent).position = "Right";
   }
 
   onFormSubmit(): void {
-    this.sidebar?.hide();
+    // this.sidebar?.hide();
+    this.dialog.hide();
   }
 
   addButton(label: string, value: string, description: string | null, labelInput: HTMLInputElement, valueInput: HTMLInputElement, descriptionInput: HTMLInputElement | null): void {

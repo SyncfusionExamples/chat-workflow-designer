@@ -245,7 +245,8 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   public onBeforeCloseDropDownButton(args: BeforeOpenCloseMenuEventArgs) {
     args.cancel = this.isParentListItem;
     if (!(this.isParentListItem || ((args.event.target as HTMLElement).closest(".bc-block-option.e-listview")==null))) {
-      this.sidebarComponent?.sidebar?.show();
+      // this.sidebarComponent?.sidebar?.show();
+      this.sidebarComponent?.dialog.show();
     }
   }
 
