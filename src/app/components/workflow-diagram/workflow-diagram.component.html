@@ -21,50 +21,55 @@
     [getConnectorDefaults]="getConnectorDefaults" (created)="onDiagramCreated()" [selectedItems]="selectedItems"
     (onUserHandleMouseDown)="onUserHandleMouseDown($event)" (click)="onNodeClick($event)" [snapSettings]="snapSettings">
 
-    <ng-template #userHandleTemplate>
+    <ng-template #userHandleTemplate let-data>
       <div class="dropDown-container">
-        <button #dropdownbutton id="dropdownbutton" ejs-dropdownbutton target="#listview"
+        @if (data.name === 'addBlock') {
+          <button #dropdownbutton id="dropdownbutton" ejs-dropdownbutton target="#listview"
           (open)="onOpenDropDownButton($event)" iconCss='e-icons e-plus' cssClass='e-caret-hide'
           (beforeClose)="onBeforeCloseDropDownButton($event)" (beforeOpen)="onBeforeOpenDropDownButton()"></button>
+        }
+        @else if (data.name === 'editBlock'){
+          <button #editbtn ejs-button id="editbtn" iconCss='e-icons e-edit' cssClass='e-caret-hide'></button>
+        }
+        @else{
+          <button #deletebtn ejs-button id="deletebtn" iconCss='e-icons e-trash' cssClass='e-caret-hide'></button>
+        }
       </div>
     </ng-template>
 
     <ng-template #nodeTemplate let-data>
+      <div><label style="padding: 5px;">{{ data.addInfo.fieldDetails.label }}</label></div>
       @switch (data.addInfo.chatWorkflowBlockId){
         @case(chatWorkflowBlockTypeEnum.GetPickerInput){
           @switch (data.addInfo.chatWorkflowEditorTypeId){
             @case (chatWorkflowEditorTypeEnum.Boolean){
               <ng-container>
-                <div><label style="padding: 5px;">{{ data.addInfo.fieldDetails.label }}</label></div>
                 <div><button type="button" ejs-button style="width: 85%;" class="e-btn e-success">Yes</button></div>
                 <div><button type="button" ejs-button style="width: 85%;" class="e-btn e-danger">No</button></div>
               </ng-container>
             }
             @case (chatWorkflowEditorTypeEnum.Buttons){
               <ng-container>
-                <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
-                <div *ngFor="let option of data.addInfo.fieldOptionDetails; let i = index" class="button-item">
+                @for(option of data.addInfo.fieldOptionDetails; track $index){
                   <button ejs-button cssClass="e-primary" style="width: 85%;">{{option.label}}</button>
-                </div>
+                }
               </ng-container>
             }
             @case (chatWorkflowEditorTypeEnum.DropDown){
               <ng-container>
-                <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
-                <ejs-dropdownlist [dataSource]="data.addInfo.fieldOptionDetails" [fields]="ddlFields" [placeholder]="data.addInfo.fieldDetails.placeholder" cssClass="e-primary" width="85%">
+                <ejs-dropdownlist [dataSource]="data.addInfo.fieldOptionDetails" [fields]="ddlFields"
+                  [placeholder]="data.addInfo.fieldDetails.placeholder" cssClass="e-primary" width="85%">
                 </ejs-dropdownlist>
               </ng-container>
             }
             @case(chatWorkflowEditorTypeEnum.MultiSelect){
               <ng-container >
-                <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
                 <ejs-multiselect [dataSource]="data.addInfo.fieldOptionDetails" [fields]="ddlFields" [placeholder]="data.addInfo.fieldDetails.placeholder" cssClass="e-primary" width="85%">
                 </ejs-multiselect>
               </ng-container>
             }
             @case(chatWorkflowEditorTypeEnum.List){
               <ng-container>
-                <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
                 <ejs-listview id='sample-list' [dataSource]='data.addInfo.fieldOptionDetails' [fields]='ddlFields'></ejs-listview>
               </ng-container>
             }
@@ -74,43 +79,36 @@
           @switch (data.addInfo.chatWorkflowEditorTypeId){
             @case(chatWorkflowEditorTypeEnum.Text){
               <ng-container>
-                <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
                 <ejs-textbox [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true"></ejs-textbox>
               </ng-container>
             }
             @case(chatWorkflowEditorTypeEnum.TextArea){
               <ng-container>
-                <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
                 <ejs-textarea [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true"></ejs-textarea>
               </ng-container>
             }
             @case(chatWorkflowEditorTypeEnum.Date){
               <ng-container>
-                <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
                 <ejs-datepicker [placeholder]="data.addInfo.fieldDetails.placeholder" [readonly]="true"></ejs-datepicker>
               </ng-container>
             }
             @case(chatWorkflowEditorTypeEnum.DateTime){
               <ng-container>
-                <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
                 <ejs-datetimepicker [placeholder]="data.addInfo.fieldDetails.placeholder" [readonly]="true"></ejs-datetimepicker>
               </ng-container>
             }
             @case(chatWorkflowEditorTypeEnum.Number){
               <ng-container>
-                <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
                 <ejs-numerictextbox format='n0' [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true"></ejs-numerictextbox>
               </ng-container>
             }
             @case(chatWorkflowEditorTypeEnum.Decimal){
               <ng-container>
-                <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
                 <ejs-numerictextbox [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true"></ejs-numerictextbox>
               </ng-container>
             }
             @case(chatWorkflowEditorTypeEnum.Regex){
               <ng-container>
-                <div><label style="padding: 5px;">{{data.addInfo.fieldDetails.label}}</label></div>
                 <ejs-textbox [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true"></ejs-textbox>
               </ng-container>
             }
@@ -126,7 +124,7 @@
 
 </div>
 
-<app-workflow-sidebar #workflowSidebar [nodeEditType]="nodeEditType" [nodeBlockType]="nodeBlockType" [sidebarHeader]="sidebarHeader" [selectedBlockId]="selectedBlockId" [selectedWorkFlowId]="selectedWorkFlowId" (addNodeAndConnect)="onaddNodeAndConnect($event)"></app-workflow-sidebar>
+<app-workflow-sidebar #workflowSidebar [nodeEditType]="nodeEditType" [nodeBlockType]="nodeBlockType" [sidebarHeader]="sidebarHeader" [selectedBlockId]="selectedBlockId" [selectedWorkFlowId]="selectedWorkFlowId" (addNodeAndConnect)="onaddNodeAndConnect($event)" (updateNode)="onUpdateNode($event)"></app-workflow-sidebar>
 
 <!-- <div style="display: none;">
   <ejs-uploader #defaultupload id='fileupload' (success)='onUploadSuccess($event)' [asyncSettings]='asyncSettings'></ejs-uploader>
