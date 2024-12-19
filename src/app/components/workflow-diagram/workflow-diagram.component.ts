@@ -63,7 +63,15 @@ export class WorkflowDiagramComponent implements AfterViewInit{
       side: 'Right',
       margin: { top: 0, bottom: 0, left: 0, right: 0 },
       backgroundColor: 'skyblue',
-    }
+    },
+    {
+      name: 'deleteBlock',
+      visible: false,
+      offset: 0.4,
+      side: 'Right',
+      margin: { top: 0, bottom: 0, left: 45, right: 0 },
+      backgroundColor: 'skyblue',
+    },
   ];
 
   public listdata: { [key: string]: any }[] = LIST_DATA;
@@ -204,10 +212,12 @@ export class WorkflowDiagramComponent implements AfterViewInit{
       if(isLastNode && this.diagram.selectedItems.userHandles) {
         this.diagram.selectedItems.userHandles[0].visible = true;
         this.diagram.selectedItems.userHandles[1].visible = true;
+        this.diagram.selectedItems.userHandles[2].visible = true;
       }
       else if(this.diagram.selectedItems.userHandles){
         this.diagram.selectedItems.userHandles[0].visible = false;
         this.diagram.selectedItems.userHandles[1].visible = true;
+        this.diagram.selectedItems.userHandles[2].visible = false;
       }
        this.selectedBlockId = clickedBlock.id;
     }
@@ -221,7 +231,8 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   public onaddNodeAndConnect([sourceNodeId, newNode]: [string, NodeModel]): void {
     // Add the new node to the diagram
     this.diagram.addNode(newNode);
-    // this.nodes.push(newNode);
+    const index = this.diagram.nodes.findIndex(node => node.id === sourceNodeId);
+    (this.diagram.nodes[index].addInfo as RuleData2).successRuleId = (newNode.addInfo as RuleData2).id;
     // Create a new connector to link the new node to the source node
     const newConnectorId = `connector${++this.connectorIdCounter}`;
     const newConnector: ConnectorModel = {
@@ -237,8 +248,8 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   }
 
   public onUpdateNode([sourceNodeId, newNode]: [string, RuleData2]) : void {
-    const index = this.nodes.findIndex(node => node.id === sourceNodeId);
-    newNode.id  = (this.nodes[index].addInfo as RuleData2).id;
+    const index = this.diagram.nodes.findIndex(node => node.id === sourceNodeId);
+    newNode.id  = (this.diagram.nodes[index].addInfo as RuleData2).id;
     this.diagram.nodes[index].addInfo = newNode;
     this.diagram.refresh();
     this.diagram.fitToPage();
@@ -249,16 +260,29 @@ export class WorkflowDiagramComponent implements AfterViewInit{
       if(this.diagram.selectedItems.userHandles){
         this.diagram.selectedItems.userHandles[0].visible = false;
         this.diagram.selectedItems.userHandles[1].visible = false;
+        this.diagram.selectedItems.userHandles[2].visible = false;
       }
       this.dropdownbutton.toggle();
     }
     else if(event.element.name === 'editBlock'){
       if(this.diagram.selectedItems.userHandles){
         this.diagram.selectedItems.userHandles[1].visible = false;
+        this.diagram.selectedItems.userHandles[2].visible = false;
       }
-      let Obje = this.diagram.getNodeObject(this.selectedBlockId);
-      this.sidebarComponent?.setBlockValues(Obje);
+      let nodeObject = this.diagram.getNodeObject(this.selectedBlockId);
+      this.sidebarComponent?.setBlockValues(nodeObject);
       this.sidebarComponent?.sidebar?.show();
+    }
+    else if(event.element.name === 'deleteBlock'){
+      if(this.diagram.selectedItems.userHandles){
+        this.diagram.selectedItems.userHandles[1].visible = false;
+        this.diagram.selectedItems.userHandles[2].visible = false;
+      }
+      let nodeObject = this.diagram.getNodeObject(this.selectedBlockId);
+      let id = (nodeObject.addInfo as RuleData2).id;
+      const index = this.diagram.nodes.findIndex(node => (node.addInfo as RuleData2).successRuleId === id);
+      (this.diagram.nodes[index].addInfo as RuleData2).successRuleId = null;
+      this.diagram.remove(nodeObject);
     }
   }
 

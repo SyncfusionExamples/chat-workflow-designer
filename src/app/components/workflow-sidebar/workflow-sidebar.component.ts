@@ -98,19 +98,17 @@ export class WorkflowSidebarComponent {
     }
   }
   // Add and Save option
-  addAndSaveOption(label: string, value: string, description: string | null, labelInput: HTMLInputElement, valueInput: HTMLInputElement, descriptionInput: HTMLInputElement | null): void {
-    if (label.trim() && value.trim()) {
+  addOrUpdateSaveOption(label: string, value: string, description: string | null, labelInput: HTMLInputElement, valueInput: HTMLInputElement, descriptionInput: HTMLInputElement | null): void {
+    const option = { label: label.trim(), value: value.trim(), description };
+    if(this.isEdit){
+      this.options[this.editIndex] = option;
+    } 
+    else {
       this.options.push({ label, value, description });
-      this.cancelOption(labelInput, valueInput, descriptionInput);
     }
-  }
-  // Edit and Save option
-  editAndSaveOption(label: string, value: string, description: string | null, labelInput: HTMLInputElement, valueInput: HTMLInputElement, descriptionInput: HTMLInputElement | null) {
-    this.options[this.editIndex].label = label.trim();
-    this.options[this.editIndex].value = value.trim();
-    this.options[this.editIndex].description = description;
     this.cancelOption(labelInput, valueInput, descriptionInput);
   }
+  
   // edit option value loading
   editOption(index: number): void {
     this.isEditButton = true;
