@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, viewChild, ViewChild } from '@angular/core';
 import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, HierarchicalTree, HierarchicalTreeService, HtmlModel, IClickEventArgs, IExportOptions, LayoutModel, LineDistribution, Node, NodeModel, PrintAndExport, SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
-import { FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData, RuleData2 } from '../../models/appModel';
+import { ChatWorkflowRulesData, FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData, RuleData2, WorkflowRulesData } from '../../models/appModel';
 import { RULE_DATA, RULE_DATA2, RULE_DATA3 } from '../../data/rule-data';
 import { DialogModule } from '@syncfusion/ej2-angular-popups';
 import { BeforeOpenCloseMenuEventArgs, DropDownButtonComponent, DropDownButtonModule, ItemModel, OpenCloseMenuEventArgs } from '@syncfusion/ej2-angular-splitbuttons';
@@ -18,6 +18,7 @@ import { ButtonModule, SwitchModule } from '@syncfusion/ej2-angular-buttons';
 import sampleWorkflowData from '../../data/sample-workflow-data.json'; // Adjust the path as needed
 import { AsyncSettingsModel, FileInfo, Uploader } from '@syncfusion/ej2-inputs';
 import { WorkflowSidebarComponent } from '../workflow-sidebar/workflow-sidebar.component';  // Import child component
+import { WorkflowService } from '../../services/workflow.service';
 
 
 Diagram.Inject(HierarchicalTree, LineDistribution, PrintAndExport);
@@ -25,12 +26,12 @@ Diagram.Inject(HierarchicalTree, LineDistribution, PrintAndExport);
 @Component({
   selector: 'app-workflow-diagram',
   standalone: true,
-  providers: [HierarchicalTreeService],
+  providers: [HierarchicalTreeService, WorkflowService],
   imports: [DiagramModule, DialogModule, DropDownButtonModule, ButtonModule, CommonModule, ListViewModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule, DatePickerModule, DateTimePickerModule, SwitchModule, ToolbarModule, UploaderModule, WorkflowSidebarComponent],
   templateUrl: './workflow-diagram.component.html',
   styleUrl: './workflow-diagram.component.scss'
 })
-export class WorkflowDiagramComponent implements AfterViewInit{
+export class WorkflowDiagramComponent implements AfterViewInit {
   @ViewChild('diagram') diagram!: DiagramComponent;
   @ViewChild('dropdownbutton') dropdownbutton!: DropDownButtonComponent;
   @ViewChild('listview') listView!: ListViewComponent;
@@ -41,8 +42,6 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   public chatWorkflowBlockTypeEnum = ChatWorkflowBlockTypeEnum;
   // public data: RuleData[] = RULE_DATA;
   public data: RuleData2[] = RULE_DATA3;
-  public nodes: NodeModel[] = [];
-  public connectors: ConnectorModel[] = [];
   public closeOnDocumentClick: boolean = true;
   public sidebarInput: string = '';
   public ddlFields: Object = { text: 'label', value: 'value' };
@@ -93,13 +92,30 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   public selectedBlockId!: string;
   public selectedWorkFlowId!: number;
 
-  constructor() {
+  constructor(private workflowService: WorkflowService) {
     // Initialize nodes and connectors based on the data
-    this.initializeDiagramElements();
+    // this.initializeDiagramElements();
+    this.loadDiagramData();
     this.textFormatDDLOptions = this.enumToArray(TextFormatEnum);
   }
 
   ngAfterViewInit() {
+  }
+
+  private loadDiagramData() {
+    var workflowId = 7;
+    this.workflowService.getDiagramData(workflowId).subscribe({
+      next: (response) => {
+        if (response && response.result) {
+          this.initializeDiagramElements(response);
+        } else {
+          console.warn('Received unexpected response structure:', response);
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching diagram data:', error);
+      }
+    });
   }
 
   // Convert enum to array of objects
@@ -114,30 +130,32 @@ export class WorkflowDiagramComponent implements AfterViewInit{
       });
   }
   
-  private initializeDiagramElements(): void {
+  private initializeDiagramElements(data: WorkflowRulesData): void {
     this.selectedWorkFlowId = 1; // Get from DB
-    sampleWorkflowData.forEach(item => {
+    data.result.forEach(item => {
       let buttonCount = 0;
-      if(item.chatWorkflowEditorTypeId == 2){
+      if(item.chatWorkflowEditorTypeId == 2) {
         buttonCount = item.fieldOptionDetails?.length || 0;
       }
       // Create nodes based on the data
-      this.nodes.push({
+      var nodedata = {
         id: `node${item.id}`,
         // annotations: [{ content: `node${item['id']}` }],
         width: 200,
         height: 150 + (buttonCount * 25),
         addInfo: item
-      });
+      };
+      this.diagram.addNode(nodedata);
 
       // Create connectors from success_rule_id
       if (item['successRuleId']) {
-        this.connectors.push({
+        var connectorData = {
           id: `connector${item['id']}-s${item['successRuleId']}`,
           sourceID: `node${item['id']}`,
           targetID: `node${item['successRuleId']}`,
           // annotations: [{ content: 'success', alignment: 'Center'}]
-        });
+        };
+        this.diagram.addConnector(connectorData);
       }
       // if (item.branchDetails) {
       //   item.branchDetails.forEach(branch: any => {
