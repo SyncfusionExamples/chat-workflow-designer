@@ -7,14 +7,14 @@ import { BeforeOpenCloseMenuEventArgs, DropDownButtonComponent, DropDownButtonMo
 import { CommonModule } from '@angular/common';
 import { ListViewComponent, ListViewModule, SelectEventArgs } from '@syncfusion/ej2-angular-lists';
 import { LIST_DATA } from '../../data/list-data';
-import { ClickEventArgs, SidebarComponent, SidebarModule, ToolbarModule } from '@syncfusion/ej2-angular-navigations';
+import { ClickEventArgs, ToolbarModule } from '@syncfusion/ej2-angular-navigations';
 import { FormsModule } from '@angular/forms';
 import workflowData from '../../data/workflow-data.json'; // Adjust the path as needed
 import { DropDownList, DropDownListComponent, DropDownListModule, MultiSelectModule } from '@syncfusion/ej2-angular-dropdowns';
 import { NumericTextBoxModule, TextAreaModule, TextBoxModule, UploaderModule } from '@syncfusion/ej2-angular-inputs';
 import { DatePickerModule, DateTimePickerModule } from '@syncfusion/ej2-angular-calendars';
 import { TextFormatEnum, ChatWorkflowEditorTypeEnum, ChatWorkflowBlockTypeEnum } from '../../models/enum';
-import { SwitchModule } from '@syncfusion/ej2-angular-buttons';
+import { ButtonModule, SwitchModule } from '@syncfusion/ej2-angular-buttons';
 import sampleWorkflowData from '../../data/sample-workflow-data.json'; // Adjust the path as needed
 import { AsyncSettingsModel, FileInfo, Uploader } from '@syncfusion/ej2-inputs';
 import { WorkflowSidebarComponent } from '../workflow-sidebar/workflow-sidebar.component';  // Import child component
@@ -26,7 +26,7 @@ Diagram.Inject(HierarchicalTree, LineDistribution, PrintAndExport);
   selector: 'app-workflow-diagram',
   standalone: true,
   providers: [HierarchicalTreeService],
-  imports: [DiagramModule, DialogModule, DropDownButtonModule, CommonModule, ListViewModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule, DatePickerModule, DateTimePickerModule, SwitchModule, ToolbarModule, UploaderModule, WorkflowSidebarComponent],
+  imports: [DiagramModule, DialogModule, DropDownButtonModule, ButtonModule, CommonModule, ListViewModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule, DatePickerModule, DateTimePickerModule, SwitchModule, ToolbarModule, UploaderModule, WorkflowSidebarComponent],
   templateUrl: './workflow-diagram.component.html',
   styleUrl: './workflow-diagram.component.scss'
 })
@@ -49,10 +49,18 @@ export class WorkflowDiagramComponent implements AfterViewInit{
 
   public handles: UserHandleModel[] = [
     {
-      name: 'plusIcon',
+      name: 'addBlock',
       visible: false,
       offset: 0.4,
       side: 'Bottom',
+      margin: { top: 0, bottom: 0, left: 0, right: 0 },
+      backgroundColor: 'skyblue',
+    },
+    {
+      name: 'editBlock',
+      visible: false,
+      offset: 0.4,
+      side: 'Right',
       margin: { top: 0, bottom: 0, left: 0, right: 0 },
       backgroundColor: 'skyblue',
     }
@@ -195,9 +203,11 @@ export class WorkflowDiagramComponent implements AfterViewInit{
       let isLastNode = clickedBlock.outEdges.length == 0;
       if(isLastNode && this.diagram.selectedItems.userHandles) {
         this.diagram.selectedItems.userHandles[0].visible = true;
+        this.diagram.selectedItems.userHandles[1].visible = true;
       }
       else if(this.diagram.selectedItems.userHandles){
         this.diagram.selectedItems.userHandles[0].visible = false;
+        this.diagram.selectedItems.userHandles[1].visible = true;
       }
        this.selectedBlockId = clickedBlock.id;
     }
@@ -211,6 +221,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   public onaddNodeAndConnect([sourceNodeId, newNode]: [string, NodeModel]): void {
     // Add the new node to the diagram
     this.diagram.addNode(newNode);
+    // this.nodes.push(newNode);
     // Create a new connector to link the new node to the source node
     const newConnectorId = `connector${++this.connectorIdCounter}`;
     const newConnector: ConnectorModel = {
@@ -225,16 +236,33 @@ export class WorkflowDiagramComponent implements AfterViewInit{
     this.diagram.doLayout();
   }
 
+  public onUpdateNode([sourceNodeId, newNode]: [string, RuleData2]) : void {
+    const index = this.nodes.findIndex(node => node.id === sourceNodeId);
+    newNode.id  = (this.nodes[index].addInfo as RuleData2).id;
+    this.diagram.nodes[index].addInfo = newNode;
+    this.diagram.refresh();
+    this.diagram.fitToPage();
+  }
+
   public onUserHandleMouseDown(event: UserHandleEventsArgs) {
-    if(event.element.name === 'plusIcon') {
+    if(event.element.name === 'addBlock') {
+      if(this.diagram.selectedItems.userHandles){
+        this.diagram.selectedItems.userHandles[0].visible = false;
+        this.diagram.selectedItems.userHandles[1].visible = false;
+      }
       this.dropdownbutton.toggle();
+    }
+    else if(event.element.name === 'editBlock'){
+      if(this.diagram.selectedItems.userHandles){
+        this.diagram.selectedItems.userHandles[1].visible = false;
+      }
+      let Obje = this.diagram.getNodeObject(this.selectedBlockId);
+      this.sidebarComponent?.setBlockValues(Obje);
+      this.sidebarComponent?.sidebar?.show();
     }
   }
 
   public onOpenDropDownButton(args: OpenCloseMenuEventArgs) {
-    if(this.diagram.selectedItems.userHandles){
-      this.diagram.selectedItems.userHandles[0].visible = false;
-    }
     let dropDownContainer = document.querySelector('.dropDown-container') as HTMLElement;
     args.element.parentElement!.style.top = dropDownContainer.getBoundingClientRect().top + dropDownContainer.offsetHeight +'px';
 
