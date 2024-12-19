@@ -34,7 +34,7 @@
             </ng-template>
 
             <ng-template #removeButtonTemplate>
-                @for(button of buttons; track $index){
+                @for(button of options; track $index){
                     <div class="button-item">
                         <button ejs-button cssClass="e-primary" style="width: 75%;">{{button.label}}</button>
                         <button ejs-button type="button" iconCss='e-icons e-edit' (click)="editOption($index)"></button>
