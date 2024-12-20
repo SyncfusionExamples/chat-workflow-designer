@@ -3,7 +3,7 @@
     <div class="content">
         <form (ngSubmit)="onFormSubmit()" class="full-size-form">
             <div class="form-header"> {{sidebarHeader}}</div>
-            <div>
+            <div [hidden]="nodeBlockType === chatWorkflowBlockTypeEnum.GetCustomerDetails">
                 <label>
                     Label: <input type="text" [(ngModel)]="sideBarLabel" name="sideBarLabel" placeholder="Enter label..." class="description-box" required />
                 </label>
@@ -166,6 +166,13 @@
                         </div>
                         }
                     }
+                }
+                @case(chatWorkflowBlockTypeEnum.GetCustomerDetails){
+                    <div>
+                        <ejs-checkbox label="Get Customer Email" [(ngModel)]="getEmailInfo" name="getEmailInfo" [checked]="true" [disabled] = "true"></ejs-checkbox>
+                        <ejs-checkbox label="Get Customer Name" [(ngModel)]="getNameInfo" name="getNameInfo"></ejs-checkbox>
+                        <ejs-checkbox label="Get Customer Phone Number" [(ngModel)]="getPhoneNumberInfo" name="getPhoneNumberInfo"></ejs-checkbox>
+                    </div> 
                 }
             }
         </form>

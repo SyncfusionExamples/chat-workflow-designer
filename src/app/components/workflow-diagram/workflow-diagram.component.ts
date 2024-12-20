@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, viewChild, ViewChild } from '@angular/core';
 import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, HierarchicalTree, HierarchicalTreeService, HtmlModel, IClickEventArgs, IExportOptions, LayoutModel, LineDistribution, Node, NodeModel, PrintAndExport, SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
-import { FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData, RuleData2 } from '../../models/appModel';
-import { RULE_DATA, RULE_DATA2, RULE_DATA3 } from '../../data/rule-data';
+import { FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData2 } from '../../models/appModel';
+import { RULE_DATA2, RULE_DATA3 } from '../../data/rule-data';
 import { DialogModule } from '@syncfusion/ej2-angular-popups';
 import { BeforeOpenCloseMenuEventArgs, DropDownButtonComponent, DropDownButtonModule, ItemModel, OpenCloseMenuEventArgs } from '@syncfusion/ej2-angular-splitbuttons';
 import { CommonModule } from '@angular/common';
@@ -39,7 +39,6 @@ export class WorkflowDiagramComponent implements AfterViewInit{
 
   public chatWorkflowEditorTypeEnum = ChatWorkflowEditorTypeEnum; 
   public chatWorkflowBlockTypeEnum = ChatWorkflowBlockTypeEnum;
-  // public data: RuleData[] = RULE_DATA;
   public data: RuleData2[] = RULE_DATA3;
   public nodes: NodeModel[] = [];
   public connectors: ConnectorModel[] = [];
@@ -319,8 +318,10 @@ export class WorkflowDiagramComponent implements AfterViewInit{
     this.isParentListItem = false; // The value is reset here, to handle document click case of dropdown
     // Reset ListView to its initial state before opening
     if (this.listView) {
-      this.listView.dataSource = this.listdata; // Reset data
-      this.listView.refresh();
+      // this.listView.dataSource = this.listdata; // Reset data
+      while ((this.listView as any).curDSLevel.length > 0) {
+        this.listView.back();
+      }
     }
   }
 
