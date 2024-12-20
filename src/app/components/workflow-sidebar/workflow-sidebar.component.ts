@@ -7,13 +7,13 @@ import { FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleD
 import { NodeModel } from '@syncfusion/ej2-angular-diagrams';
 import { DropDownListComponent } from '@syncfusion/ej2-angular-dropdowns';
 import { DatePickerModule, DateTimePickerModule } from '@syncfusion/ej2-angular-calendars';
-import { ButtonModule } from '@syncfusion/ej2-angular-buttons';
+import { ButtonModule, CheckBoxModule } from '@syncfusion/ej2-angular-buttons';
 
 
 @Component({
   selector: 'app-workflow-sidebar',
   standalone: true,
-  imports: [SidebarModule, FormsModule, CommonModule, DatePickerModule, DateTimePickerModule, ButtonModule],
+  imports: [SidebarModule, FormsModule, CommonModule, DatePickerModule, DateTimePickerModule, ButtonModule, CheckBoxModule],
   templateUrl: './workflow-sidebar.component.html',
   styleUrl: './workflow-sidebar.component.scss'
 })
@@ -55,6 +55,10 @@ export class WorkflowSidebarComponent {
   public addOption: boolean = false;
   public newNodeInfo: any;
   private updatePending = false;
+
+  public getEmailInfo: boolean = true;
+  public getNameInfo: boolean = false;
+  public getPhoneNumberInfo: boolean = false;
 
   @Input() nodeEditType!: number;
   @Input() nodeBlockType!: number;
@@ -288,6 +292,11 @@ export class WorkflowSidebarComponent {
         }
         break;
       }
+      case (this.chatWorkflowBlockTypeEnum.GetCustomerDetails): {
+        let fieldInfo = this.createCustomerBlockFieldInfo();
+        this.newNodeInfo = this.createNodeInfo(null, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
+        break;
+      }
     }
     if (this.isEdit) {
       this.updateNode.emit([sourceNodeId, this.newNodeInfo]);
@@ -337,6 +346,14 @@ export class WorkflowSidebarComponent {
       label: this.sideBarLabel,
       placeholder: this.sideBarPlaceholder,
       fieldValidation: fieldValidationInfo
+    }
+  }
+
+  public createCustomerBlockFieldInfo(): FieldDetails {
+    return {
+      hasEmailDetails: this.getEmailInfo,
+      hasNameDetails: this.getNameInfo,
+      hasPhoneNumberDetails: this.getPhoneNumberInfo,
     }
   }
 

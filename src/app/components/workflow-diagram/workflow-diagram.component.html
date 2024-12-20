@@ -123,6 +123,13 @@
             }
           }
         }
+        @case(chatWorkflowBlockTypeEnum.GetCustomerDetails){
+          <ng-container>
+            <div><label>Get Email details</label></div>
+            <div><label *ngIf="data.addInfo.fieldDetails.hasNameDetails">Get Name details</label></div>
+            <div><label *ngIf="data.addInfo.fieldDetails.hasPhoneNumberDetails">Get Phone number details</label></div>
+          </ng-container>
+        }
       }
     </ng-template>
   </ejs-diagram>
