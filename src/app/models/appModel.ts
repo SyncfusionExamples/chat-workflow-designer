@@ -95,7 +95,3 @@ export interface ChatWorkflowRulesData {
   fieldOptionDetails?: FieldOptionDetail[] | null;
   parentId?: number | null;
 }
-
-export interface WorkflowRulesData {
-  result: ChatWorkflowRulesData[];
-}
