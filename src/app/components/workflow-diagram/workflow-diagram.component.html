@@ -19,7 +19,7 @@
     id="diagram" [width]="'100%'" [height]="649" [nodes]="nodes"
     [connectors]="connectors" [layout]="layout" [getNodeDefaults]="getNodeDefaults"
     [getConnectorDefaults]="getConnectorDefaults" (created)="onDiagramCreated()" [selectedItems]="selectedItems"
-    (onUserHandleMouseDown)="onUserHandleMouseDown($event)" (click)="onNodeClick($event)" [snapSettings]="snapSettings">
+    (onUserHandleMouseDown)="onUserHandleMouseDown($event)" (click)="onNodeClick($event)" [snapSettings]="snapSettings" [dataSourceSettings]='dataSourceSettings'>
 
     <ng-template #userHandleTemplate let-data>
       <div class="dropDown-container">
@@ -38,10 +38,10 @@
     </ng-template>
 
     <ng-template #nodeTemplate let-data>
-      <div><label style="padding: 5px;">{{ data.addInfo.fieldDetails.label }}</label></div>
-      @switch (data.addInfo.chatWorkflowBlockId){
+      <div><label style="padding: 5px;">{{ data.data.fieldDetails.label }}</label></div>
+      @switch (data.data.chatWorkflowBlockId){
         @case(chatWorkflowBlockTypeEnum.GetPickerInput){
-          @switch (data.addInfo.chatWorkflowEditorTypeId){
+          @switch (data.data.chatWorkflowEditorTypeId){
             @case (chatWorkflowEditorTypeEnum.Boolean){
               <ng-container>
                 <div><button type="button" ejs-button style="width: 85%;" class="e-btn e-success">Yes</button></div>
@@ -50,75 +50,66 @@
             }
             @case (chatWorkflowEditorTypeEnum.Buttons){
               <ng-container>
-                @for(option of data.addInfo.fieldOptionDetails; track $index){
+                @for(option of data.data.fieldOptionDetails; track $index){
                   <button ejs-button cssClass="e-primary" style="width: 85%;">{{option.label}}</button>
                 }
               </ng-container>
             }
             @case (chatWorkflowEditorTypeEnum.DropDown){
               <ng-container>
-                <ejs-dropdownlist [dataSource]="data.addInfo.fieldOptionDetails" [fields]="ddlFields"
-                  [placeholder]="data.addInfo.fieldDetails.placeholder" cssClass="e-primary" width="85%">
+                <ejs-dropdownlist [dataSource]="data.data.fieldOptionDetails" [fields]="ddlFields"
+                  [placeholder]="data.data.fieldDetails.placeholder" cssClass="e-primary" width="85%">
                 </ejs-dropdownlist>
               </ng-container>
             }
             @case(chatWorkflowEditorTypeEnum.MultiSelect){
               <ng-container >
-                <ejs-multiselect [dataSource]="data.addInfo.fieldOptionDetails" [fields]="ddlFields"
-                  [placeholder]="data.addInfo.fieldDetails.placeholder"
-                  [maximumSelectionLength]="data.addInfo.fieldDetails.fieldValidation.max" cssClass="e-primary" width="85%">
+                <ejs-multiselect [dataSource]="data.data.fieldOptionDetails" [fields]="ddlFields" [placeholder]="data.data.fieldDetails.placeholder" cssClass="e-primary" width="85%">
                 </ejs-multiselect>
               </ng-container>
             }
             @case(chatWorkflowEditorTypeEnum.List){
               <ng-container>
-                <ejs-listview id='sample-list' [dataSource]='data.addInfo.fieldOptionDetails'
-                  [fields]='ddlFields'></ejs-listview>
+                <ejs-listview id='sample-list' [dataSource]='data.data.fieldOptionDetails' [fields]='ddlFields'></ejs-listview>
               </ng-container>
             }
           }
         }
         @case(chatWorkflowBlockTypeEnum.GetTextInput){
-          @switch (data.addInfo.chatWorkflowEditorTypeId){
+          @switch (data.data.chatWorkflowEditorTypeId){
             @case(chatWorkflowEditorTypeEnum.Text){
               <ng-container>
-                <ejs-textbox [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true"></ejs-textbox>
+                <ejs-textbox [placeholder]="data.data.fieldDetails.placeholder" readonly="true"></ejs-textbox>
               </ng-container>
             }
             @case(chatWorkflowEditorTypeEnum.TextArea){
               <ng-container>
-                <ejs-textarea [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true"
-                  [maxLength]="data.addInfo.fieldDetails.fieldValidation.max"></ejs-textarea>
+                <ejs-textarea [placeholder]="data.data.fieldDetails.placeholder" readonly="true"></ejs-textarea>
               </ng-container>
             }
             @case(chatWorkflowEditorTypeEnum.Date){
               <ng-container>
-                <ejs-datepicker [placeholder]="data.addInfo.fieldDetails.placeholder" [readonly]="true"></ejs-datepicker>
+                <ejs-datepicker [placeholder]="data.data.fieldDetails.placeholder" [readonly]="true"></ejs-datepicker>
               </ng-container>
             }
             @case(chatWorkflowEditorTypeEnum.DateTime){
               <ng-container>
-                <ejs-datetimepicker [placeholder]="data.addInfo.fieldDetails.placeholder"
-                  [readonly]="true"></ejs-datetimepicker>
+                <ejs-datetimepicker [placeholder]="data.data.fieldDetails.placeholder" [readonly]="true"></ejs-datetimepicker>
               </ng-container>
             }
             @case(chatWorkflowEditorTypeEnum.Number){
               <ng-container>
-                <ejs-numerictextbox format='n0' [min]="'data.addInfo.fieldDetails.fieldValidation.min'"
-                  [max]="'data.addInfo.fieldDetails.fieldValidation.max'" [placeholder]="data.addInfo.fieldDetails.placeholder"
-                  readonly="true" floatLabelType='Auto'></ejs-numerictextbox>
+                <ejs-numerictextbox format='n0' [placeholder]="data.data.fieldDetails.placeholder" readonly="true"></ejs-numerictextbox>
               </ng-container>
             }
             @case(chatWorkflowEditorTypeEnum.Decimal){
               <ng-container>
-                <ejs-numerictextbox [min]="'data.addInfo.fieldDetails.fieldValidation.min'"
-                  [max]="'data.addInfo.fieldDetails.fieldValidation.max'" [placeholder]="data.addInfo.fieldDetails.placeholder"
-                  readonly="true" floatLabelType='Auto'></ejs-numerictextbox>
+                <ejs-numerictextbox [placeholder]="data.data.fieldDetails.placeholder" readonly="true"></ejs-numerictextbox>
               </ng-container>
             }
             @case(chatWorkflowEditorTypeEnum.Regex){
               <ng-container>
-                <ejs-textbox [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true"></ejs-textbox>
+                <ejs-textbox [placeholder]="data.data.fieldDetails.placeholder" readonly="true"></ejs-textbox>
               </ng-container>
             }
           }
