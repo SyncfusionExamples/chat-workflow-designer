@@ -215,7 +215,7 @@ export class WorkflowSidebarComponent {
             break;
           }
           case (this.chatWorkflowEditorTypeEnum.MultiSelect): {
-            let fieldValidationInfo = this.createFieldValidationInfo(this.fieldOptionMinValue.toString(), this.fieldOptionMaxValue.toString(), null);
+            let fieldValidationInfo = this.createFieldValidationInfo(this.fieldOptionMinValue.toString(), this.fieldOptionMaxValue.toString(), "");
             let fieldOptionInfo = this.mapOptionsToFieldOptions();
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
             this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, fieldOptionInfo, null);
@@ -235,13 +235,13 @@ export class WorkflowSidebarComponent {
       case (this.chatWorkflowBlockTypeEnum.GetTextInput): {
         switch (this.nodeEditType) {
           case (this.chatWorkflowEditorTypeEnum.Text): {
-            let fieldValidationInfo = this.createFieldValidationInfo(null, this.fieldOptionMaxValue.toString(), null);
+            let fieldValidationInfo = this.createFieldValidationInfo(null, this.fieldOptionMaxValue.toString(), "");
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
             this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
             break;
           }
           case (this.chatWorkflowEditorTypeEnum.TextArea): {
-            let fieldValidationInfo = this.createFieldValidationInfo(null, this.fieldOptionMaxValue.toString(), null);
+            let fieldValidationInfo = this.createFieldValidationInfo(null, this.fieldOptionMaxValue.toString(), "");
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
             this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
             break;
@@ -252,7 +252,7 @@ export class WorkflowSidebarComponent {
             today.getDate() + 30; // Calculate 30 days from today
             const maxDate = today.toISOString().split('T')[0]; // Max date in YYYY-MM-DD format
 
-            let fieldValidationInfo = this.createFieldValidationInfo(minDate, maxDate, null);
+            let fieldValidationInfo = this.createFieldValidationInfo(minDate, maxDate, "");
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
             this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
             break;
@@ -262,7 +262,7 @@ export class WorkflowSidebarComponent {
             const minDateTime = now.toISOString(); // Current datetime in ISO format
             const maxDateTime = new Date(now.setDate(now.getDate() + 30)).toISOString(); // Max datetime, 30 days from now
 
-            let fieldValidationInfo = this.createFieldValidationInfo(minDateTime, maxDateTime, null);
+            let fieldValidationInfo = this.createFieldValidationInfo(minDateTime, maxDateTime, "");
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
             this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
             break;
@@ -323,7 +323,7 @@ export class WorkflowSidebarComponent {
     }));
   }
 
-  public createFieldValidationInfo(minValue: string | null, maxValue: string | null, regexValue: string | null): FieldValidation {
+  public createFieldValidationInfo(minValue: string | "", maxValue: string | "", regexValue: string | ""): FieldValidation {
     return {
       min: minValue,
       max: maxValue,

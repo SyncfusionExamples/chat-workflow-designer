@@ -16,8 +16,7 @@
   </div>
   <div>
     <ejs-diagram class="diagram-container" #diagram 
-    id="diagram" [width]="'100%'" [height]="649" [nodes]="nodes"
-    [connectors]="connectors" [layout]="layout" [getNodeDefaults]="getNodeDefaults"
+    id="diagram" [width]="'100%'" [height]="649" [layout]="layout" [getNodeDefaults]="getNodeDefaults"
     [getConnectorDefaults]="getConnectorDefaults" (created)="onDiagramCreated()" [selectedItems]="selectedItems"
     (onUserHandleMouseDown)="onUserHandleMouseDown($event)" (click)="onNodeClick($event)" [snapSettings]="snapSettings">
 
@@ -65,8 +64,7 @@
             @case(chatWorkflowEditorTypeEnum.MultiSelect){
               <ng-container >
                 <ejs-multiselect [dataSource]="data.addInfo.fieldOptionDetails" [fields]="ddlFields"
-                  [placeholder]="data.addInfo.fieldDetails.placeholder"
-                  [maximumSelectionLength]="data.addInfo.fieldDetails.fieldValidation.max" cssClass="e-primary" width="85%">
+                  [placeholder]="data.addInfo.fieldDetails.placeholder" cssClass="e-primary" width="85%">
                 </ejs-multiselect>
               </ng-container>
             }
@@ -87,8 +85,7 @@
             }
             @case(chatWorkflowEditorTypeEnum.TextArea){
               <ng-container>
-                <ejs-textarea [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true"
-                  [maxLength]="data.addInfo.fieldDetails.fieldValidation.max"></ejs-textarea>
+                <ejs-textarea [placeholder]="data.addInfo.fieldDetails.placeholder" readonly="true"></ejs-textarea>
               </ng-container>
             }
             @case(chatWorkflowEditorTypeEnum.Date){
@@ -104,15 +101,13 @@
             }
             @case(chatWorkflowEditorTypeEnum.Number){
               <ng-container>
-                <ejs-numerictextbox format='n0' [min]="'data.addInfo.fieldDetails.fieldValidation.min'"
-                  [max]="'data.addInfo.fieldDetails.fieldValidation.max'" [placeholder]="data.addInfo.fieldDetails.placeholder"
+                <ejs-numerictextbox format='n0' [placeholder]="data.addInfo.fieldDetails.placeholder"
                   readonly="true" floatLabelType='Auto'></ejs-numerictextbox>
               </ng-container>
             }
             @case(chatWorkflowEditorTypeEnum.Decimal){
               <ng-container>
-                <ejs-numerictextbox [min]="'data.addInfo.fieldDetails.fieldValidation.min'"
-                  [max]="'data.addInfo.fieldDetails.fieldValidation.max'" [placeholder]="data.addInfo.fieldDetails.placeholder"
+                <ejs-numerictextbox [placeholder]="data.addInfo.fieldDetails.placeholder"
                   readonly="true" floatLabelType='Auto'></ejs-numerictextbox>
               </ng-container>
             }
@@ -129,7 +124,6 @@
 
   <ejs-listview #listview id='listview' [dataSource]='listdata' cssClass='bc-block-option' [fields]='fields' [showHeader]='true'
     [headerTitle]='headertitle' [animation]='animation' (select)="onSelectListView($event)"></ejs-listview>
-  </div>
 
 </div>
 

@@ -1,6 +1,6 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, viewChild, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, resolveForwardRef, viewChild, ViewChild } from '@angular/core';
 import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, HierarchicalTree, HierarchicalTreeService, HtmlModel, IClickEventArgs, IExportOptions, LayoutModel, LineDistribution, Node, NodeModel, PrintAndExport, SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
-import { FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData, RuleData2 } from '../../models/appModel';
+import { ChatWorkflowRulesData2, FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData, RuleData2, WorkflowRulesData } from '../../models/appModel';
 import { RULE_DATA, RULE_DATA2, RULE_DATA3 } from '../../data/rule-data';
 import { DialogModule } from '@syncfusion/ej2-angular-popups';
 import { BeforeOpenCloseMenuEventArgs, DropDownButtonComponent, DropDownButtonModule, ItemModel, OpenCloseMenuEventArgs } from '@syncfusion/ej2-angular-splitbuttons';
@@ -18,6 +18,8 @@ import { ButtonModule, SwitchModule } from '@syncfusion/ej2-angular-buttons';
 import sampleWorkflowData from '../../data/sample-workflow-data.json'; // Adjust the path as needed
 import { AsyncSettingsModel, FileInfo, Uploader } from '@syncfusion/ej2-inputs';
 import { WorkflowSidebarComponent } from '../workflow-sidebar/workflow-sidebar.component';  // Import child component
+import { WorkflowService } from '../../services/workflow.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
 Diagram.Inject(HierarchicalTree, LineDistribution, PrintAndExport);
@@ -25,7 +27,7 @@ Diagram.Inject(HierarchicalTree, LineDistribution, PrintAndExport);
 @Component({
   selector: 'app-workflow-diagram',
   standalone: true,
-  providers: [HierarchicalTreeService],
+  providers: [HierarchicalTreeService, WorkflowService],
   imports: [DiagramModule, DialogModule, DropDownButtonModule, ButtonModule, CommonModule, ListViewModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule, DatePickerModule, DateTimePickerModule, SwitchModule, ToolbarModule, UploaderModule, WorkflowSidebarComponent],
   templateUrl: './workflow-diagram.component.html',
   styleUrl: './workflow-diagram.component.scss'
@@ -93,9 +95,10 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   public selectedBlockId!: string;
   public selectedWorkFlowId!: number;
 
-  constructor() {
+  constructor(private workflowService: WorkflowService) {
     // Initialize nodes and connectors based on the data
-    this.initializeDiagramElements();
+    // this.initializeDiagramElements();
+    this.loadDiagramData();
     this.textFormatDDLOptions = this.enumToArray(TextFormatEnum);
   }
 
@@ -114,30 +117,42 @@ export class WorkflowDiagramComponent implements AfterViewInit{
       });
   }
   
-  private initializeDiagramElements(): void {
-    this.selectedWorkFlowId = 1; // Get from DB
-    sampleWorkflowData.forEach(item => {
+  private loadDiagramData() {
+    this.selectedWorkFlowId = 7;
+    this.workflowService.getDiagramData(this.selectedWorkFlowId).then((res) => {
+      console.log(res);
+      this.initializeDiagramElements(res);
+    }).catch(() =>{
+      console.log("Get Error");
+    });
+  }
+
+  private initializeDiagramElements(data: WorkflowRulesData): void {
+    data.result.forEach(item => {
       let buttonCount = 0;
       if(item.chatWorkflowEditorTypeId == 2){
         buttonCount = item.fieldOptionDetails?.length || 0;
       }
       // Create nodes based on the data
-      this.nodes.push({
+      var nodedata = {
         id: `node${item.id}`,
         // annotations: [{ content: `node${item['id']}` }],
         width: 200,
         height: 150 + (buttonCount * 25),
         addInfo: item
-      });
-
+      };
+      // this.nodes.push(nodedata);
+      this.diagram.addNode(nodedata);
       // Create connectors from success_rule_id
       if (item['successRuleId']) {
-        this.connectors.push({
+        var connectorData = {
           id: `connector${item['id']}-s${item['successRuleId']}`,
           sourceID: `node${item['id']}`,
           targetID: `node${item['successRuleId']}`,
           // annotations: [{ content: 'success', alignment: 'Center'}]
-        });
+        };
+        // this.connectors.push(connectorData);
+        this.diagram.addConnector(connectorData);
       }
       // if (item.branchDetails) {
       //   item.branchDetails.forEach(branch: any => {
@@ -250,9 +265,35 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   public onUpdateNode([sourceNodeId, newNode]: [string, RuleData2]) : void {
     const index = this.diagram.nodes.findIndex(node => node.id === sourceNodeId);
     newNode.id  = (this.diagram.nodes[index].addInfo as RuleData2).id;
-    this.diagram.nodes[index].addInfo = newNode;
-    this.diagram.refresh();
-    this.diagram.fitToPage();
+    var workBody : ChatWorkflowRulesData2 = {
+      chatWorkflowEditorTypeId : newNode.chatWorkflowEditorTypeId,
+      fieldDetails: newNode.fieldDetails,
+      fieldOptionDetails : newNode.fieldOptionDetails
+    };
+    this.workflowService.updateDiagramData(newNode.chatWorkflowId, newNode.id, workBody).then((result) => {
+      console.log(result.message);
+      this.diagram.nodes[index].addInfo = newNode;
+      this.diagram.refresh();
+      this.diagram.fitToPage();
+    }).catch((e : HttpErrorResponse) => {
+      if(e && e.error?.Message){
+        console.log("Update failed");
+      }
+    });
+  }
+
+  public onDeleteNode(nodeObject) : void{
+    let ruleData : RuleData2 = nodeObject.addInfo as RuleData2;
+    let id = ruleData.id;
+    const index = this.diagram.nodes.findIndex(node => (node.addInfo as RuleData2).successRuleId === id);
+    this.workflowService.deleteDiagramData(ruleData.chatWorkflowId, ruleData.id).then((result) => {
+      (this.diagram.nodes[index].addInfo as RuleData2).successRuleId = null;
+      this.diagram.remove(nodeObject);
+    }).catch((e : HttpErrorResponse) =>{
+      if(e&& e.error?.Message){
+        console.log("Delete failed");
+      }
+    });
   }
 
   public onUserHandleMouseDown(event: UserHandleEventsArgs) {
@@ -279,10 +320,7 @@ export class WorkflowDiagramComponent implements AfterViewInit{
         this.diagram.selectedItems.userHandles[2].visible = false;
       }
       let nodeObject = this.diagram.getNodeObject(this.selectedBlockId);
-      let id = (nodeObject.addInfo as RuleData2).id;
-      const index = this.diagram.nodes.findIndex(node => (node.addInfo as RuleData2).successRuleId === id);
-      (this.diagram.nodes[index].addInfo as RuleData2).successRuleId = null;
-      this.diagram.remove(nodeObject);
+      this.onDeleteNode(nodeObject);
     }
   }
 

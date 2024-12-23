@@ -30,9 +30,9 @@ export interface FieldOptionDetail {
 
 // Define FieldValidation interface
 export interface FieldValidation {
-  max?: string | null;
-  min?: string | null; 
-  regex?: string | null;
+  max?: string | "";
+  min?: string | ""; 
+  regex?: string | "";
 }
 
 // Define FieldDetails interface
@@ -80,4 +80,27 @@ export interface RuleData2 {
   branchDetails?: BranchDetail[] | null;
   messageDetails?: MessageDetails | null;
   fieldOptionDetails?: FieldOptionDetail[] | null;
+}
+
+// Define the main Workflow interface
+export interface ChatWorkflowRulesData2 {
+  chatWorkflowEditorTypeId?: number | null;
+  fieldDetails?: FieldDetails | null;
+  fieldOptionDetails?: FieldOptionDetail[] | null;
+}
+
+export interface ChatWorkflowRulesData {
+  id: number;
+  successWorkflowId?: number | null;
+  successRuleId?: number | null;
+  chatWorkflowBlockId: number;
+  chatWorkflowEditorTypeId?: number | null;
+  fieldDetails?: FieldDetails | null;
+  branchDetails?: BranchDetail[] | null;
+  messageDetails?: MessageDetails | null;
+  fieldOptionDetails?: FieldOptionDetail[] | null;
+}
+
+export interface WorkflowRulesData {
+  result: ChatWorkflowRulesData[];
 }
