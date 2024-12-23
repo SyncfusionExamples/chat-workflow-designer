@@ -21,7 +21,6 @@ import { ButtonModule, SwitchModule } from '@syncfusion/ej2-angular-buttons';
 import sampleWorkflowData from '../../data/sample-workflow-data.json'; // Adjust the path as needed
 import { AsyncSettingsModel, FileInfo, Uploader } from '@syncfusion/ej2-inputs';
 import { WorkflowSidebarComponent } from '../workflow-sidebar/workflow-sidebar.component';  // Import child component
-import { WorkflowService } from '../../services/workflow.service';
 import { Adaptor, DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
 
 
@@ -30,7 +29,7 @@ Diagram.Inject(HierarchicalTree, LineDistribution, PrintAndExport);
 @Component({
   selector: 'app-workflow-diagram',
   standalone: true,
-  providers: [HierarchicalTreeService, WorkflowService, DataBindingService],
+  providers: [HierarchicalTreeService, DataBindingService],
   imports: [DiagramModule, DialogModule, DropDownButtonModule, ButtonModule, CommonModule, ListViewModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule, DatePickerModule, DateTimePickerModule, SwitchModule, ToolbarModule, UploaderModule, WorkflowSidebarComponent],
   templateUrl: './workflow-diagram.component.html',
   styleUrl: './workflow-diagram.component.scss'
@@ -91,8 +90,6 @@ export class WorkflowDiagramComponent implements AfterViewInit {
   private nodeIdCounter: number = 0;
   private connectorIdCounter: number = 0;
   public newNodeData: RuleData2[] = [];
-  textFormatDDLOptions: Array<{ text: string, value: number }>;
-  ddlTextFormatFields: Object = { text: 'text', value: 'value' };
 
   public sidebarHeader!: string;
   public nodeBlockType!: number;
@@ -102,54 +99,39 @@ export class WorkflowDiagramComponent implements AfterViewInit {
 
   public dataSourceSettings!: DataSourceModel;
 
-  constructor(private workflowService: WorkflowService) {
-    this.textFormatDDLOptions = this.enumToArray(TextFormatEnum);
-
+  constructor() {
   }
 
-ngOnInit() {
- let baseUrl = 'https://localhost:44303/chatwidget-api/v1/workflow-designer/'+ this.workflowID+'/rules';
+  ngOnInit() {
+  let baseUrl = 'https://localhost:44303/chatwidget-api/v1/workflow-designer/'+ this.workflowID+'/rules';
 
-  this.dataSourceSettings = {
-    id: 'id', parentId: 'parentRuleId',
-    dataManager: new DataManager (
-          { 
-            url: baseUrl, 
-            crossDomain: true 
-          },
-        ),
-        //binds the external data with node
-        doBinding: (nodeModel: NodeModel, data: ChatWorkflowRulesData, diagram: Diagram) => {
-          let buttonCount = 0;
-          if(data.chatWorkflowEditorTypeId == 2) {
-            buttonCount = data.fieldOptionDetails?.length || 0;
+    this.dataSourceSettings = {
+      id: 'id', parentId: 'parentRuleId',
+      dataManager: new DataManager (
+            { 
+              url: baseUrl, 
+              crossDomain: true 
+            },
+          ),
+          //binds the external data with node
+          doBinding: (nodeModel: NodeModel, data: ChatWorkflowRulesData, diagram: Diagram) => {
+            let buttonCount = 0;
+            if(data.chatWorkflowEditorTypeId == 2) {
+              buttonCount = data.fieldOptionDetails?.length || 0;
+            }
+            nodeModel.id= `node${data.id}`;
+            nodeModel.width= 200;
+            nodeModel.height= 150 + (buttonCount * 25);
           }
-          nodeModel.id= `node${data.id}`;
-          nodeModel.width= 200;
-          nodeModel.height= 150 + (buttonCount * 25);
-        }
-  };
-}
+    };
+  }
 
   ngAfterViewInit() {
 
   }
 
-  // Convert enum to array of objects
-  private enumToArray(enumObj: any): Array<{ text: string, value: number }> {
-    return Object.keys(enumObj)
-      .filter(key => isNaN(Number(key)))
-      .map(key => {
-        return {
-          text: key,
-          value: enumObj[key as keyof typeof enumObj]
-        }
-      });
-  }
-
   public onDiagramCreated(): void {
-    // (this.diagram as DiagramComponent).fitToPage();
-  };
+  }
 
   // Configure snapSettings to hide grid lines
   public snapSettings: SnapSettingsModel = {
@@ -245,7 +227,6 @@ ngOnInit() {
     newNode.id  = (this.diagram.nodes[index].addInfo as RuleData2).id;
     this.diagram.nodes[index].addInfo = newNode;
     this.diagram.refresh();
-    // this.diagram.fitToPage();
   }
 
   public onUserHandleMouseDown(event: UserHandleEventsArgs) {
