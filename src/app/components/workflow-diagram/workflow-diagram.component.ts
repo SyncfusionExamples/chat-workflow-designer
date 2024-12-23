@@ -208,7 +208,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
     // Add the new node to the diagram
     this.diagram.addNode(newNode);
     const index = this.diagram.nodes.findIndex(node => node.id === sourceNodeId);
-    (this.diagram.nodes[index].addInfo as RuleData2).successRuleId = (newNode.addInfo as RuleData2).id;
+    (this.diagram.nodes[index].data as RuleData2).successRuleId = (newNode.data as RuleData2).id;
     // Create a new connector to link the new node to the source node
     const newConnectorId = `connector${++this.connectorIdCounter}`;
     const newConnector: ConnectorModel = {
@@ -225,8 +225,8 @@ export class WorkflowDiagramComponent implements AfterViewInit {
 
   public onUpdateNode([sourceNodeId, newNode]: [string, RuleData2]) : void {
     const index = this.diagram.nodes.findIndex(node => node.id === sourceNodeId);
-    newNode.id  = (this.diagram.nodes[index].addInfo as RuleData2).id;
-    this.diagram.nodes[index].addInfo = newNode;
+    newNode.id  = (this.diagram.nodes[index].data as RuleData2).id;
+    this.diagram.nodes[index].data = newNode;
     this.diagram.refresh();
   }
 
@@ -254,9 +254,9 @@ export class WorkflowDiagramComponent implements AfterViewInit {
         this.diagram.selectedItems.userHandles[2].visible = false;
       }
       let nodeObject = this.diagram.getNodeObject(this.selectedBlockId);
-      let id = (nodeObject.addInfo as RuleData2).id;
-      const index = this.diagram.nodes.findIndex(node => (node.addInfo as RuleData2).successRuleId === id);
-      (this.diagram.nodes[index].addInfo as RuleData2).successRuleId = null;
+      let id = (nodeObject.data as RuleData2).id;
+      const index = this.diagram.nodes.findIndex(node => (node.data as RuleData2).successRuleId === id);
+      (this.diagram.nodes[index].data as RuleData2).successRuleId = null;
       this.diagram.remove(nodeObject);
     }
   }

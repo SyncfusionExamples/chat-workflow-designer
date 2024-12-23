@@ -153,7 +153,7 @@ export class WorkflowSidebarComponent {
   // Set the node(block) values
   setBlockValues(nodeInfo: NodeModel) {
     this.isEdit = true;
-    let nodeDetails = nodeInfo.addInfo as RuleData2;
+    let nodeDetails = nodeInfo.data as RuleData2;
     this.soureId = nodeInfo?.id ?? "";
     this.nodeBlockType = nodeDetails.chatWorkflowBlockId;
     this.nodeEditType = nodeDetails.chatWorkflowEditorTypeId ?? 0;
@@ -351,7 +351,7 @@ export class WorkflowSidebarComponent {
       shape: {
         type: 'HTML',
       },
-      addInfo: nodeInfo
+      data: nodeInfo
     };
   }
 
