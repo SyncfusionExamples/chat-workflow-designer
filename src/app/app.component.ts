@@ -10,4 +10,5 @@ import { WorkflowDiagramComponent } from './components/workflow-diagram/workflow
 })
 
 export class AppComponent {
+public workflowID: number = 7;
 }

@@ -63,3 +63,17 @@ export interface RuleData2 {
   messageDetails?: MessageDetails | null;
   fieldOptionDetails?: FieldOptionDetail[] | null;
 }
+
+// Define the main Workflow interface
+export interface ChatWorkflowRulesData {
+  id: number;
+  successWorkflowId?: number | null;
+  successRuleId?: number | null;
+  chatWorkflowBlockId: number;
+  chatWorkflowEditorTypeId?: number | null;
+  fieldDetails?: FieldDetails | null;
+  branchDetails?: BranchDetail[] | null;
+  messageDetails?: MessageDetails | null;
+  fieldOptionDetails?: FieldOptionDetail[] | null;
+  parentId?: number | null;
+}
