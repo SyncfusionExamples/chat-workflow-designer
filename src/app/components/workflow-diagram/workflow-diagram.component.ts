@@ -318,7 +318,6 @@ export class WorkflowDiagramComponent implements AfterViewInit{
     this.isParentListItem = false; // The value is reset here, to handle document click case of dropdown
     // Reset ListView to its initial state before opening
     if (this.listView) {
-      // this.listView.dataSource = this.listdata; // Reset data
       while ((this.listView as any).curDSLevel.length > 0) {
         this.listView.back();
       }
