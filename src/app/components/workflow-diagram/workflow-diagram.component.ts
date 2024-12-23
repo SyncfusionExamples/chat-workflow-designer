@@ -1,5 +1,8 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, viewChild, ViewChild } from '@angular/core';
-import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, HierarchicalTree, HierarchicalTreeService, HtmlModel, IClickEventArgs, IExportOptions, LayoutModel, LineDistribution, Node, NodeModel, PrintAndExport, SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel } from '@syncfusion/ej2-angular-diagrams';
+import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, 
+  HierarchicalTree, HierarchicalTreeService, HtmlModel, IClickEventArgs, IExportOptions, LayoutModel, LineDistribution, Node, NodeModel, PrintAndExport, 
+  SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel, DataSourceModel, 
+  DataBindingService} from '@syncfusion/ej2-angular-diagrams';
 import { ChatWorkflowRulesData, FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData, RuleData2, WorkflowRulesData } from '../../models/appModel';
 import { RULE_DATA, RULE_DATA2, RULE_DATA3 } from '../../data/rule-data';
 import { DialogModule } from '@syncfusion/ej2-angular-popups';
@@ -19,6 +22,7 @@ import sampleWorkflowData from '../../data/sample-workflow-data.json'; // Adjust
 import { AsyncSettingsModel, FileInfo, Uploader } from '@syncfusion/ej2-inputs';
 import { WorkflowSidebarComponent } from '../workflow-sidebar/workflow-sidebar.component';  // Import child component
 import { WorkflowService } from '../../services/workflow.service';
+import { Adaptor, DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
 
 
 Diagram.Inject(HierarchicalTree, LineDistribution, PrintAndExport);
@@ -26,7 +30,7 @@ Diagram.Inject(HierarchicalTree, LineDistribution, PrintAndExport);
 @Component({
   selector: 'app-workflow-diagram',
   standalone: true,
-  providers: [HierarchicalTreeService, WorkflowService],
+  providers: [HierarchicalTreeService, WorkflowService, DataBindingService],
   imports: [DiagramModule, DialogModule, DropDownButtonModule, ButtonModule, CommonModule, ListViewModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule, DatePickerModule, DateTimePickerModule, SwitchModule, ToolbarModule, UploaderModule, WorkflowSidebarComponent],
   templateUrl: './workflow-diagram.component.html',
   styleUrl: './workflow-diagram.component.scss'
@@ -37,6 +41,8 @@ export class WorkflowDiagramComponent implements AfterViewInit {
   @ViewChild('listview') listView!: ListViewComponent;
   @ViewChild('workflowSidebar') sidebarComponent!: WorkflowSidebarComponent;
   @ViewChild('fileInput', { static: false }) fileInput!: ElementRef;
+
+  @Input() workflowID!: number | null;
 
   public chatWorkflowEditorTypeEnum = ChatWorkflowEditorTypeEnum; 
   public chatWorkflowBlockTypeEnum = ChatWorkflowBlockTypeEnum;
@@ -94,30 +100,39 @@ export class WorkflowDiagramComponent implements AfterViewInit {
   public selectedBlockId!: string;
   public selectedWorkFlowId!: number;
 
+  public dataSourceSettings!: DataSourceModel;
+
   constructor(private workflowService: WorkflowService) {
-    // Initialize nodes and connectors based on the data
-    // this.initializeDiagramElements();
-    this.loadDiagramData();
     this.textFormatDDLOptions = this.enumToArray(TextFormatEnum);
+
   }
+
+ngOnInit() {
+ let baseUrl = 'https://localhost:44303/chatwidget-api/v1/workflow-designer/'+ this.workflowID+'/rules';
+
+  this.dataSourceSettings = {
+    id: 'id', parentId: 'parentRuleId',
+    dataManager: new DataManager (
+          { 
+            url: baseUrl, 
+            crossDomain: true 
+          },
+        ),
+        //binds the external data with node
+        doBinding: (nodeModel: NodeModel, data: ChatWorkflowRulesData, diagram: Diagram) => {
+          let buttonCount = 0;
+          if(data.chatWorkflowEditorTypeId == 2) {
+            buttonCount = data.fieldOptionDetails?.length || 0;
+          }
+          nodeModel.id= `node${data.id}`;
+          nodeModel.width= 200;
+          nodeModel.height= 150 + (buttonCount * 25);
+        }
+  };
+}
 
   ngAfterViewInit() {
-  }
 
-  private loadDiagramData() {
-    var workflowId = 7;
-    this.workflowService.getDiagramData(workflowId).subscribe({
-      next: (response) => {
-        if (response && response.result) {
-          this.initializeDiagramElements(response);
-        } else {
-          console.warn('Received unexpected response structure:', response);
-        }
-      },
-      error: (error) => {
-        console.error('Error fetching diagram data:', error);
-      }
-    });
   }
 
   // Convert enum to array of objects
@@ -131,54 +146,9 @@ export class WorkflowDiagramComponent implements AfterViewInit {
         }
       });
   }
-  
-  private initializeDiagramElements(data: WorkflowRulesData): void {
-    this.selectedWorkFlowId = 1; // Get from DB
-    data.result.forEach(item => {
-      let buttonCount = 0;
-      if(item.chatWorkflowEditorTypeId == 2) {
-        buttonCount = item.fieldOptionDetails?.length || 0;
-      }
-      // Create nodes based on the data
-      var nodedata = {
-        id: `node${item.id}`,
-        // annotations: [{ content: `node${item['id']}` }],
-        width: 200,
-        height: 150 + (buttonCount * 25),
-        addInfo: item
-      };
-      this.nodes.push(nodedata);
-      // this.diagram.addNode(nodedata);
-
-      // Create connectors from success_rule_id
-      if (item['successRuleId']) {
-        var connectorData = {
-          id: `connector${item['id']}-s${item['successRuleId']}`,
-          sourceID: `node${item['id']}`,
-          targetID: `node${item['successRuleId']}`,
-          // annotations: [{ content: 'success', alignment: 'Center'}]
-        };
-        this.connectors.push(connectorData);
-        // this.diagram.addConnector(connectorData);
-      }
-      // if (item.branchDetails) {
-      //   item.branchDetails.forEach(branch: any => {
-      //     if (branch.successRuleId) {
-      //       this.connectors.push({
-      //         id: `connector${item.id}-s${branch.successRuleId}`,
-      //         sourceID: `node${item.id}`,
-      //         targetID: `node${branch.successRuleId}`,
-      //         annotations: [{ content: 'success', alignment: 'Center' }]
-      //       });
-      //     }
-      //   });
-      // }
-    });
-    this.diagram.refresh();
-  }
 
   public onDiagramCreated(): void {
-    (this.diagram as DiagramComponent).fitToPage();
+    // (this.diagram as DiagramComponent).fitToPage();
   };
 
   // Configure snapSettings to hide grid lines
@@ -198,9 +168,9 @@ export class WorkflowDiagramComponent implements AfterViewInit {
     connectionPointOrigin: ConnectionPointOrigin.DifferentPoint,
     horizontalSpacing: 40,
     verticalSpacing: 40,
-    horizontalAlignment: 'Left',
-    verticalAlignment: 'Top',
-    margin: { left: 0, right: 0, top: 0, bottom: 0 },
+    horizontalAlignment: 'Center',
+    verticalAlignment: 'Center',
+    margin: { left: 0, right: 0, top: 50, bottom: 0 },
     orientation: 'TopToBottom',
   };
 
@@ -275,7 +245,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
     newNode.id  = (this.diagram.nodes[index].addInfo as RuleData2).id;
     this.diagram.nodes[index].addInfo = newNode;
     this.diagram.refresh();
-    this.diagram.fitToPage();
+    // this.diagram.fitToPage();
   }
 
   public onUserHandleMouseDown(event: UserHandleEventsArgs) {

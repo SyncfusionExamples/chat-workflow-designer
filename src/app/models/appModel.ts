@@ -93,6 +93,7 @@ export interface ChatWorkflowRulesData {
   branchDetails?: BranchDetail[] | null;
   messageDetails?: MessageDetails | null;
   fieldOptionDetails?: FieldOptionDetail[] | null;
+  parentId?: number | null;
 }
 
 export interface WorkflowRulesData {
