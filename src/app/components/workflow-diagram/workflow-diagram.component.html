@@ -38,8 +38,19 @@
     </ng-template>
 
     <ng-template #nodeTemplate let-data>
-      <div><label style="padding: 5px;">{{ data.data.fieldDetails.label }}</label></div>
+      @if(data.data.chatWorkflowBlockId !== chatWorkflowBlockTypeEnum.SendTextMessage){
+        <div><label style="padding: 5px;">{{ data.data.fieldDetails.label }}</label></div>
+      }
       @switch (data.data.chatWorkflowBlockId){
+        @case(chatWorkflowBlockTypeEnum.SendTextMessage){
+          <ng-container>
+            <label>{{data.data.messageDetails.text}}</label>
+            <div *ngIf="data.data.messageDetails.isPrivate" class="private-label-container">
+              <hr class="separator"/>
+              <div class="private-label"><i>Private</i></div>
+            </div>
+          </ng-container>
+        }
         @case(chatWorkflowBlockTypeEnum.GetPickerInput){
           @switch (data.data.chatWorkflowEditorTypeId){
             @case (chatWorkflowEditorTypeEnum.Boolean){
