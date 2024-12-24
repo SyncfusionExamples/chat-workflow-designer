@@ -38,8 +38,15 @@
     </ng-template>
 
     <ng-template #nodeTemplate let-data>
-      <div><label style="padding: 5px;">{{ data.addInfo.fieldDetails.label }}</label></div>
+      @if(data.addInfo.chatWorkflowBlockId !== chatWorkflowBlockTypeEnum.SendTextMessage){
+        <div><label style="padding: 5px;">{{ data.addInfo.fieldDetails.label }}</label></div>
+      }
       @switch (data.addInfo.chatWorkflowBlockId){
+        @case(chatWorkflowBlockTypeEnum.SendTextMessage){
+          <ng-container>
+            <label>{{data.addInfo.messageDetails.text}}</label>
+          </ng-container>
+        }
         @case(chatWorkflowBlockTypeEnum.GetPickerInput){
           @switch (data.addInfo.chatWorkflowEditorTypeId){
             @case (chatWorkflowEditorTypeEnum.Boolean){

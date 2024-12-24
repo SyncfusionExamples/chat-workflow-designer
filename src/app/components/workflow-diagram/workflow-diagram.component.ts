@@ -26,7 +26,7 @@ Diagram.Inject(HierarchicalTree, LineDistribution, PrintAndExport);
   selector: 'app-workflow-diagram',
   standalone: true,
   providers: [HierarchicalTreeService],
-  imports: [DiagramModule, DialogModule, DropDownButtonModule, ButtonModule, CommonModule, ListViewModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule, DatePickerModule, DateTimePickerModule, SwitchModule, ToolbarModule, UploaderModule, WorkflowSidebarComponent],
+  imports: [DiagramModule, DialogModule, DropDownButtonModule, ButtonModule, CommonModule, ListViewModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule, DatePickerModule, DateTimePickerModule, ToolbarModule, UploaderModule, WorkflowSidebarComponent],
   templateUrl: './workflow-diagram.component.html',
   styleUrl: './workflow-diagram.component.scss'
 })
@@ -39,7 +39,6 @@ export class WorkflowDiagramComponent implements AfterViewInit{
 
   public chatWorkflowEditorTypeEnum = ChatWorkflowEditorTypeEnum; 
   public chatWorkflowBlockTypeEnum = ChatWorkflowBlockTypeEnum;
-  // public data: RuleData[] = RULE_DATA;
   public data: RuleData2[] = RULE_DATA3;
   public nodes: NodeModel[] = [];
   public connectors: ConnectorModel[] = [];
@@ -84,8 +83,6 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   private nodeIdCounter: number = 0;
   private connectorIdCounter: number = 0;
   public newNodeData: RuleData2[] = [];
-  textFormatDDLOptions: Array<{ text: string, value: number }>;
-  ddlTextFormatFields: Object = { text: 'text', value: 'value' };
 
   public sidebarHeader!: string;
   public nodeBlockType!: number;
@@ -96,22 +93,9 @@ export class WorkflowDiagramComponent implements AfterViewInit{
   constructor() {
     // Initialize nodes and connectors based on the data
     this.initializeDiagramElements();
-    this.textFormatDDLOptions = this.enumToArray(TextFormatEnum);
   }
 
   ngAfterViewInit() {
-  }
-
-  // Convert enum to array of objects
-  private enumToArray(enumObj: any): Array<{ text: string, value: number }> {
-    return Object.keys(enumObj)
-      .filter(key => isNaN(Number(key)))
-      .map(key => {
-        return {
-          text: key,
-          value: enumObj[key as keyof typeof enumObj]
-        }
-      });
   }
   
   private initializeDiagramElements(): void {
