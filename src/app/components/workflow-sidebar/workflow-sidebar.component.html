@@ -167,6 +167,16 @@
                         }
                     }
                 }
+                @case(chatWorkflowBlockTypeEnum.SendTextMessage){
+                    <div>                        
+                        <label>Text Format: </label>
+                        <ejs-dropdownlist #ddlTextFormat [(value)]='value' [dataSource]="textFormatDDLOptions" [fields]="ddlTextFormatFields" cssClass="e-primary"></ejs-dropdownlist>
+                        <div>
+                            <label>Is Private: </label>
+                            <ejs-switch [(ngModel)]="checkedIsPrivate" name="customMessageIsPrivate" cssClass="custom-iOS" [checked]="false" ></ejs-switch>
+                        </div>
+                    </div> 
+                }
             }
         </form>
     </div>

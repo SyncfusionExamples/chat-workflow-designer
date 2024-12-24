@@ -1,19 +1,19 @@
 import { Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
-import { ClickEventArgs, SidebarComponent, SidebarModule, ToolbarModule } from '@syncfusion/ej2-angular-navigations';
+import { SidebarComponent, SidebarModule } from '@syncfusion/ej2-angular-navigations';
 import { TextFormatEnum, ChatWorkflowEditorTypeEnum, ChatWorkflowBlockTypeEnum } from '../../models/enum';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData2 } from '../../models/appModel';
 import { NodeModel } from '@syncfusion/ej2-angular-diagrams';
-import { DropDownListComponent } from '@syncfusion/ej2-angular-dropdowns';
+import { DropDownListComponent, DropDownListModule } from '@syncfusion/ej2-angular-dropdowns';
 import { DatePickerModule, DateTimePickerModule } from '@syncfusion/ej2-angular-calendars';
-import { ButtonModule } from '@syncfusion/ej2-angular-buttons';
+import { ButtonModule, SwitchModule } from '@syncfusion/ej2-angular-buttons';
 
 
 @Component({
   selector: 'app-workflow-sidebar',
   standalone: true,
-  imports: [SidebarModule, FormsModule, CommonModule, DatePickerModule, DateTimePickerModule, ButtonModule],
+  imports: [SidebarModule, FormsModule, CommonModule, DatePickerModule, DateTimePickerModule, ButtonModule, SwitchModule, DropDownListModule ],
   templateUrl: './workflow-sidebar.component.html',
   styleUrl: './workflow-sidebar.component.scss'
 })
@@ -43,7 +43,6 @@ export class WorkflowSidebarComponent {
   public type: string = 'Push';
   public width: string = '280px';
   public checkedIsPrivate: boolean = false;
-  public customMessage: string = '';
   public newNodeWidth: number = 200;
   public newNodeHeight: number = 150;
   public newNode: NodeModel = {};
@@ -56,6 +55,10 @@ export class WorkflowSidebarComponent {
   public newNodeInfo: any;
   private updatePending = false;
 
+  textFormatDDLOptions: Array<{ text: string, value: number }>;
+  ddlTextFormatFields: Object = { text: 'text', value: 'value' };
+  public value = 1;
+
   @Input() nodeEditType!: number;
   @Input() nodeBlockType!: number;
   @Input() sidebarHeader!: string;
@@ -66,8 +69,21 @@ export class WorkflowSidebarComponent {
 
 
   constructor() {
+    this.textFormatDDLOptions = this.enumToArray(TextFormatEnum);
   }
 
+  // Convert enum to array of objects
+  private enumToArray(enumObj: any): Array<{ text: string, value: number }> {
+    return Object.keys(enumObj)
+      .filter(key => isNaN(Number(key)))
+      .map(key => {
+        return {
+          text: key,
+          value: enumObj[key as keyof typeof enumObj]
+        }
+      });
+  }
+  
   public onSideBarCreated(args: any) {
     (this.sidebar as SidebarComponent).hide();
     (this.sidebar as SidebarComponent).position = "Right";
@@ -180,13 +196,15 @@ export class WorkflowSidebarComponent {
     this.fieldOptionRegexValue = "";
     this.addOption = false;
     this.editIndex = -1;
+    this.checkedIsPrivate = false;
+    this.ddlTextFormat.value = TextFormatEnum.Text
   }
   // Construct the add or update block details
   addOrUpdateBlock(sourceNodeId: string) {
     switch (this.nodeBlockType) {
       case (this.chatWorkflowBlockTypeEnum.SendTextMessage): {
         let messageInfo: MessageDetails = {
-          text: this.customMessage,
+          text: this.sideBarLabel,
           isPrivate: this.checkedIsPrivate,
           textFormat: this.ddlTextFormat.value as TextFormatEnum
         }
