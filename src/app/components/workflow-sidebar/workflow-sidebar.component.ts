@@ -204,7 +204,7 @@ export class WorkflowSidebarComponent {
     switch (this.nodeBlockType) {
       case (this.chatWorkflowBlockTypeEnum.SendTextMessage): {
         let messageInfo: MessageDetails = {
-          text: this.sideBarLabel,
+          text: this.sideBarDescription,
           isPrivate: this.checkedIsPrivate,
           textFormat: this.ddlTextFormat.value as TextFormatEnum
         }
