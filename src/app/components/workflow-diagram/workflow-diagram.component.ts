@@ -221,7 +221,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
       fieldDetails: newNode.fieldDetails,
       fieldOptionDetails : newNode.fieldOptionDetails
     };
-    this.workflowService.updateDiagramData(newNode.chatWorkflowId, newNode.id, workBody).then((result) => {
+    this.workflowService.updateRule(newNode.chatWorkflowId, newNode.id, workBody).then((result) => {
       console.log(result.message);
       this.diagram.setProperties({ nodes: [], connectors: [] }, true);
       this.diagram.refresh();
@@ -236,7 +236,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
   public onDeleteNode(nodeObject) : void{
     let ruleData : RuleData2 = nodeObject.data as RuleData2;
     const index = this.diagram.nodes.findIndex(node => (node.data as RuleData2).successRuleId === ruleData.id);
-    this.workflowService.deleteDiagramData(ruleData.id).then((result) => {
+    this.workflowService.deleteRule(ruleData.id).then((result) => {
       console.log(result.message);
       this.diagram.setProperties({ nodes: [], connectors: [] }, true);
       this.diagram.refresh();

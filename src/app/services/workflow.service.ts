@@ -15,7 +15,7 @@ export class WorkflowService {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
 
-  updateDiagramData(workflowId :number , ruleId: number, body : ChatWorkflowRulesData2) :  Promise<{ message: string }> {
+  updateRule(workflowId :number , ruleId: number, body : ChatWorkflowRulesData2) :  Promise<{ message: string }> {
     const url = WorkflowApiPaths.updateWorkflowRules
     .replace('{baseUrl}', this.baseUrl)
     .replace('{workflowId}', workflowId.toString())
@@ -24,7 +24,7 @@ export class WorkflowService {
     return this.http.put<{ message: string }>(url, body, this.httpOptions).toPromise();
   }
 
-  deleteDiagramData(ruleId: number): Promise<{ message: string }> {
+  deleteRule(ruleId: number): Promise<{ message: string }> {
     const url = WorkflowApiPaths.updateWorkflowRules
     .replace('{baseUrl}', this.baseUrl)
     .replace('{ruleId}', ruleId.toString());
