@@ -45,6 +45,9 @@
         @case(chatWorkflowBlockTypeEnum.SendTextMessage){
           <ng-container>
             <label>{{data.data.messageDetails.text}}</label>
+            <div>
+              <ejs-checkbox label="isPrivate message" [checked]="data.data.messageDetails.isPrivate" [disabled] = "true"></ejs-checkbox>
+            </div>
           </ng-container>
         }
         @case(chatWorkflowBlockTypeEnum.GetPickerInput){
