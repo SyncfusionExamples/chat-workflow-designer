@@ -38,7 +38,7 @@
     </ng-template>
 
     <ng-template #nodeTemplate let-data>
-      @if(data.addInfo.chatWorkflowBlockId !== chatWorkflowBlockTypeEnum.SendTextMessage){
+      @if(data.data.chatWorkflowBlockId !== chatWorkflowBlockTypeEnum.SendTextMessage){
         <div><label style="padding: 5px;">{{ data.data.fieldDetails.label }}</label></div>
       }
       @switch (data.data.chatWorkflowBlockId){
