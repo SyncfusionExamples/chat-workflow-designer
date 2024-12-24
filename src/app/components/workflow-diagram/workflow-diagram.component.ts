@@ -3,7 +3,7 @@ import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, C
   HierarchicalTree, HierarchicalTreeService, HtmlModel, IClickEventArgs, IExportOptions, LayoutModel, LineDistribution, Node, NodeModel, PrintAndExport, 
   SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel, DataSourceModel, 
   DataBindingService} from '@syncfusion/ej2-angular-diagrams';
-import { ChatWorkflowRulesData, FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData2 } from '../../models/appModel';
+import { ChatWorkflowRulesData, ChatWorkflowRulesData2, FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData2 } from '../../models/appModel';
 import { RULE_DATA, RULE_DATA2, RULE_DATA3 } from '../../data/rule-data';
 import { DialogModule } from '@syncfusion/ej2-angular-popups';
 import { BeforeOpenCloseMenuEventArgs, DropDownButtonComponent, DropDownButtonModule, ItemModel, OpenCloseMenuEventArgs } from '@syncfusion/ej2-angular-splitbuttons';
@@ -22,6 +22,8 @@ import sampleWorkflowData from '../../data/sample-workflow-data.json'; // Adjust
 import { AsyncSettingsModel, FileInfo, Uploader } from '@syncfusion/ej2-inputs';
 import { WorkflowSidebarComponent } from '../workflow-sidebar/workflow-sidebar.component';  // Import child component
 import { Adaptor, DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
+import { WorkflowService } from '../../services/workflow.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
 Diagram.Inject(HierarchicalTree, LineDistribution, PrintAndExport);
@@ -29,7 +31,7 @@ Diagram.Inject(HierarchicalTree, LineDistribution, PrintAndExport);
 @Component({
   selector: 'app-workflow-diagram',
   standalone: true,
-  providers: [HierarchicalTreeService, DataBindingService],
+  providers: [HierarchicalTreeService, DataBindingService, WorkflowService],
   imports: [DiagramModule, DialogModule, DropDownButtonModule, ButtonModule, CommonModule, ListViewModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule, DatePickerModule, DateTimePickerModule, SwitchModule, ToolbarModule, UploaderModule, WorkflowSidebarComponent],
   templateUrl: './workflow-diagram.component.html',
   styleUrl: './workflow-diagram.component.scss'
@@ -99,7 +101,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
 
   public dataSourceSettings!: DataSourceModel;
 
-  constructor() {
+  constructor(private workflowService: WorkflowService) {
   }
 
   ngOnInit() {
@@ -196,6 +198,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
         this.diagram.selectedItems.userHandles[2].visible = false;
       }
        this.selectedBlockId = clickedBlock.id;
+       this.selectedWorkFlowId = this.workflowID;
     }
   }
 
@@ -205,31 +208,44 @@ export class WorkflowDiagramComponent implements AfterViewInit {
 
   // Method to add a new node and connect it
   public onaddNodeAndConnect([sourceNodeId, newNode]: [string, NodeModel]): void {
-    // Add the new node to the diagram
-    this.diagram.addNode(newNode);
-    const index = this.diagram.nodes.findIndex(node => node.id === sourceNodeId);
-    (this.diagram.nodes[index].data as RuleData2).successRuleId = (newNode.data as RuleData2).id;
-    // Create a new connector to link the new node to the source node
-    const newConnectorId = `connector${++this.connectorIdCounter}`;
-    const newConnector: ConnectorModel = {
-      id: newConnectorId,
-      sourceID: sourceNodeId,
-      targetID: newNode.id,
-      type: 'Orthogonal',
-      style: { strokeColor: '#6BA5D7', strokeWidth: 1 }
-    };
-    // Add the connector to the diagram
-    this.diagram.addConnector(newConnector);
-    this.diagram.doLayout();
-  }
-
-  public onUpdateNode([sourceNodeId, newNode]: [string, RuleData2]) : void {
-    const index = this.diagram.nodes.findIndex(node => node.id === sourceNodeId);
-    newNode.id  = (this.diagram.nodes[index].data as RuleData2).id;
-    this.diagram.nodes[index].data = newNode;
+    this.diagram.setProperties({ nodes: [], connectors: [] }, true);
     this.diagram.refresh();
   }
 
+  // Update the Node and reload
+  public onUpdateNode([sourceNodeId, newNode]: [string, RuleData2]) : void {
+    const index = this.diagram.nodes.findIndex(node => node.id === sourceNodeId);
+    newNode.id  = (this.diagram.nodes[index].data as RuleData2).id;
+    var workBody : ChatWorkflowRulesData2 = {
+      chatWorkflowEditorTypeId : newNode.chatWorkflowEditorTypeId,
+      fieldDetails: newNode.fieldDetails,
+      fieldOptionDetails : newNode.fieldOptionDetails
+    };
+    this.workflowService.updateDiagramData(newNode.chatWorkflowId, newNode.id, workBody).then((result) => {
+      console.log(result.message);
+      this.diagram.setProperties({ nodes: [], connectors: [] }, true);
+      this.diagram.refresh();
+    }).catch((e : HttpErrorResponse) => {
+      if(e && e.error?.Message){
+        console.log("Update failed");
+      }
+    });
+  }
+
+  // on node delete 
+  public onDeleteNode(nodeObject) : void{
+    let ruleData : RuleData2 = nodeObject.data as RuleData2;
+    const index = this.diagram.nodes.findIndex(node => (node.data as RuleData2).successRuleId === ruleData.id);
+    this.workflowService.deleteDiagramData(ruleData.id).then((result) => {
+      console.log(result.message);
+      this.diagram.setProperties({ nodes: [], connectors: [] }, true);
+      this.diagram.refresh();
+    }).catch((e : HttpErrorResponse) =>{
+      if(e&& e.error?.Message){
+        console.log("Delete failed");
+      }
+    });
+  }
   public onUserHandleMouseDown(event: UserHandleEventsArgs) {
     if(event.element.name === 'addBlock') {
       if(this.diagram.selectedItems.userHandles){
@@ -254,10 +270,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
         this.diagram.selectedItems.userHandles[2].visible = false;
       }
       let nodeObject = this.diagram.getNodeObject(this.selectedBlockId);
-      let id = (nodeObject.data as RuleData2).id;
-      const index = this.diagram.nodes.findIndex(node => (node.data as RuleData2).successRuleId === id);
-      (this.diagram.nodes[index].data as RuleData2).successRuleId = null;
-      this.diagram.remove(nodeObject);
+      this.onDeleteNode(nodeObject);
     }
   }
 

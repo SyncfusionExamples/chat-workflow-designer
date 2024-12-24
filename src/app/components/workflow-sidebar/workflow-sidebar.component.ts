@@ -87,6 +87,7 @@ export class WorkflowSidebarComponent {
   onUpdateCloseSideBarClick(): void {
     this.addOrUpdateBlock(this.soureId)
     this.sidebar?.hide();
+    this.removeSetBlockValues();
   }
   // Cancel the add or update 
   onCancelSideBarClick(): void {
@@ -100,7 +101,7 @@ export class WorkflowSidebarComponent {
   // Add and Save option
   addOrUpdateSaveOption(label: string, value: string, description: string | null, labelInput: HTMLInputElement, valueInput: HTMLInputElement, descriptionInput: HTMLInputElement | null): void {
     const option = { label: label.trim(), value: value.trim(), description };
-    if(this.isEdit){
+    if(this.isEditButton){
       this.options[this.editIndex] = option;
     } 
     else {
@@ -215,7 +216,7 @@ export class WorkflowSidebarComponent {
             break;
           }
           case (this.chatWorkflowEditorTypeEnum.MultiSelect): {
-            let fieldValidationInfo = this.createFieldValidationInfo(this.fieldOptionMinValue.toString(), this.fieldOptionMaxValue.toString(), null);
+            let fieldValidationInfo = this.createFieldValidationInfo(this.fieldOptionMinValue.toString(), this.fieldOptionMaxValue.toString(), "");
             let fieldOptionInfo = this.mapOptionsToFieldOptions();
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
             this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, fieldOptionInfo, null);
@@ -235,13 +236,13 @@ export class WorkflowSidebarComponent {
       case (this.chatWorkflowBlockTypeEnum.GetTextInput): {
         switch (this.nodeEditType) {
           case (this.chatWorkflowEditorTypeEnum.Text): {
-            let fieldValidationInfo = this.createFieldValidationInfo(null, this.fieldOptionMaxValue.toString(), null);
+            let fieldValidationInfo = this.createFieldValidationInfo("", this.fieldOptionMaxValue.toString(), "");
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
             this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
             break;
           }
           case (this.chatWorkflowEditorTypeEnum.TextArea): {
-            let fieldValidationInfo = this.createFieldValidationInfo(null, this.fieldOptionMaxValue.toString(), null);
+            let fieldValidationInfo = this.createFieldValidationInfo("", this.fieldOptionMaxValue.toString(), "");
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
             this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
             break;
@@ -252,7 +253,7 @@ export class WorkflowSidebarComponent {
             today.getDate() + 30; // Calculate 30 days from today
             const maxDate = today.toISOString().split('T')[0]; // Max date in YYYY-MM-DD format
 
-            let fieldValidationInfo = this.createFieldValidationInfo(minDate, maxDate, null);
+            let fieldValidationInfo = this.createFieldValidationInfo(minDate, maxDate, "");
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
             this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
             break;
@@ -262,25 +263,25 @@ export class WorkflowSidebarComponent {
             const minDateTime = now.toISOString(); // Current datetime in ISO format
             const maxDateTime = new Date(now.setDate(now.getDate() + 30)).toISOString(); // Max datetime, 30 days from now
 
-            let fieldValidationInfo = this.createFieldValidationInfo(minDateTime, maxDateTime, null);
+            let fieldValidationInfo = this.createFieldValidationInfo(minDateTime, maxDateTime, "");
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
             this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
             break;
           }
           case (this.chatWorkflowEditorTypeEnum.Number): {
-            let fieldValidationInfo = this.createFieldValidationInfo(this.fieldOptionMinValue.toString(), this.fieldOptionMaxValue.toString(), null);
+            let fieldValidationInfo = this.createFieldValidationInfo(this.fieldOptionMinValue.toString(), this.fieldOptionMaxValue.toString(), "");
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
             this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
             break;
           }
           case (this.chatWorkflowEditorTypeEnum.Decimal): {
-            let fieldValidationInfo = this.createFieldValidationInfo(this.fieldOptionMinValue.toString(), this.fieldOptionMaxValue.toString(), null);
+            let fieldValidationInfo = this.createFieldValidationInfo(this.fieldOptionMinValue.toString(), this.fieldOptionMaxValue.toString(), "");
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
             this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
             break;
           }
           case (this.chatWorkflowEditorTypeEnum.Regex): {
-            let fieldValidationInfo = this.createFieldValidationInfo(null, null, this.fieldOptionRegexValue);
+            let fieldValidationInfo = this.createFieldValidationInfo("", "", this.fieldOptionRegexValue);
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
             this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
             break;
@@ -319,11 +320,11 @@ export class WorkflowSidebarComponent {
     return this.options.map(button => ({
       label: button.label,
       value: button.value,
-      description: button.description ?? null
+      description: button.description ?? ""
     }));
   }
 
-  public createFieldValidationInfo(minValue: string | null, maxValue: string | null, regexValue: string | null): FieldValidation {
+  public createFieldValidationInfo(minValue: string | "", maxValue: string | "", regexValue: string | ""): FieldValidation {
     return {
       min: minValue,
       max: maxValue,
