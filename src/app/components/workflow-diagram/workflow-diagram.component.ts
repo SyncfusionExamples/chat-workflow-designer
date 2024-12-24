@@ -13,11 +13,11 @@ import { LIST_DATA } from '../../data/list-data';
 import { ClickEventArgs, ToolbarModule } from '@syncfusion/ej2-angular-navigations';
 import { FormsModule } from '@angular/forms';
 import workflowData from '../../data/workflow-data.json'; // Adjust the path as needed
-import { DropDownList, DropDownListComponent, DropDownListModule, MultiSelectModule } from '@syncfusion/ej2-angular-dropdowns';
+import { DropDownListModule, MultiSelectModule } from '@syncfusion/ej2-angular-dropdowns';
 import { NumericTextBoxModule, TextAreaModule, TextBoxModule, UploaderModule } from '@syncfusion/ej2-angular-inputs';
 import { DatePickerModule, DateTimePickerModule } from '@syncfusion/ej2-angular-calendars';
 import { TextFormatEnum, ChatWorkflowEditorTypeEnum, ChatWorkflowBlockTypeEnum } from '../../models/enum';
-import { ButtonModule, SwitchModule } from '@syncfusion/ej2-angular-buttons';
+import { ButtonModule } from '@syncfusion/ej2-angular-buttons';
 import sampleWorkflowData from '../../data/sample-workflow-data.json'; // Adjust the path as needed
 import { AsyncSettingsModel, FileInfo, Uploader } from '@syncfusion/ej2-inputs';
 import { WorkflowSidebarComponent } from '../workflow-sidebar/workflow-sidebar.component';  // Import child component
@@ -47,7 +47,6 @@ export class WorkflowDiagramComponent implements AfterViewInit {
 
   public chatWorkflowEditorTypeEnum = ChatWorkflowEditorTypeEnum; 
   public chatWorkflowBlockTypeEnum = ChatWorkflowBlockTypeEnum;
-  // public data: RuleData[] = RULE_DATA;
   public data: RuleData2[] = RULE_DATA3;
   public nodes: NodeModel[] = [];
   public connectors: ConnectorModel[] = [];
