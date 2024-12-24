@@ -57,7 +57,7 @@ export class WorkflowSidebarComponent {
 
   textFormatDDLOptions: Array<{ text: string, value: number }>;
   ddlTextFormatFields: Object = { text: 'text', value: 'value' };
-  public value = 2;
+  public value = 1;
 
   @Input() nodeEditType!: number;
   @Input() nodeBlockType!: number;
