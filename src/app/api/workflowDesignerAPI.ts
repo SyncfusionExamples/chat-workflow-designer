@@ -5,7 +5,7 @@ export interface WorkflowListPathsType {
 
 const apiPaths: WorkflowListPathsType = {
     updateWorkflowRules: `{baseUrl}/{workflowId}/rules/{ruleId}/update`,
-    deleteWorkflowRules: `{baseUrl}/rules/{ruleId}/delete`,
+    deleteWorkflowRules: `{baseUrl}/{ruleId}/rules`,
 }
 
 export const WorkflowApiPaths: WorkflowListPathsType = apiPaths;

@@ -25,10 +25,10 @@ export class WorkflowService {
   }
 
   deleteRule(ruleId: number): Promise<{ message: string }> {
-    const url = WorkflowApiPaths.updateWorkflowRules
+    const url = WorkflowApiPaths.deleteWorkflowRules
     .replace('{baseUrl}', this.baseUrl)
     .replace('{ruleId}', ruleId.toString());
 
-    return this.http.put<{ message: string }>(url, this.httpOptions).toPromise();
+    return this.http.delete<{ message: string }>(url, this.httpOptions).toPromise();
   }
 }
