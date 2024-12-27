@@ -38,19 +38,8 @@
     </ng-template>
 
     <ng-template #nodeTemplate let-data>
-      @if(data.data.chatWorkflowBlockId !== chatWorkflowBlockTypeEnum.SendTextMessage){
-        <div><label style="padding: 5px;">{{ data.data.fieldDetails.description }}</label></div>
-      }
+      <div><label style="padding: 5px;">{{ data.data.fieldDetails.label }}</label></div>
       @switch (data.data.chatWorkflowBlockId){
-        @case(chatWorkflowBlockTypeEnum.SendTextMessage){
-          <ng-container>
-            <label>{{data.data.messageDetails.text}}</label>
-            <div *ngIf="data.data.messageDetails.isPrivate" class="private-label-container">
-              <hr class="separator"/>
-              <div class="private-label"><i>Private</i></div>
-            </div>
-          </ng-container>
-        }
         @case(chatWorkflowBlockTypeEnum.GetPickerInput){
           @switch (data.data.chatWorkflowEditorTypeId){
             @case (chatWorkflowEditorTypeEnum.Boolean){
@@ -125,6 +114,39 @@
             }
           }
         }
+        @case(chatWorkflowBlockTypeEnum.BranchOnPickerInput){
+          @switch (data.data.chatWorkflowEditorTypeId){
+            @case (chatWorkflowEditorTypeEnum.ButtonsBranch){
+              <ng-container>
+                @for(option of data.data.fieldOptionDetails; track $index){
+                  <div class="button-item">
+                    <button ejs-button cssClass="e-primary" style="width: 75%;">{{$index+1}}.{{option.label}}</button>
+                    @if(checkBranchAdd(data.data.branchDetails, option.value)){
+                      <div class="dropDown-container{{$index}}">
+                        <button #dropdownbutton id="dropdownbutton-{{$index}}" ejs-dropdownbutton target="#listview"
+                        (open)="onOpenDropDownButton1($event, option, $index)" iconCss='e-icons e-plus' cssClass='e-caret-hide'
+                        (beforeClose)="onBeforeCloseDropDownButton($event)" (beforeOpen)="onBeforeOpenDropDownButton()"></button>
+                      </div>                      
+                    }
+                  </div>
+                }
+              </ng-container>
+            }
+            @case (chatWorkflowEditorTypeEnum.DropdownBranch){
+              <ng-container>
+                <ejs-dropdownlist [dataSource]="data.data.fieldOptionDetails" [fields]="ddlFields"
+                  [placeholder]="data.data.fieldDetails.placeholder" cssClass="e-primary" width="85%">
+                </ejs-dropdownlist>
+              </ng-container>
+            }
+            @case(chatWorkflowEditorTypeEnum.ListBranch){
+              <ng-container>
+                <ejs-listview id='sample-list' [dataSource]='data.data.fieldOptionDetails'
+                  [fields]='ddlFields'></ejs-listview>
+              </ng-container>
+            }
+          }
+        }
       }
     </ng-template>
   </ejs-diagram>
@@ -135,7 +157,7 @@
 
 </div>
 
-<app-workflow-sidebar #workflowSidebar [nodeEditType]="nodeEditType" [nodeBlockType]="nodeBlockType" [sidebarHeader]="sidebarHeader" [selectedBlockId]="selectedBlockId" [selectedWorkFlowId]="selectedWorkFlowId" (addNodeAndConnect)="onaddNodeAndConnect($event)" (updateNode)="onUpdateNode($event)"></app-workflow-sidebar>
+<app-workflow-sidebar #workflowSidebar [nodeEditType]="nodeEditType" [nodeBlockType]="nodeBlockType" [sidebarHeader]="sidebarHeader" [selectedBlockId]="selectedBlockId" [selectedWorkFlowId]="selectedWorkFlowId" (addNodeAndConnect)="onaddNodeAndConnect()" (updateNode)="onUpdateNode($event)"></app-workflow-sidebar>
 
 <!-- <div style="display: none;">
   <ejs-uploader #defaultupload id='fileupload' (success)='onUploadSuccess($event)' [asyncSettings]='asyncSettings'></ejs-uploader>

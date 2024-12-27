@@ -166,6 +166,32 @@
                         </div>
                     </div> 
                 }
+                @case(chatWorkflowBlockTypeEnum.BranchOnPickerInput){
+                    @switch(nodeEditType){
+                        @case(chatWorkflowEditorTypeEnum.ButtonsBranch){
+                        <div>
+                            <div class="button-list" *ngTemplateOutlet="removeButtonTemplate"></div>
+                            <div class="add-button-form" *ngTemplateOutlet="addOptionTemplate"></div>
+                        </div>
+                        }
+                        @case(chatWorkflowEditorTypeEnum.DropdownBranch){
+                        <div>
+                            <div *ngTemplateOutlet="sideBarDescriptionTemplate"></div>
+                            <div *ngTemplateOutlet="sideBarPlaceholderTemplate"></div>
+                            <div class="button-list"  *ngTemplateOutlet="removeButtonTemplate"></div>
+                            <div class="add-button-form" *ngTemplateOutlet="addOptionTemplate"></div>
+                        </div>
+                        }
+                        @case(chatWorkflowEditorTypeEnum.ListBranch){
+                        <div>
+                            <div *ngTemplateOutlet="sideBarDescriptionTemplate"></div>
+                            <div *ngTemplateOutlet="sideBarPlaceholderTemplate"></div>
+                            <div class="button-list"  *ngTemplateOutlet="removeButtonTemplate"></div>
+                            <div class="add-button-form" *ngTemplateOutlet="addOptionTemplate; context: { visibility: true }"></div>
+                        </div>
+                        }
+                    }
+                }
             }
         </form>
     </div>

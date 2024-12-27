@@ -2,23 +2,20 @@ import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, view
 import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, 
   HierarchicalTree, HierarchicalTreeService, HtmlModel, IClickEventArgs, IExportOptions, LayoutModel, LineDistribution, Node, NodeModel, PrintAndExport, 
   SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel, DataSourceModel, 
-  DataBindingService} from '@syncfusion/ej2-angular-diagrams';
-import { ChatWorkflowRulesData, ChatWorkflowRulesData2, FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData2 } from '../../models/appModel';
-import { RULE_DATA, RULE_DATA2, RULE_DATA3 } from '../../data/rule-data';
+  DataBindingService,
+  SnapConstraints} from '@syncfusion/ej2-angular-diagrams';
+import { BranchDetail, ChatWorkflowRulesData, ChatWorkflowRulesData2, FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData2 } from '../../models/appModel';
 import { DialogModule } from '@syncfusion/ej2-angular-popups';
 import { BeforeOpenCloseMenuEventArgs, DropDownButtonComponent, DropDownButtonModule, ItemModel, OpenCloseMenuEventArgs } from '@syncfusion/ej2-angular-splitbuttons';
 import { CommonModule } from '@angular/common';
 import { ListViewComponent, ListViewModule, SelectEventArgs } from '@syncfusion/ej2-angular-lists';
 import { LIST_DATA } from '../../data/list-data';
 import { ClickEventArgs, ToolbarModule } from '@syncfusion/ej2-angular-navigations';
-import { FormsModule } from '@angular/forms';
-import workflowData from '../../data/workflow-data.json'; // Adjust the path as needed
 import { DropDownListModule, MultiSelectModule } from '@syncfusion/ej2-angular-dropdowns';
 import { NumericTextBoxModule, TextAreaModule, TextBoxModule, UploaderModule } from '@syncfusion/ej2-angular-inputs';
 import { DatePickerModule, DateTimePickerModule } from '@syncfusion/ej2-angular-calendars';
 import { TextFormatEnum, ChatWorkflowEditorTypeEnum, ChatWorkflowBlockTypeEnum } from '../../models/enum';
 import { ButtonModule, SwitchModule } from '@syncfusion/ej2-angular-buttons';
-import sampleWorkflowData from '../../data/sample-workflow-data.json'; // Adjust the path as needed
 import { AsyncSettingsModel, FileInfo, Uploader } from '@syncfusion/ej2-inputs';
 import { WorkflowSidebarComponent } from '../workflow-sidebar/workflow-sidebar.component';  // Import child component
 import { Adaptor, DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
@@ -47,7 +44,6 @@ export class WorkflowDiagramComponent implements AfterViewInit {
 
   public chatWorkflowEditorTypeEnum = ChatWorkflowEditorTypeEnum; 
   public chatWorkflowBlockTypeEnum = ChatWorkflowBlockTypeEnum;
-  public data: RuleData2[] = RULE_DATA3;
   public nodes: NodeModel[] = [];
   public connectors: ConnectorModel[] = [];
   public closeOnDocumentClick: boolean = true;
@@ -137,9 +133,8 @@ export class WorkflowDiagramComponent implements AfterViewInit {
 
   // Configure snapSettings to hide grid lines
   public snapSettings: SnapSettingsModel = {
-    horizontalGridlines: { lineColor: 'transparent', lineIntervals: [] },
-    verticalGridlines: { lineColor: 'transparent', lineIntervals: [] },
-    constraints: 0 // Disable all snapping
+    constraints:  SnapConstraints.All,
+    gridType: 'Dots'
   };
 
   public selectedItems: SelectorModel = {
@@ -186,8 +181,14 @@ export class WorkflowDiagramComponent implements AfterViewInit {
     if (args.actualObject instanceof Node) {
       const clickedBlock = args.actualObject as Node;
       let isLastNode = clickedBlock.outEdges.length == 0;
+      this.selectedBlockId = clickedBlock.id;
+      this.selectedWorkFlowId = this.workflowID;
+      const index = this.diagram.nodes.findIndex(node => node.id === this.selectedBlockId);
+      let isBranchNode = (this.diagram.nodes[index].data as RuleData2).chatWorkflowBlockId == 10;
       if(isLastNode && this.diagram.selectedItems.userHandles) {
-        this.diagram.selectedItems.userHandles[0].visible = true;
+        if(!isBranchNode){
+          this.diagram.selectedItems.userHandles[0].visible = true;
+        }
         this.diagram.selectedItems.userHandles[1].visible = true;
         this.diagram.selectedItems.userHandles[2].visible = true;
       }
@@ -196,8 +197,6 @@ export class WorkflowDiagramComponent implements AfterViewInit {
         this.diagram.selectedItems.userHandles[1].visible = true;
         this.diagram.selectedItems.userHandles[2].visible = false;
       }
-       this.selectedBlockId = clickedBlock.id;
-       this.selectedWorkFlowId = this.workflowID;
     }
   }
 
@@ -205,8 +204,20 @@ export class WorkflowDiagramComponent implements AfterViewInit {
     return this.diagram.nodes.length;
   }
 
+  public checkBranchAdd(branchInfo : BranchDetail[] | null, value: string ): boolean{
+    if(branchInfo != null){
+      for (const branch of branchInfo) {
+        if (branch.value === value && branch.successRuleId == null) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   // Method to add a new node and connect it
-  public onaddNodeAndConnect([sourceNodeId, newNode]: [string, NodeModel]): void {
+  public onaddNodeAndConnect(): void {
+    console.log("Hoi");
     this.diagram.setProperties({ nodes: [], connectors: [] }, true);
     this.diagram.refresh();
   }
@@ -233,9 +244,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
 
   // on node delete 
   public onDeleteNode(nodeObject) : void{
-    let ruleData : RuleData2 = nodeObject.data as RuleData2;
-    const index = this.diagram.nodes.findIndex(node => (node.data as RuleData2).successRuleId === ruleData.id);
-    this.workflowService.deleteRule(ruleData.id).then((result) => {
+    this.workflowService.deleteRule((nodeObject.data as RuleData2).id).then((result) => {
       console.log(result.message);
       this.diagram.setProperties({ nodes: [], connectors: [] }, true);
       this.diagram.refresh();
@@ -245,6 +254,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
       }
     });
   }
+
   public onUserHandleMouseDown(event: UserHandleEventsArgs) {
     if(event.element.name === 'addBlock') {
       if(this.diagram.selectedItems.userHandles){
@@ -274,11 +284,23 @@ export class WorkflowDiagramComponent implements AfterViewInit {
   }
 
   public onOpenDropDownButton(args: OpenCloseMenuEventArgs) {
+    console.log("Drop :" + args.element );
+
     let dropDownContainer = document.querySelector('.dropDown-container') as HTMLElement;
     args.element.parentElement!.style.top = dropDownContainer.getBoundingClientRect().top + dropDownContainer.offsetHeight +'px';
 
     let ulElement = document.querySelector('ul') as HTMLElement;
     args.element.parentElement!.style.left = dropDownContainer.getBoundingClientRect().left - (ulElement.getBoundingClientRect().width / 2)+ (dropDownContainer.getBoundingClientRect().width / 2)+'px' ;
+  }
+
+  public onOpenDropDownButton1(args: OpenCloseMenuEventArgs, option: any, index: number) {
+    console.log("Option Selected:", option);
+    console.log("Index:", index);
+    this.dropdownbutton.toggle();
+    if(this.diagram.selectedItems.userHandles){
+      this.diagram.selectedItems.userHandles[1].visible = false;
+      this.diagram.selectedItems.userHandles[2].visible = false;
+    }
   }
 
   public onBeforeCloseDropDownButton(args: BeforeOpenCloseMenuEventArgs) {

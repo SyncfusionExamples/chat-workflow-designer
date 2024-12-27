@@ -59,9 +59,6 @@ export interface MessageDetails {
 
 // Define BranchDetails interface
 export interface BranchDetail {
-  id?: number | null;
-  type?: string | null;
-  name?: string | null;
   successRuleId?: number| null;
   successWorkflowId?: number | null;
   value?: string | null;
