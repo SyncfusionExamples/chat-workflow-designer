@@ -5,15 +5,12 @@
             <div class="form-header"> {{sidebarHeader}}</div>
             <div [hidden]="nodeBlockType === chatWorkflowBlockTypeEnum.GetCustomerDetails">
                 <label>
+                    Description: <input type="text" [(ngModel)]="sideBarDescription" name="singleDescription" placeholder="Enter description..." class="description-box" />
+                </label>
+                <label>
                     Label: <input type="text" [(ngModel)]="sideBarLabel" name="sideBarLabel" placeholder="Enter label..." class="description-box" required />
                 </label>
             </div>
-
-            <ng-template #sideBarDescriptionTemplate>
-                <label>
-                    Description: <input type="text" [(ngModel)]="sideBarDescription" name="singleDescription" placeholder="Enter description..." class="description-box" />
-                </label>
-            </ng-template>
 
             <ng-template #sideBarPlaceholderTemplate>
                 <label>
@@ -86,7 +83,6 @@
                         }
                         @case(chatWorkflowEditorTypeEnum.DropDown){
                         <div>
-                            <div *ngTemplateOutlet="sideBarDescriptionTemplate"></div>
                             <div *ngTemplateOutlet="sideBarPlaceholderTemplate"></div>
                             <div class="button-list"  *ngTemplateOutlet="removeButtonTemplate"></div>
                             <div class="add-button-form" *ngTemplateOutlet="addOptionTemplate"></div>
@@ -94,7 +90,6 @@
                         }
                         @case(chatWorkflowEditorTypeEnum.MultiSelect){
                         <div>
-                            <div *ngTemplateOutlet="sideBarDescriptionTemplate"></div>
                             <div *ngTemplateOutlet="sideBarPlaceholderTemplate"></div>
                             <div class="button-list" *ngTemplateOutlet="removeButtonTemplate"></div>
                             <div class="add-button-form" *ngTemplateOutlet="addOptionTemplate"></div>
@@ -104,7 +99,6 @@
                         }
                         @case(chatWorkflowEditorTypeEnum.List){
                         <div>
-                            <div *ngTemplateOutlet="sideBarDescriptionTemplate"></div>
                             <div *ngTemplateOutlet="sideBarPlaceholderTemplate"></div>
                             <div class="button-list"  *ngTemplateOutlet="removeButtonTemplate"></div>
                             <div class="add-button-form" *ngTemplateOutlet="addOptionTemplate; context: { visibility: true }"></div>
@@ -128,7 +122,6 @@
                         }
                         @case(chatWorkflowEditorTypeEnum.Number){
                         <div>
-                            <div *ngTemplateOutlet="sideBarDescriptionTemplate"></div>
                             <div *ngTemplateOutlet="sideBarPlaceholderTemplate"></div>
                             <div *ngTemplateOutlet="fieldOptionMinValueTemplate"></div>
                             <div *ngTemplateOutlet="fieldOptionMaxValueTemplate"></div>
@@ -136,7 +129,6 @@
                         }
                         @case(chatWorkflowEditorTypeEnum.Decimal){
                         <div>
-                            <div *ngTemplateOutlet="sideBarDescriptionTemplate"></div>
                             <div *ngTemplateOutlet="sideBarPlaceholderTemplate"></div>
                             <div *ngTemplateOutlet="fieldOptionMinValueTemplate"></div>
                             <div *ngTemplateOutlet="fieldOptionMaxValueTemplate"></div>
@@ -144,21 +136,18 @@
                         }
                         @case(chatWorkflowEditorTypeEnum.Text){
                         <div>
-                            <div *ngTemplateOutlet="sideBarDescriptionTemplate"></div>
                             <div *ngTemplateOutlet="sideBarPlaceholderTemplate"></div>
                             <div *ngTemplateOutlet="fieldOptionMaxValueTemplate"></div>
                         </div>
                         }
                         @case(chatWorkflowEditorTypeEnum.TextArea){
                         <div>
-                            <div *ngTemplateOutlet="sideBarDescriptionTemplate"></div>
                             <div *ngTemplateOutlet="sideBarPlaceholderTemplate"></div>
                             <div *ngTemplateOutlet="fieldOptionMaxValueTemplate"></div>
                         </div>
                         }
                         @case(chatWorkflowEditorTypeEnum.Regex){
                         <div>
-                            <div *ngTemplateOutlet="sideBarDescriptionTemplate"></div>
                             <div *ngTemplateOutlet="sideBarPlaceholderTemplate"></div>
                             <label>
                                 Regex: <input type="text" [(ngModel)]="fieldOptionRegexValue" name="fieldOptionRegexValue" placeholder="Enter regex here" class="description-box" />
