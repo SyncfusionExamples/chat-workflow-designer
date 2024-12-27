@@ -123,8 +123,9 @@
                     <button ejs-button cssClass="e-primary" style="width: 75%;">{{$index+1}}.{{option.label}}</button>
                     @if(checkBranchAdd(data.data.branchDetails, option.value)){
                       <div class="dropDown-container{{$index}}">
+                        <button (click)="onClick">Click</button>
                         <button #dropdownbutton id="dropdownbutton-{{$index}}" ejs-dropdownbutton target="#listview"
-                        (open)="onOpenDropDownButton1($event, option, $index)" iconCss='e-icons e-plus' cssClass='e-caret-hide'
+                        (open)="onOpenDropDownButton($event, option, $index)" iconCss='e-icons e-plus' cssClass='e-caret-hide'
                         (beforeClose)="onBeforeCloseDropDownButton($event)" (beforeOpen)="onBeforeOpenDropDownButton()"></button>
                       </div>                      
                     }

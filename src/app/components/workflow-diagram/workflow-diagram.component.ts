@@ -284,24 +284,19 @@ export class WorkflowDiagramComponent implements AfterViewInit {
     }
   }
 
-  public onOpenDropDownButton(args: OpenCloseMenuEventArgs) {
-    console.log("Drop :" + args.element );
-
+  public onOpenDropDownButton(args: OpenCloseMenuEventArgs, option: any | null, index: number | null) : void {
+    if(index!=null){
+      this.dropdownbutton.toggle();
+      if(this.diagram.selectedItems.userHandles){
+        this.diagram.selectedItems.userHandles[1].visible = false;
+        this.diagram.selectedItems.userHandles[2].visible = false;
+      }
+    }
     let dropDownContainer = document.querySelector('.dropDown-container') as HTMLElement;
     args.element.parentElement!.style.top = dropDownContainer.getBoundingClientRect().top + dropDownContainer.offsetHeight +'px';
 
     let ulElement = document.querySelector('ul') as HTMLElement;
     args.element.parentElement!.style.left = dropDownContainer.getBoundingClientRect().left - (ulElement.getBoundingClientRect().width / 2)+ (dropDownContainer.getBoundingClientRect().width / 2)+'px' ;
-  }
-
-  public onOpenDropDownButton1(args: OpenCloseMenuEventArgs, option: any, index: number) {
-    console.log("Option Selected:", option);
-    console.log("Index:", index);
-    this.dropdownbutton.toggle();
-    if(this.diagram.selectedItems.userHandles){
-      this.diagram.selectedItems.userHandles[1].visible = false;
-      this.diagram.selectedItems.userHandles[2].visible = false;
-    }
   }
 
   public onBeforeCloseDropDownButton(args: BeforeOpenCloseMenuEventArgs) {
