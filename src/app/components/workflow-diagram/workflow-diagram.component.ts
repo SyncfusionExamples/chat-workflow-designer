@@ -97,6 +97,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
   public nodeEditType!: number;
   public selectedBlockId!: string;
   public selectedWorkFlowId!: number;
+  public clickedNodeRuleId: number;
 
   public dataSourceSettings!: DataSourceModel;
 
@@ -197,6 +198,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
         this.diagram.selectedItems.userHandles[2].visible = false;
       }
        this.selectedBlockId = clickedBlock.id;
+       this.clickedNodeRuleId = (clickedBlock.data as RuleData2).id;
        this.selectedWorkFlowId = this.workflowID;
     }
   }
@@ -206,7 +208,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
   }
 
   // Method to add a new node and connect it
-  public onaddNodeAndConnect([sourceNodeId, newNode]: [string, NodeModel]): void {
+  public onDiagramRefresh(): void {
     this.diagram.setProperties({ nodes: [], connectors: [] }, true);
     this.diagram.refresh();
   }
