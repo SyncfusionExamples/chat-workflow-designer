@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { WorkflowApiPaths } from '../api/workflowDesignerAPI';
-import { ChatWorkflowRulesData2 } from '../models/appModel';
+import { ChatWorkflowAddRuleRequest, ChatWorkflowRulesData2 } from '../models/appModel';
 
 @Injectable({
   providedIn: 'root'
@@ -30,5 +30,11 @@ export class WorkflowService {
     .replace('{ruleId}', ruleId.toString());
 
     return this.http.delete<{ message: string }>(url, this.httpOptions).toPromise();
+  }
+
+  addRule(addRuleRequest: ChatWorkflowAddRuleRequest, ): Promise<{ workflowRuleId: number, message: string }> {
+    const url = WorkflowApiPaths.addWorkflowRules.replace('{baseUrl}', this.baseUrl);
+
+    return this.http.post<{ workflowRuleId: number, message: string }>(url, addRuleRequest, this.httpOptions).toPromise();
   }
 }

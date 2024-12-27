@@ -70,7 +70,7 @@ export interface RuleData2 {
   chatWorkflowId: number;
   successWorkflowId?: number | null;
   successRuleId?: number | null;
-  isActive: boolean;
+  isActive?: boolean;
   chatWorkflowBlockId: number;
   chatWorkflowEditorTypeId?: number | null;
   fieldDetails?: FieldDetails | null;
@@ -80,10 +80,20 @@ export interface RuleData2 {
 }
 
 // Define the main Workflow interface
-export interface ChatWorkflowRulesData {
+export interface ChatWorkflowRulesData extends ChatWorkflowCommonObject {
   id: number;
   successWorkflowId?: number | null;
   successRuleId?: number | null;
+}
+
+export interface ChatWorkflowRulesData2 {
+  chatWorkflowEditorTypeId?: number | null;
+  fieldDetails?: FieldDetails | null;
+  fieldOptionDetails?: FieldOptionDetail[] | null;
+}
+
+export interface ChatWorkflowCommonObject {
+  chatWorkflowId: number;
   chatWorkflowBlockId: number;
   chatWorkflowEditorTypeId?: number | null;
   fieldDetails?: FieldDetails | null;
@@ -93,8 +103,11 @@ export interface ChatWorkflowRulesData {
   parentId?: number | null;
 }
 
-export interface ChatWorkflowRulesData2 {
-  chatWorkflowEditorTypeId?: number | null;
-  fieldDetails?: FieldDetails | null;
-  fieldOptionDetails?: FieldOptionDetail[] | null;
+export interface ChatWorkflowAddRuleRequest extends ChatWorkflowCommonObject {
+  previousWorkflowRuleId?: number;
+}
+
+export interface AddWorkflowRulesResponse {
+  workflowRuleId: number;
+  successMessage: string;
 }

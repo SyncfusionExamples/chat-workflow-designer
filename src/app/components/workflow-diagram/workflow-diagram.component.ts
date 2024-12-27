@@ -93,6 +93,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
   public nodeEditType!: number;
   public selectedBlockId!: string;
   public selectedWorkFlowId!: number;
+  public clickedNodeRuleId: number;
 
   public dataSourceSettings!: DataSourceModel;
 
@@ -182,6 +183,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
       const clickedBlock = args.actualObject as Node;
       let isLastNode = clickedBlock.outEdges.length == 0;
       this.selectedBlockId = clickedBlock.id;
+      this.clickedNodeRuleId = (clickedBlock.data as RuleData2).id;
       this.selectedWorkFlowId = this.workflowID;
       const index = this.diagram.nodes.findIndex(node => node.id === this.selectedBlockId);
       let isBranchNode = (this.diagram.nodes[index].data as RuleData2).chatWorkflowBlockId == 10;
@@ -216,8 +218,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
   }
 
   // Method to add a new node and connect it
-  public onaddNodeAndConnect(): void {
-    console.log("Hoi");
+  public onDiagramRefresh(): void {
     this.diagram.setProperties({ nodes: [], connectors: [] }, true);
     this.diagram.refresh();
   }
