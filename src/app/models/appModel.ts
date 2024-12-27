@@ -27,9 +27,6 @@ export interface FieldDetails {
   value?: string;
   groupId?: number;
   ruleType?: number;
-  hasEmailDetails?: boolean; // Indicates if the customer block has email details
-  hasNameDetails?: boolean;
-  hasPhoneNumberDetails?: boolean;
 }
 
 // Define MessageDetails interface
@@ -49,6 +46,12 @@ export interface BranchDetail {
   value?: string | null;
 }
 
+export interface CustomerBlockFieldDetails {
+  isEmailEditorEnabled?: boolean;
+  isNameEditorEnabled?: boolean;
+  isPhoneEditorEnabled?: boolean;
+}
+
 // Define the main Workflow interface
 export interface RuleData2 {
   id: number;
@@ -62,6 +65,8 @@ export interface RuleData2 {
   branchDetails?: BranchDetail[] | null;
   messageDetails?: MessageDetails | null;
   fieldOptionDetails?: FieldOptionDetail[] | null;
+  customerBlockFieldInfo?: CustomerBlockFieldDetails | null;
+  parentId?: number | null;
 }
 
 // Define the main Workflow interface
@@ -75,5 +80,6 @@ export interface ChatWorkflowRulesData {
   branchDetails?: BranchDetail[] | null;
   messageDetails?: MessageDetails | null;
   fieldOptionDetails?: FieldOptionDetail[] | null;
+  customerBlockFieldInfo?: CustomerBlockFieldDetails | null;
   parentId?: number | null;
 }

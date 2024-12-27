@@ -3,7 +3,7 @@ import { SidebarComponent, SidebarModule } from '@syncfusion/ej2-angular-navigat
 import { TextFormatEnum, ChatWorkflowEditorTypeEnum, ChatWorkflowBlockTypeEnum } from '../../models/enum';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData2 } from '../../models/appModel';
+import { CustomerBlockFieldDetails, FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData2 } from '../../models/appModel';
 import { NodeModel } from '@syncfusion/ej2-angular-diagrams';
 import { DropDownListComponent, DropDownListModule } from '@syncfusion/ej2-angular-dropdowns';
 import { DatePickerModule, DateTimePickerModule } from '@syncfusion/ej2-angular-calendars';
@@ -212,27 +212,27 @@ export class WorkflowSidebarComponent {
           isPrivate: this.checkedIsPrivate,
           textFormat: this.ddlTextFormat.value as TextFormatEnum
         }
-        this.newNodeInfo = this.createNodeInfo(null, this.nodeBlockType, this.selectedWorkFlowId, null, null, messageInfo);
+        this.newNodeInfo = this.createNodeInfo(null, this.nodeBlockType, this.selectedWorkFlowId, null, null, messageInfo, null);
         break;
       }
       case (this.chatWorkflowBlockTypeEnum.GetPickerInput): {
         switch (this.nodeEditType) {
           case (this.chatWorkflowEditorTypeEnum.Boolean): {
             let fieldInfo = this.createFieldInfo(null);
-            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
+            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null, null);
             break;
           }
           case (this.chatWorkflowEditorTypeEnum.Buttons): {
             let fieldOptionInfo = this.mapOptionsToFieldOptions();
             let fieldInfo = this.createFieldInfo(null);
-            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, fieldOptionInfo, null);
+            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, fieldOptionInfo, null, null);
             this.newNodeHeight += (this.options.length * 25);
             break;
           }
           case this.chatWorkflowEditorTypeEnum.DropDown: {
             let fieldOptionInfo = this.mapOptionsToFieldOptions();
             let fieldInfo = this.createFieldInfo(null);
-            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, fieldOptionInfo, null);
+            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, fieldOptionInfo, null, null);
             this.newNodeHeight += (this.options.length * 25);
             break;
           }
@@ -240,14 +240,14 @@ export class WorkflowSidebarComponent {
             let fieldValidationInfo = this.createFieldValidationInfo(this.fieldOptionMinValue.toString(), this.fieldOptionMaxValue.toString(), null);
             let fieldOptionInfo = this.mapOptionsToFieldOptions();
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
-            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, fieldOptionInfo, null);
+            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, fieldOptionInfo, null, null);
             this.newNodeHeight += (this.options.length * 25);
             break;
           }
           case (this.chatWorkflowEditorTypeEnum.List): {
             let fieldOptionInfo = this.mapOptionsToFieldOptions();
             let fieldInfo = this.createFieldInfo(null);
-            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, fieldOptionInfo, null);
+            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, fieldOptionInfo, null, null);
             this.newNodeHeight += (this.options.length * 25);
             break;
           }
@@ -259,13 +259,13 @@ export class WorkflowSidebarComponent {
           case (this.chatWorkflowEditorTypeEnum.Text): {
             let fieldValidationInfo = this.createFieldValidationInfo(null, this.fieldOptionMaxValue.toString(), null);
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
-            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
+            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null, null);
             break;
           }
           case (this.chatWorkflowEditorTypeEnum.TextArea): {
             let fieldValidationInfo = this.createFieldValidationInfo(null, this.fieldOptionMaxValue.toString(), null);
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
-            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
+            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null, null);
             break;
           }
           case (this.chatWorkflowEditorTypeEnum.Date): {
@@ -276,7 +276,7 @@ export class WorkflowSidebarComponent {
 
             let fieldValidationInfo = this.createFieldValidationInfo(minDate, maxDate, null);
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
-            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
+            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null, null);
             break;
           }
           case (this.chatWorkflowEditorTypeEnum.DateTime): {
@@ -286,33 +286,37 @@ export class WorkflowSidebarComponent {
 
             let fieldValidationInfo = this.createFieldValidationInfo(minDateTime, maxDateTime, null);
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
-            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
+            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null, null);
             break;
           }
           case (this.chatWorkflowEditorTypeEnum.Number): {
             let fieldValidationInfo = this.createFieldValidationInfo(this.fieldOptionMinValue.toString(), this.fieldOptionMaxValue.toString(), null);
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
-            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
+            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null, null);
             break;
           }
           case (this.chatWorkflowEditorTypeEnum.Decimal): {
             let fieldValidationInfo = this.createFieldValidationInfo(this.fieldOptionMinValue.toString(), this.fieldOptionMaxValue.toString(), null);
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
-            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
+            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null, null);
             break;
           }
           case (this.chatWorkflowEditorTypeEnum.Regex): {
             let fieldValidationInfo = this.createFieldValidationInfo(null, null, this.fieldOptionRegexValue);
             let fieldInfo = this.createFieldInfo(fieldValidationInfo);
-            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
+            this.newNodeInfo = this.createNodeInfo(this.nodeEditType, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null, null);
             break;
           }
         }
         break;
       }
       case (this.chatWorkflowBlockTypeEnum.GetCustomerDetails): {
-        let fieldInfo = this.createCustomerBlockFieldInfo();
-        this.newNodeInfo = this.createNodeInfo(null, this.nodeBlockType, this.selectedWorkFlowId, fieldInfo, null, null);
+        let customerBlockFieldInfo : CustomerBlockFieldDetails = {
+          isEmailEditorEnabled: this.getEmailInfo,
+          isNameEditorEnabled: this.getNameInfo,
+          isPhoneEditorEnabled: this.getPhoneNumberInfo,
+        }
+        this.newNodeInfo = this.createNodeInfo(null, this.nodeBlockType, this.selectedWorkFlowId, null, null, null, customerBlockFieldInfo);
         break;
       }
     }
@@ -325,7 +329,7 @@ export class WorkflowSidebarComponent {
     }
   }
 
-  public createNodeInfo(editorTypeId: number | null, blockId: number, workflowId: number, fieldInfo: FieldDetails | null, fieldOptionInfo: FieldOptionDetail[] | null, messageInfo: MessageDetails | null): RuleData2 {
+  public createNodeInfo(editorTypeId: number | null, blockId: number, workflowId: number, fieldInfo: FieldDetails | null, fieldOptionInfo: FieldOptionDetail[] | null, messageInfo: MessageDetails | null, customerBlockFieldInfo: CustomerBlockFieldDetails | null): RuleData2 {
     let ruleDataId = this.isEdit ? 0 : WorkflowSidebarComponent.nodeLength++; // Need to set value dynamically from db
     return {
       id: ruleDataId,
@@ -338,7 +342,8 @@ export class WorkflowSidebarComponent {
       fieldDetails: fieldInfo,
       branchDetails: null,
       messageDetails: messageInfo,
-      fieldOptionDetails: fieldOptionInfo
+      fieldOptionDetails: fieldOptionInfo,
+      customerBlockFieldInfo: customerBlockFieldInfo
     };
   }
 
@@ -364,14 +369,6 @@ export class WorkflowSidebarComponent {
       label: this.sideBarLabel,
       placeholder: this.sideBarPlaceholder,
       fieldValidation: fieldValidationInfo
-    }
-  }
-
-  public createCustomerBlockFieldInfo(): FieldDetails {
-    return {
-      hasEmailDetails: this.getEmailInfo,
-      hasNameDetails: this.getNameInfo,
-      hasPhoneNumberDetails: this.getPhoneNumberInfo,
     }
   }
 

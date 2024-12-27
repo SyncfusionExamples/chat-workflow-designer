@@ -347,5 +347,4 @@ export class WorkflowDiagramComponent implements AfterViewInit {
     this.diagram.loadDiagram(jsonString);
     this.fileInput.nativeElement.value = '';
   }
-
 }
