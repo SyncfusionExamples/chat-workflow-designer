@@ -1,26 +1,5 @@
 import { TextFormatEnum } from "./enum";
 
-export interface RuleData {
-  id: number;
-  workflow_id: number;
-  expression: string;
-  success_message: string;
-  error_message: string;
-  operator: any | null;  // Use 'any' if the data type is unknown, else specify a more specific type
-  success_action_name: string | null;
-  success_expression: string | null;
-  success_workflow_id: number | null;
-  success_rule_id: number | null;
-  failure_action_name: string | null;
-  failure_expression: string | null;
-  failure_workflow_id: number | null;
-  failure_rule_id: number | null;
-  child_rules: any | null;  // If child_rules has a specific type, replace 'any' with it
-  custom_details: string | null;  // Assuming this is always a JSON string
-  last_modified_on: string;  // Keep as a string, or use Date if you prefer converting it
-  is_active: boolean;
-}
-
 // Define FieldOptionDetails interface
 export interface FieldOptionDetail {
   label: string;
@@ -37,17 +16,17 @@ export interface FieldValidation {
 
 // Define FieldDetails interface
 export interface FieldDetails {
-  description?: string | null;
-  label?: string | null;
-  placeholder?: string | null;
-  apiName?: string | null;
-  maskForAgent?: boolean | null;
-  isOptional?: boolean | null;
-  useAPI?: boolean | null;
+  description?: string;
+  label?: string;
+  placeholder?: string;
+  apiName?: string;
+  maskForAgent?: boolean;
+  isOptional?: boolean;
+  useAPI?: boolean;
   fieldValidation?: FieldValidation | null;
-  value?: string | null;
-  groupId?: number | null;
-  ruleType?: number | null;
+  value?: string;
+  groupId?: number;
+  ruleType?: number;
 }
 
 // Define MessageDetails interface
@@ -67,6 +46,12 @@ export interface BranchDetail {
   value?: string | null;
 }
 
+export interface CustomerBlockFieldDetails {
+  isEmailEditorEnabled?: boolean;
+  isNameEditorEnabled?: boolean;
+  isPhoneEditorEnabled?: boolean;
+}
+
 // Define the main Workflow interface
 export interface RuleData2 {
   id: number;
@@ -80,6 +65,8 @@ export interface RuleData2 {
   branchDetails?: BranchDetail[] | null;
   messageDetails?: MessageDetails | null;
   fieldOptionDetails?: FieldOptionDetail[] | null;
+  customerBlockFieldInfo?: CustomerBlockFieldDetails | null;
+  parentId?: number | null;
 }
 
 // Define the main Workflow interface
@@ -93,5 +80,6 @@ export interface ChatWorkflowRulesData {
   branchDetails?: BranchDetail[] | null;
   messageDetails?: MessageDetails | null;
   fieldOptionDetails?: FieldOptionDetail[] | null;
+  customerBlockFieldInfo?: CustomerBlockFieldDetails | null;
   parentId?: number | null;
 }
