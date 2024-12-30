@@ -7,7 +7,7 @@
                 <label>
                     Description: <input type="text" [(ngModel)]="sideBarDescription" name="singleDescription" placeholder="Enter description..." class="description-box" />
                 </label>
-                <label>
+                <label [hidden]="nodeBlockType === chatWorkflowBlockTypeEnum.SendTextMessage">
                     Label: <input type="text" [(ngModel)]="sideBarLabel" name="sideBarLabel" placeholder="Enter label..." class="description-box" required />
                 </label>
             </div>
