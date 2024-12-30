@@ -3,7 +3,7 @@
     <div class="content">
         <form (ngSubmit)="onFormSubmit()" class="full-size-form">
             <div class="form-header"> {{sidebarHeader}}</div>
-            <div>
+            <div [hidden]="nodeBlockType === chatWorkflowBlockTypeEnum.GetCustomerDetails">
                 <label>
                     Description: <input type="text" [(ngModel)]="sideBarDescription" name="singleDescription" placeholder="Enter description..." class="description-box" />
                 </label>
@@ -165,6 +165,13 @@
                             <ejs-switch [(ngModel)]="checkedIsPrivate" name="customMessageIsPrivate" cssClass="custom-iOS" [checked]="false" ></ejs-switch>
                         </div>
                     </div> 
+                }
+                @case(chatWorkflowBlockTypeEnum.GetCustomerDetails){
+                    <div>
+                        <ejs-checkbox label="Get Customer Email" [(ngModel)]="getEmailInfo" name="getEmailInfo" [checked]="true" [disabled] = "true"></ejs-checkbox>
+                        <ejs-checkbox label="Get Customer Name" [(ngModel)]="getNameInfo" name="getNameInfo"></ejs-checkbox>
+                        <ejs-checkbox label="Get Customer Phone Number" [(ngModel)]="getPhoneNumberInfo" name="getPhoneNumberInfo"></ejs-checkbox>
+                    </div>
                 }
             }
         </form>

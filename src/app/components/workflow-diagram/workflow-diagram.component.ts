@@ -4,7 +4,7 @@ import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, C
   SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel, DataSourceModel, 
   DataBindingService} from '@syncfusion/ej2-angular-diagrams';
 import { ChatWorkflowRulesData, ChatWorkflowRulesData2, FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData2 } from '../../models/appModel';
-import { RULE_DATA, RULE_DATA2, RULE_DATA3 } from '../../data/rule-data';
+import { RULE_DATA3 } from '../../data/rule-data';
 import { DialogModule } from '@syncfusion/ej2-angular-popups';
 import { BeforeOpenCloseMenuEventArgs, DropDownButtonComponent, DropDownButtonModule, ItemModel, OpenCloseMenuEventArgs } from '@syncfusion/ej2-angular-splitbuttons';
 import { CommonModule } from '@angular/common';
@@ -306,8 +306,9 @@ export class WorkflowDiagramComponent implements AfterViewInit {
     this.isParentListItem = false; // The value is reset here, to handle document click case of dropdown
     // Reset ListView to its initial state before opening
     if (this.listView) {
-      this.listView.dataSource = this.listdata; // Reset data
-      this.listView.refresh();
+      while ((this.listView as any).curDSLevel.length > 0) {
+        this.listView.back();
+      }
     }
   }
 
@@ -359,5 +360,4 @@ export class WorkflowDiagramComponent implements AfterViewInit {
     this.diagram.loadDiagram(jsonString);
     this.fileInput.nativeElement.value = '';
   }
-
 }
