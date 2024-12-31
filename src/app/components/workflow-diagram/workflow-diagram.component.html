@@ -14,6 +14,8 @@
       <input #fileInput type="file" accept=".json" style="display: none" (change)="onFileSelected($event)"/>
     </div>
   </div>
+  <ejs-contextmenu #contextmenu id='contextmenu' [items]= 'menuItems'></ejs-contextmenu>
+
   <div>
     <ejs-diagram class="diagram-container" #diagram 
     id="diagram" [width]="'100%'" [height]="649" [nodes]="nodes"
@@ -24,9 +26,10 @@
     <ng-template #userHandleTemplate let-data>
       <div class="dropDown-container">
         @if (data.name === 'addBlock') {
-          <button #dropdownbutton id="dropdownbutton" ejs-dropdownbutton target="#listview"
-          (open)="onOpenDropDownButton($event)" iconCss='e-icons e-plus' cssClass='e-caret-hide'
-          (beforeClose)="onBeforeCloseDropDownButton($event)" (beforeOpen)="onBeforeOpenDropDownButton()"></button>
+          <!-- <button #dropdownbutton id="dropdownbutton" ejs-dropdownbutton target="#listview"
+          (open)="onOpenDropDownButton($event, null, null)" iconCss='e-icons e-plus' cssClass='e-caret-hide'
+          (beforeClose)="onBeforeCloseDropDownButton($event)" (beforeOpen)="onBeforeOpenDropDownButton()"></button> -->
+          <button #addbtn ejs-button id="addbtn" iconCss='e-icons e-plus' cssClass='e-caret-hide'></button>
         }
         @else if (data.name === 'editBlock'){
           <button #editbtn ejs-button id="editbtn" iconCss='e-icons e-edit' cssClass='e-caret-hide'></button>
@@ -38,6 +41,7 @@
     </ng-template>
 
     <ng-template #nodeTemplate let-data>
+      <div class="workflowNode">
       @if(data.data.chatWorkflowBlockId !== chatWorkflowBlockTypeEnum.SendTextMessage && data.data.chatWorkflowBlockId !== chatWorkflowBlockTypeEnum.GetCustomerDetails) {
         <div><label style="padding: 5px;">{{ data.data.fieldDetails.description }}</label></div>
       }
@@ -145,7 +149,6 @@
                     <button ejs-button cssClass="e-primary" style="width: 75%;">{{$index+1}}.{{option.label}}</button>
                     @if(checkBranchAdd(data.data.branchDetails, option.value)){
                       <div class="dropDown-container{{$index}}">
-                        <button (click)="onClick">Click</button>
                         <button #dropdownbutton id="dropdownbutton-{{$index}}" ejs-dropdownbutton target="#listview"
                         (open)="onOpenDropDownButton($event, option, $index)" iconCss='e-icons e-plus' cssClass='e-caret-hide'
                         (beforeClose)="onBeforeCloseDropDownButton($event)" (beforeOpen)="onBeforeOpenDropDownButton()"></button>
@@ -171,11 +174,12 @@
           }
         }
       }
+      </div>
     </ng-template>
   </ejs-diagram>
 
-  <ejs-listview #listview id='listview' [dataSource]='listdata' cssClass='bc-block-option' [fields]='fields' [showHeader]='true'
-    [headerTitle]='headertitle' [animation]='animation' (select)="onSelectListView($event)"></ejs-listview>
+  <!-- <ejs-listview #listview id='listview' [dataSource]='listdata' cssClass='bc-block-option' [fields]='fields' [showHeader]='true'
+    [headerTitle]='headertitle' [animation]='animation' (select)="onSelectListView($event)"></ejs-listview> -->
   </div>
 
 </div>

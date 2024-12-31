@@ -116,9 +116,11 @@
                         </div>
                         }
                         @case(chatWorkflowEditorTypeEnum.DateTime){
+                        <div>
                             <div *ngTemplateOutlet="sideBarPlaceholderTemplate"></div>
                             <label> From: <ejs-datetimepicker [(ngModel)]="fromDate" name="fromdatetimepicker"></ejs-datetimepicker></label>
                             <label> To: <ejs-datetimepicker [(ngModel)]="toDate" name="todatetimepicker"></ejs-datetimepicker></label>
+                        </div>
                         }
                         @case(chatWorkflowEditorTypeEnum.Number){
                         <div>
@@ -166,6 +168,13 @@
                         </div>
                     </div> 
                 }
+                @case(chatWorkflowBlockTypeEnum.GetCustomerDetails){
+                    <div>
+                        <ejs-checkbox label="Get Customer Email" [(ngModel)]="getEmailInfo" name="getEmailInfo" [checked]="true" [disabled] = "true"></ejs-checkbox>
+                        <ejs-checkbox label="Get Customer Name" [(ngModel)]="getNameInfo" name="getNameInfo"></ejs-checkbox>
+                        <ejs-checkbox label="Get Customer Phone Number" [(ngModel)]="getPhoneNumberInfo" name="getPhoneNumberInfo"></ejs-checkbox>
+                    </div>
+                }
                 @case(chatWorkflowBlockTypeEnum.BranchOnPickerInput){
                     @switch(nodeEditType){
                         @case(chatWorkflowEditorTypeEnum.ButtonsBranch){
@@ -191,12 +200,6 @@
                         </div>
                         }
                     }
-                @case(chatWorkflowBlockTypeEnum.GetCustomerDetails){
-                    <div>
-                        <ejs-checkbox label="Get Customer Email" [(ngModel)]="getEmailInfo" name="getEmailInfo" [checked]="true" [disabled] = "true"></ejs-checkbox>
-                        <ejs-checkbox label="Get Customer Name" [(ngModel)]="getNameInfo" name="getNameInfo"></ejs-checkbox>
-                        <ejs-checkbox label="Get Customer Phone Number" [(ngModel)]="getPhoneNumberInfo" name="getPhoneNumberInfo"></ejs-checkbox>
-                    </div>
                 }
             }
         </form>

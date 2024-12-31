@@ -2,14 +2,14 @@ import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, view
 import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, 
   HierarchicalTree, HierarchicalTreeService, HtmlModel, IClickEventArgs, IExportOptions, LayoutModel, LineDistribution, Node, NodeModel, PrintAndExport, 
   SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel, DataSourceModel, 
-  DataBindingService} from '@syncfusion/ej2-angular-diagrams';
-import { ChatWorkflowRulesData, FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails } from '../../models/appModel';
+  DataBindingService, SnapConstraints} from '@syncfusion/ej2-angular-diagrams';
+import { BranchDetail, ChatWorkflowRulesData, FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails } from '../../models/appModel';
 import { DialogModule } from '@syncfusion/ej2-angular-popups';
 import { BeforeOpenCloseMenuEventArgs, DropDownButtonComponent, DropDownButtonModule, ItemModel, OpenCloseMenuEventArgs } from '@syncfusion/ej2-angular-splitbuttons';
 import { CommonModule } from '@angular/common';
 import { ListViewComponent, ListViewModule, SelectEventArgs } from '@syncfusion/ej2-angular-lists';
 import { LIST_DATA } from '../../data/list-data';
-import { ClickEventArgs, ToolbarModule } from '@syncfusion/ej2-angular-navigations';
+import { ClickEventArgs, ContextMenuComponent, ContextMenuModule, MenuComponent, MenuItemModel, MenuModule, ToolbarModule } from '@syncfusion/ej2-angular-navigations';
 import { DropDownListModule, MultiSelectModule } from '@syncfusion/ej2-angular-dropdowns';
 import { NumericTextBoxModule, TextAreaModule, TextBoxModule, UploaderModule } from '@syncfusion/ej2-angular-inputs';
 import { DatePickerModule, DateTimePickerModule } from '@syncfusion/ej2-angular-calendars';
@@ -28,7 +28,7 @@ Diagram.Inject(HierarchicalTree, LineDistribution, PrintAndExport);
   selector: 'app-workflow-diagram',
   standalone: true,
   providers: [HierarchicalTreeService, DataBindingService, WorkflowService],
-  imports: [DiagramModule, DialogModule, DropDownButtonModule, ButtonModule, CommonModule, ListViewModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule, DatePickerModule, DateTimePickerModule, SwitchModule, ToolbarModule, UploaderModule, WorkflowSidebarComponent],
+  imports: [DiagramModule,ContextMenuModule , MenuModule, DialogModule, DropDownButtonModule, ButtonModule, CommonModule, ListViewModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule, DatePickerModule, DateTimePickerModule, SwitchModule, ToolbarModule, UploaderModule, WorkflowSidebarComponent],
   templateUrl: './workflow-diagram.component.html',
   styleUrl: './workflow-diagram.component.scss'
 })
@@ -38,6 +38,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
   @ViewChild('listview') listView!: ListViewComponent;
   @ViewChild('workflowSidebar') sidebarComponent!: WorkflowSidebarComponent;
   @ViewChild('fileInput', { static: false }) fileInput!: ElementRef;
+  @ViewChild('contextmenu') contextmenu!: ContextMenuComponent;
 
   @Input() workflowID!: number | null;
 
@@ -76,6 +77,30 @@ export class WorkflowDiagramComponent implements AfterViewInit {
     },
   ];
 
+  public menuItems: MenuItemModel[] = [
+    {
+      text: 'View',
+      items: [
+          {
+              text: 'Toolbars',
+              items: [
+                  { text: 'Menu Bar' },
+                  { text: 'Bookmarks Toolbar' },
+                  { text: 'Customize' },
+              ]
+          },
+          {
+              text: 'Zoom',
+              items: [
+                  { text: 'Zoom In' },
+                  { text: 'Zoom Out' },
+                  { text: 'Reset' },
+              ]
+          },
+          { text: 'Full Screen' }
+      ]
+  }
+  ];
   public listdata: { [key: string]: any }[] = LIST_DATA;
   public fields: {[key: string]: string} ={ tooltip: 'text'};
   public headertitle = 'Block';
@@ -186,7 +211,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
       this.clickedNodeRuleId = (clickedBlock.data as ChatWorkflowRulesData).id;
       this.selectedWorkFlowId = this.workflowID;
       const index = this.diagram.nodes.findIndex(node => node.id === this.selectedBlockId);
-      let isBranchNode = (this.diagram.nodes[index].data as RuleData2).chatWorkflowBlockId == 10;
+      let isBranchNode = (this.diagram.nodes[index].data as ChatWorkflowRulesData).chatWorkflowBlockId == 10;
       if(isLastNode && this.diagram.selectedItems.userHandles) {
         if(!isBranchNode){
           this.diagram.selectedItems.userHandles[0].visible = true;
@@ -250,7 +275,9 @@ export class WorkflowDiagramComponent implements AfterViewInit {
         this.diagram.selectedItems.userHandles[1].visible = false;
         this.diagram.selectedItems.userHandles[2].visible = false;
       }
-      this.dropdownbutton.toggle();
+      var addbtn=document.getElementById('addbtn');
+      var addPos = addbtn.getBoundingClientRect();
+      this.contextmenu.open(addPos.top + window.scrollY, addPos.left+window.scrollX);
     }
     else if(event.element.name === 'editBlock'){
       if(this.diagram.selectedItems.userHandles){
@@ -271,19 +298,22 @@ export class WorkflowDiagramComponent implements AfterViewInit {
     }
   }
 
-  public onOpenDropDownButton(args: OpenCloseMenuEventArgs, option: any | null, index: number | null) : void {
-    if(index!=null){
+  public onOpenDropDownButton(args: OpenCloseMenuEventArgs, option: any | null, index: number | null) {
+    console.log("Drop :" + args.element);
+    if (index != null) {
       this.dropdownbutton.toggle();
-      if(this.diagram.selectedItems.userHandles){
+      if (this.diagram.selectedItems.userHandles) {
         this.diagram.selectedItems.userHandles[1].visible = false;
         this.diagram.selectedItems.userHandles[2].visible = false;
       }
     }
-    let dropDownContainer = document.querySelector('.dropDown-container') as HTMLElement;
-    args.element.parentElement!.style.top = dropDownContainer.getBoundingClientRect().top + dropDownContainer.offsetHeight +'px';
+    else {
+      let dropDownContainer = document.querySelector('.dropDown-container') as HTMLElement;
+      args.element.parentElement!.style.top = dropDownContainer.getBoundingClientRect().top + dropDownContainer.offsetHeight + 'px';
 
-    let ulElement = document.querySelector('ul') as HTMLElement;
-    args.element.parentElement!.style.left = dropDownContainer.getBoundingClientRect().left - (ulElement.getBoundingClientRect().width / 2)+ (dropDownContainer.getBoundingClientRect().width / 2)+'px' ;
+      let ulElement = document.querySelector('ul') as HTMLElement;
+      args.element.parentElement!.style.left = dropDownContainer.getBoundingClientRect().left - (ulElement.getBoundingClientRect().width / 2) + (dropDownContainer.getBoundingClientRect().width / 2) + 'px';
+    }
   }
 
   public onBeforeCloseDropDownButton(args: BeforeOpenCloseMenuEventArgs) {
