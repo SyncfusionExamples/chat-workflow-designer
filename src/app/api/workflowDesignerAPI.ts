@@ -4,10 +4,13 @@ export interface WorkflowListPathsType {
     readonly addWorkflowRules: string;
 }
 
+// Define the path template once
+const workflowRulesPath = `{baseUrl}/{workflowId}/rules/{ruleId}`;
+
 const apiPaths: WorkflowListPathsType = {
-    updateWorkflowRules: `{baseUrl}/{workflowId}/rules/{ruleId}/update`,
-    deleteWorkflowRules: `{baseUrl}/{ruleId}/rules`,
-    addWorkflowRules: `{baseUrl}`
+    updateWorkflowRules: workflowRulesPath,
+    deleteWorkflowRules: workflowRulesPath,
+    addWorkflowRules: `{baseUrl}/rules`
 }
 
 export const WorkflowApiPaths: WorkflowListPathsType = apiPaths;

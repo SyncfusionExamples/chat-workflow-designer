@@ -3,38 +3,13 @@ export const LIST_DATA: { [key: string]: any }[] = [
       'text': 'Action',
       'id': '01',
       'category': 'Block Type',
-      'child': [{
-            'text': 'Identity',
+      'child': [
+        {
+            'text': 'Customer Block',
             'id': '1',
+            'blockid': 3,
+            'editerTypeId': null,
             'category': 'Action',
-            'child': [{
-                'text': 'Name',
-                'id': '1001',
-                'blockid': 3,
-                'editerTypeId': 18,
-                'category': 'Identity',
-            },
-            {
-                'text': 'Email',
-                'id': '1002',
-                'blockid': 3,
-                'editerTypeId': 19,
-                'category': 'Identity',
-            },
-            {
-                'text': 'Phone No',
-                'id': '1003',
-                'blockid': 3,
-                'editerTypeId': 20,
-                'category': 'Identity',
-            },
-            {
-                'text': 'Requester Linking',
-                'id': '1004',
-                'blockid': 3,
-                'editerTypeId': 21,
-                'category': 'Identity',
-            }]
         },
         {
             'text': 'Custom Message',

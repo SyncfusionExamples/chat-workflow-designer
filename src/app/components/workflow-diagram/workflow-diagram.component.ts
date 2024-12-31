@@ -2,9 +2,8 @@ import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, view
 import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, 
   HierarchicalTree, HierarchicalTreeService, HtmlModel, IClickEventArgs, IExportOptions, LayoutModel, LineDistribution, Node, NodeModel, PrintAndExport, 
   SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel, DataSourceModel, 
-  DataBindingService,
-  SnapConstraints} from '@syncfusion/ej2-angular-diagrams';
-import { BranchDetail, ChatWorkflowRulesData, ChatWorkflowRulesData2, FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData2 } from '../../models/appModel';
+  DataBindingService} from '@syncfusion/ej2-angular-diagrams';
+import { ChatWorkflowRulesData, FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails } from '../../models/appModel';
 import { DialogModule } from '@syncfusion/ej2-angular-popups';
 import { BeforeOpenCloseMenuEventArgs, DropDownButtonComponent, DropDownButtonModule, ItemModel, OpenCloseMenuEventArgs } from '@syncfusion/ej2-angular-splitbuttons';
 import { CommonModule } from '@angular/common';
@@ -86,7 +85,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
 
   private nodeIdCounter: number = 0;
   private connectorIdCounter: number = 0;
-  public newNodeData: RuleData2[] = [];
+  public newNodeData: ChatWorkflowRulesData[] = [];
 
   public sidebarHeader!: string;
   public nodeBlockType!: number;
@@ -118,6 +117,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
             if(data.chatWorkflowEditorTypeId == 2) {
               buttonCount = data.fieldOptionDetails?.length || 0;
             }
+            data.chatWorkflowId = this.workflowID;
             nodeModel.id= `node${data.id}`;
             nodeModel.width= 200;
             nodeModel.height= 150 + (buttonCount * 25);
@@ -183,7 +183,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
       const clickedBlock = args.actualObject as Node;
       let isLastNode = clickedBlock.outEdges.length == 0;
       this.selectedBlockId = clickedBlock.id;
-      this.clickedNodeRuleId = (clickedBlock.data as RuleData2).id;
+      this.clickedNodeRuleId = (clickedBlock.data as ChatWorkflowRulesData).id;
       this.selectedWorkFlowId = this.workflowID;
       const index = this.diagram.nodes.findIndex(node => node.id === this.selectedBlockId);
       let isBranchNode = (this.diagram.nodes[index].data as RuleData2).chatWorkflowBlockId == 10;
@@ -218,34 +218,21 @@ export class WorkflowDiagramComponent implements AfterViewInit {
   }
 
   // Method to add a new node and connect it
+  // public onDiagramRefresh(): void {
+  //   this.diagram.setProperties({ nodes: [], connectors: [] }, true);
+  //   this.diagram.refresh();
+  // }
+
   public onDiagramRefresh(): void {
     this.diagram.setProperties({ nodes: [], connectors: [] }, true);
-    this.diagram.refresh();
-  }
-
-  // Update the Node and reload
-  public onUpdateNode([sourceNodeId, newNode]: [string, RuleData2]) : void {
-    const index = this.diagram.nodes.findIndex(node => node.id === sourceNodeId);
-    newNode.id  = (this.diagram.nodes[index].data as RuleData2).id;
-    var workBody : ChatWorkflowRulesData2 = {
-      chatWorkflowEditorTypeId : newNode.chatWorkflowEditorTypeId,
-      fieldDetails: newNode.fieldDetails,
-      fieldOptionDetails : newNode.fieldOptionDetails
-    };
-    this.workflowService.updateRule(newNode.chatWorkflowId, newNode.id, workBody).then((result) => {
-      console.log(result.message);
-      this.diagram.setProperties({ nodes: [], connectors: [] }, true);
       this.diagram.refresh();
-    }).catch((e : HttpErrorResponse) => {
-      if(e && e.error?.Message){
-        console.log("Update failed");
-      }
-    });
   }
 
   // on node delete 
-  public onDeleteNode(nodeObject) : void{
-    this.workflowService.deleteRule((nodeObject.data as RuleData2).id).then((result) => {
+  public onDeleteNode(nodeObject) : void {
+    let ruleData : ChatWorkflowRulesData = nodeObject.data as ChatWorkflowRulesData;
+    const index = this.diagram.nodes.findIndex(node => (node.data as ChatWorkflowRulesData).successRuleId === ruleData.id);
+    this.workflowService.deleteRule(ruleData.chatWorkflowId, ruleData.id).then((result) => {
       console.log(result.message);
       this.diagram.setProperties({ nodes: [], connectors: [] }, true);
       this.diagram.refresh();
@@ -324,8 +311,9 @@ export class WorkflowDiagramComponent implements AfterViewInit {
     this.isParentListItem = false; // The value is reset here, to handle document click case of dropdown
     // Reset ListView to its initial state before opening
     if (this.listView) {
-      this.listView.dataSource = this.listdata; // Reset data
-      this.listView.refresh();
+      while ((this.listView as any).curDSLevel.length > 0) {
+        this.listView.back();
+      }
     }
   }
 
@@ -377,5 +365,4 @@ export class WorkflowDiagramComponent implements AfterViewInit {
     this.diagram.loadDiagram(jsonString);
     this.fileInput.nativeElement.value = '';
   }
-
 }

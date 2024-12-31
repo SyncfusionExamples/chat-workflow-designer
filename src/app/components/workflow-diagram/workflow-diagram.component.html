@@ -38,8 +38,30 @@
     </ng-template>
 
     <ng-template #nodeTemplate let-data>
-      <div><label style="padding: 5px;">{{ data.data.fieldDetails.label }}</label></div>
+      @if(data.data.chatWorkflowBlockId !== chatWorkflowBlockTypeEnum.SendTextMessage && data.data.chatWorkflowBlockId !== chatWorkflowBlockTypeEnum.GetCustomerDetails) {
+        <div><label style="padding: 5px;">{{ data.data.fieldDetails.description }}</label></div>
+      }
       @switch (data.data.chatWorkflowBlockId){
+        @case(chatWorkflowBlockTypeEnum.SendTextMessage){
+          <ng-container>
+            <label>{{data.data.messageDetails.text}}</label>
+            <div *ngIf="data.data.messageDetails.isPrivate" class="private-label-container">
+              <hr class="separator"/>
+              <div class="private-label"><i>Private</i></div>
+            </div>
+          </ng-container>
+        }
+        @case(chatWorkflowBlockTypeEnum.GetCustomerDetails){
+          <ng-container>
+            <div><label>Get Email details</label></div>
+            @if (data.data.customerBlockFieldInfo.isNameEditorEnabled){
+              <div><label>Get Name details</label></div>
+            }
+            @if (data.data.customerBlockFieldInfo.isPhoneEditorEnabled){
+              <div><label>Get Phone number details</label></div>
+            }
+          </ng-container>
+        }
         @case(chatWorkflowBlockTypeEnum.GetPickerInput){
           @switch (data.data.chatWorkflowEditorTypeId){
             @case (chatWorkflowEditorTypeEnum.Boolean){
@@ -158,7 +180,7 @@
 
 </div>
 
-<app-workflow-sidebar #workflowSidebar [nodeEditType]="nodeEditType" [nodeBlockType]="nodeBlockType" [sidebarHeader]="sidebarHeader" [clickedNodeRuleId]="clickedNodeRuleId" [selectedWorkFlowId]="selectedWorkFlowId" (diagramRefresh)="onDiagramRefresh()" (updateNode)="onUpdateNode($event)"></app-workflow-sidebar>
+<app-workflow-sidebar #workflowSidebar [nodeEditType]="nodeEditType" [nodeBlockType]="nodeBlockType" [sidebarHeader]="sidebarHeader" [clickedNodeRuleId]="clickedNodeRuleId" [selectedWorkFlowId]="selectedWorkFlowId" (diagramRefresh)="onDiagramRefresh()"></app-workflow-sidebar>
 
 <!-- <div style="display: none;">
   <ejs-uploader #defaultupload id='fileupload' (success)='onUploadSuccess($event)' [asyncSettings]='asyncSettings'></ejs-uploader>
