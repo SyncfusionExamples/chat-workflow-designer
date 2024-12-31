@@ -38,7 +38,7 @@
     </ng-template>
 
     <ng-template #nodeTemplate let-data>
-      @if(data.data.chatWorkflowBlockId !== chatWorkflowBlockTypeEnum.SendTextMessage){
+      @if(data.data.chatWorkflowBlockId !== chatWorkflowBlockTypeEnum.SendTextMessage && data.data.chatWorkflowBlockId !== chatWorkflowBlockTypeEnum.GetCustomerDetails) {
         <div><label style="padding: 5px;">{{ data.data.fieldDetails.description }}</label></div>
       }
       @switch (data.data.chatWorkflowBlockId){
@@ -49,6 +49,17 @@
               <hr class="separator"/>
               <div class="private-label"><i>Private</i></div>
             </div>
+          </ng-container>
+        }
+        @case(chatWorkflowBlockTypeEnum.GetCustomerDetails){
+          <ng-container>
+            <div><label>Get Email details</label></div>
+            @if (data.data.customerBlockFieldInfo.isNameEditorEnabled){
+              <div><label>Get Name details</label></div>
+            }
+            @if (data.data.customerBlockFieldInfo.isPhoneEditorEnabled){
+              <div><label>Get Phone number details</label></div>
+            }
           </ng-container>
         }
         @case(chatWorkflowBlockTypeEnum.GetPickerInput){

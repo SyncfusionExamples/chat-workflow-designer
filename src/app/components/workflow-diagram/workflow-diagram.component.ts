@@ -4,7 +4,7 @@ import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, C
   SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel, DataSourceModel, 
   DataBindingService} from '@syncfusion/ej2-angular-diagrams';
 import { ChatWorkflowRulesData, ChatWorkflowRulesData2, FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData2 } from '../../models/appModel';
-import { RULE_DATA, RULE_DATA2, RULE_DATA3 } from '../../data/rule-data';
+import { RULE_DATA3 } from '../../data/rule-data';
 import { DialogModule } from '@syncfusion/ej2-angular-popups';
 import { BeforeOpenCloseMenuEventArgs, DropDownButtonComponent, DropDownButtonModule, ItemModel, OpenCloseMenuEventArgs } from '@syncfusion/ej2-angular-splitbuttons';
 import { CommonModule } from '@angular/common';
@@ -122,6 +122,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
             if(data.chatWorkflowEditorTypeId == 2) {
               buttonCount = data.fieldOptionDetails?.length || 0;
             }
+            data.chatWorkflowId = this.workflowID;
             nodeModel.id= `node${data.id}`;
             nodeModel.width= 200;
             nodeModel.height= 150 + (buttonCount * 25);
@@ -237,7 +238,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
   public onDeleteNode(nodeObject) : void{
     let ruleData : RuleData2 = nodeObject.data as RuleData2;
     const index = this.diagram.nodes.findIndex(node => (node.data as RuleData2).successRuleId === ruleData.id);
-    this.workflowService.deleteRule(ruleData.id).then((result) => {
+    this.workflowService.deleteRule(ruleData.chatWorkflowId, ruleData.id).then((result) => {
       console.log(result.message);
       this.diagram.setProperties({ nodes: [], connectors: [] }, true);
       this.diagram.refresh();
@@ -308,8 +309,9 @@ export class WorkflowDiagramComponent implements AfterViewInit {
     this.isParentListItem = false; // The value is reset here, to handle document click case of dropdown
     // Reset ListView to its initial state before opening
     if (this.listView) {
-      this.listView.dataSource = this.listdata; // Reset data
-      this.listView.refresh();
+      while ((this.listView as any).curDSLevel.length > 0) {
+        this.listView.back();
+      }
     }
   }
 
@@ -361,5 +363,4 @@ export class WorkflowDiagramComponent implements AfterViewInit {
     this.diagram.loadDiagram(jsonString);
     this.fileInput.nativeElement.value = '';
   }
-
 }
