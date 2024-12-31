@@ -10,7 +10,7 @@ const workflowRulesPath = `{baseUrl}/{workflowId}/rules/{ruleId}`;
 const apiPaths: WorkflowListPathsType = {
     updateWorkflowRules: workflowRulesPath,
     deleteWorkflowRules: workflowRulesPath,
-    addWorkflowRules: `{baseUrl}`
+    addWorkflowRules: `{baseUrl}/rules`
 }
 
 export const WorkflowApiPaths: WorkflowListPathsType = apiPaths;
