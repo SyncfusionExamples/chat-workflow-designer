@@ -4,14 +4,14 @@ import { TextFormatEnum } from "./enum";
 export interface FieldOptionDetail {
   label: string;
   value: string;
-  description?: string | null;
+  description?: string | "";
 }
 
 // Define FieldValidation interface
 export interface FieldValidation {
-  max?: string | null;
-  min?: string | null; 
-  regex?: string | null;
+  max?: string | "";
+  min?: string | ""; 
+  regex?: string | "";
 }
 
 // Define FieldDetails interface
@@ -72,6 +72,7 @@ export interface RuleData2 {
 // Define the main Workflow interface
 export interface ChatWorkflowRulesData {
   id: number;
+  chatWorkflowId: number;
   successWorkflowId?: number | null;
   successRuleId?: number | null;
   chatWorkflowBlockId: number;
@@ -82,4 +83,10 @@ export interface ChatWorkflowRulesData {
   fieldOptionDetails?: FieldOptionDetail[] | null;
   customerBlockFieldInfo?: CustomerBlockFieldDetails | null;
   parentId?: number | null;
+}
+
+export interface ChatWorkflowRulesData2 {
+  chatWorkflowEditorTypeId?: number | null;
+  fieldDetails?: FieldDetails | null;
+  fieldOptionDetails?: FieldOptionDetail[] | null;
 }
