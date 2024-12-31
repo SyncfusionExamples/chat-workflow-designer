@@ -121,6 +121,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
             if(data.chatWorkflowEditorTypeId == 2) {
               buttonCount = data.fieldOptionDetails?.length || 0;
             }
+            data.chatWorkflowId = this.workflowID;
             nodeModel.id= `node${data.id}`;
             nodeModel.width= 200;
             nodeModel.height= 150 + (buttonCount * 25);

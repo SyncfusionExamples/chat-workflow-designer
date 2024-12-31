@@ -72,6 +72,7 @@ export interface RuleData2 {
 // Define the main Workflow interface
 export interface ChatWorkflowRulesData {
   id: number;
+  chatWorkflowId: number;
   successWorkflowId?: number | null;
   successRuleId?: number | null;
   chatWorkflowBlockId: number;
