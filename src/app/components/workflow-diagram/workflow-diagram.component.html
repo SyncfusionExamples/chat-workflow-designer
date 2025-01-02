@@ -14,6 +14,9 @@
       <input #fileInput type="file" accept=".json" style="display: none" (change)="onFileSelected($event)"/>
     </div>
   </div>
+  <ejs-contextmenu #contextmenu id='contextmenu' [items]= 'listdata' showItemOnClick="true"
+  (beforeClose)="onBeforeCloseContextMenu($event)" (select)="itemSelect($event)"></ejs-contextmenu>
+
   <div>
     <ejs-diagram class="diagram-container" #diagram 
     id="diagram" [width]="'100%'" [height]="649" [nodes]="nodes"
@@ -24,9 +27,7 @@
     <ng-template #userHandleTemplate let-data>
       <div class="dropDown-container">
         @if (data.name === 'addBlock') {
-          <button #dropdownbutton id="dropdownbutton" ejs-dropdownbutton target="#listview"
-          (open)="onOpenDropDownButton($event)" iconCss='e-icons e-plus' cssClass='e-caret-hide'
-          (beforeClose)="onBeforeCloseDropDownButton($event)" (beforeOpen)="onBeforeOpenDropDownButton()"></button>
+          <button #addbtn ejs-button id="addbtn" iconCss='e-icons e-plus' cssClass='e-caret-hide'></button>
         }
         @else if (data.name === 'editBlock'){
           <button #editbtn ejs-button id="editbtn" iconCss='e-icons e-edit' cssClass='e-caret-hide'></button>
@@ -139,14 +140,10 @@
       }
     </ng-template>
   </ejs-diagram>
-
-  <ejs-listview #listview id='listview' [dataSource]='listdata' cssClass='bc-block-option' [fields]='fields' [showHeader]='true'
-    [headerTitle]='headertitle' [animation]='animation' (select)="onSelectListView($event)"></ejs-listview>
   </div>
-
 </div>
 
-<app-workflow-sidebar #workflowSidebar [nodeEditType]="nodeEditType" [nodeBlockType]="nodeBlockType" [sidebarHeader]="sidebarHeader" [clickedNodeRuleId]="clickedNodeRuleId" [selectedWorkFlowId]="selectedWorkFlowId" (diagramRefresh)="onDiagramRefresh()"></app-workflow-sidebar>
+<app-workflow-sidebar #workflowSidebar [nodeEditType]="nodeEditType" [nodeBlockType]="nodeBlockType" [sidebarHeader]="sidebarHeader" [clickedNodeRuleId]="clickedNodeRuleId" [selectedWorkFlowId]="selectedWorkFlowId" (ruleNodeChange)="onRuleNodeChange()"></app-workflow-sidebar>
 
 <!-- <div style="display: none;">
   <ejs-uploader #defaultupload id='fileupload' (success)='onUploadSuccess($event)' [asyncSettings]='asyncSettings'></ejs-uploader>

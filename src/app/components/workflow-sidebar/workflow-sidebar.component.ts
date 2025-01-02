@@ -69,7 +69,7 @@ export class WorkflowSidebarComponent {
   @Input() sidebarHeader!: string;
   @Input() clickedNodeRuleId!: number;
   @Input() selectedWorkFlowId!: number;
-  @Output() diagramRefresh = new EventEmitter();
+  @Output() ruleNodeChange = new EventEmitter();
 
   constructor(private workflowService: WorkflowService) {
     this.textFormatDDLOptions = this.enumToArray(TextFormatEnum);
@@ -341,8 +341,7 @@ export class WorkflowSidebarComponent {
     this.workflowService.addRule(addRuleRequest).then((result) => {
       console.log(result.message);
       if (result) {
-        this.diagramRefresh.emit();
-        this.newNodeInfo.id = result.workflowRuleId;
+        this.ruleNodeChange.emit();
       }
     }).catch((e : HttpErrorResponse) => {
       if(e && e.error?.Message){
@@ -359,7 +358,7 @@ export class WorkflowSidebarComponent {
     };
     this.workflowService.updateRule(this.selectedWorkFlowId, this.clickedNodeRuleId, updateRuleRequest).then((result) => {
       console.log(result.message);
-      this.diagramRefresh.emit();
+      this.ruleNodeChange.emit();
     }).catch((e : HttpErrorResponse) => {
       if(e && e.error?.Message){
         console.log("Update failed");
@@ -408,20 +407,4 @@ export class WorkflowSidebarComponent {
       fieldValidation: fieldValidationInfo
     }
   }
-
-  public createNode(width: number, height: number, nodeInfo: ChatWorkflowRulesData): NodeModel {
-    return {
-      id: `node${nodeInfo.id}`,
-      style: { fill: '#FFFFFF', strokeColor: '#0f2c60', strokeWidth: 5 },
-      height: height,
-      width: width,
-      borderColor: '#0f2c60',
-      borderWidth: 3,
-      shape: {
-        type: 'HTML',
-      },
-      data: nodeInfo
-    };
-  }
-
 }

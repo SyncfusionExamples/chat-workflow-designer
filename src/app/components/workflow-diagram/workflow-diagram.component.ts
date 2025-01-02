@@ -9,7 +9,7 @@ import { BeforeOpenCloseMenuEventArgs, DropDownButtonComponent, DropDownButtonMo
 import { CommonModule } from '@angular/common';
 import { ListViewComponent, ListViewModule, SelectEventArgs } from '@syncfusion/ej2-angular-lists';
 import { LIST_DATA } from '../../data/list-data';
-import { ClickEventArgs, ToolbarModule } from '@syncfusion/ej2-angular-navigations';
+import { ClickEventArgs, ContextMenuComponent, ContextMenuModule, MenuEventArgs, ToolbarModule } from '@syncfusion/ej2-angular-navigations';
 import { FormsModule } from '@angular/forms';
 import workflowData from '../../data/workflow-data.json'; // Adjust the path as needed
 import { DropDownListModule, MultiSelectModule } from '@syncfusion/ej2-angular-dropdowns';
@@ -31,7 +31,7 @@ Diagram.Inject(HierarchicalTree, LineDistribution, PrintAndExport);
   selector: 'app-workflow-diagram',
   standalone: true,
   providers: [HierarchicalTreeService, DataBindingService, WorkflowService],
-  imports: [DiagramModule, DialogModule, DropDownButtonModule, ButtonModule, CommonModule, ListViewModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule, DatePickerModule, DateTimePickerModule, SwitchModule, ToolbarModule, UploaderModule, WorkflowSidebarComponent],
+  imports: [DiagramModule, ContextMenuModule, DialogModule, DropDownButtonModule, ButtonModule, CommonModule, ListViewModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule, DatePickerModule, DateTimePickerModule, SwitchModule, ToolbarModule, UploaderModule, WorkflowSidebarComponent],
   templateUrl: './workflow-diagram.component.html',
   styleUrl: './workflow-diagram.component.scss'
 })
@@ -41,6 +41,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
   @ViewChild('listview') listView!: ListViewComponent;
   @ViewChild('workflowSidebar') sidebarComponent!: WorkflowSidebarComponent;
   @ViewChild('fileInput', { static: false }) fileInput!: ElementRef;
+  @ViewChild('contextmenu') contextmenu!: ContextMenuComponent;
 
   @Input() workflowID!: number | null;
 
@@ -206,13 +207,8 @@ export class WorkflowDiagramComponent implements AfterViewInit {
     return this.diagram.nodes.length;
   }
 
-  // Method to add a new node and connect it
-  // public onDiagramRefresh(): void {
-  //   this.diagram.setProperties({ nodes: [], connectors: [] }, true);
-  //   this.diagram.refresh();
-  // }
-
-  public onDiagramRefresh(): void {
+  // Need to refresh the diagram whenever a node is added or modified
+  public onRuleNodeChange(): void {
     this.diagram.setProperties({ nodes: [], connectors: [] }, true);
       this.diagram.refresh();
   }
@@ -238,7 +234,9 @@ export class WorkflowDiagramComponent implements AfterViewInit {
         this.diagram.selectedItems.userHandles[1].visible = false;
         this.diagram.selectedItems.userHandles[2].visible = false;
       }
-      this.dropdownbutton.toggle();
+      var addbtn=document.getElementById('addbtn');
+      var addPos = addbtn.getBoundingClientRect();
+      this.contextmenu.open(addPos.top + window.scrollY, addPos.left+window.scrollX);
     }
     else if(event.element.name === 'editBlock'){
       if(this.diagram.selectedItems.userHandles){
@@ -259,42 +257,21 @@ export class WorkflowDiagramComponent implements AfterViewInit {
     }
   }
 
-  public onOpenDropDownButton(args: OpenCloseMenuEventArgs) {
-    let dropDownContainer = document.querySelector('.dropDown-container') as HTMLElement;
-    args.element.parentElement!.style.top = dropDownContainer.getBoundingClientRect().top + dropDownContainer.offsetHeight +'px';
-
-    let ulElement = document.querySelector('ul') as HTMLElement;
-    args.element.parentElement!.style.left = dropDownContainer.getBoundingClientRect().left - (ulElement.getBoundingClientRect().width / 2)+ (dropDownContainer.getBoundingClientRect().width / 2)+'px' ;
-  }
-
-  public onBeforeCloseDropDownButton(args: BeforeOpenCloseMenuEventArgs) {
-    args.cancel = this.isParentListItem;
-    if (!(this.isParentListItem || ((args.event.target as HTMLElement).closest(".bc-block-option.e-listview")==null))) {
-      this.sidebarComponent?.sidebar?.show();
-    }
-  }
-
-  public onSelectListView(args: SelectEventArgs) {
-    this.isParentListItem = args.item.classList.contains("e-has-child");
-    const selectedItem = args.item;
-    const selectedItemId = selectedItem.getAttribute('data-uid');
-    const selectedItemText = args.item ? args.item.textContent : null;
-    if (selectedItemId && /^0[1-3]$/.test(selectedItemId)) { // Check if the ID is '01', '02', or '03'
+  public itemSelect(args: MenuEventArgs): void {
+    this.isParentListItem = args.item.items.length != 0;
+    if (args.item.id && /^0[1-3]$/.test(args.item.id)) { // Check if the ID is '01', '02', or '03'
+      const selectedItemText = args.item ? args.item.text : null;
       this.sidebarHeader = selectedItemText ? selectedItemText.trim() + ' Block' : '';
     }
-    if(!this.isParentListItem && typeof args?.data === 'object' && 'editerTypeId' in args.data) {
-      this.nodeBlockType = (args.data as { blockid: number })['blockid'];
-      this.nodeEditType = (args.data as { editerTypeId: number })['editerTypeId'];
+    if(args.item.items.length == 0){
+      this.nodeBlockType = (args.item as { blockid: number })['blockid'];
+      this.nodeEditType = (args.item as { editerTypeId: number })['editerTypeId'];
     }
   }
-
-  public onBeforeOpenDropDownButton() {
-    this.isParentListItem = false; // The value is reset here, to handle document click case of dropdown
-    // Reset ListView to its initial state before opening
-    if (this.listView) {
-      while ((this.listView as any).curDSLevel.length > 0) {
-        this.listView.back();
-      }
+  
+  public onBeforeCloseContextMenu(args: BeforeOpenCloseMenuEventArgs) {
+    if(!this.isParentListItem && !((args.event.target as HTMLElement).closest(".e-menu-item")==null)) {
+        this.sidebarComponent?.sidebar?.show();
     }
   }
 
