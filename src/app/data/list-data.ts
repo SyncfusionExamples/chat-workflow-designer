@@ -3,7 +3,7 @@ export const LIST_DATA: { [key: string]: any }[] = [
       'text': 'Action',
       'id': '01',
       'category': 'Block Type',
-      'child': [
+      'items': [
         {
             'text': 'Customer Block',
             'id': '1',
@@ -22,7 +22,7 @@ export const LIST_DATA: { [key: string]: any }[] = [
             'text': 'Button Input',
             'id': '3',
             'category': 'Action',
-            'child': [{
+            'items': [{
                 'text': 'Buttons',
                 'id': '3001',
                 'blockid': 4,
@@ -41,7 +41,7 @@ export const LIST_DATA: { [key: string]: any }[] = [
             'text': 'Input',
             'id': '4',
             'category': 'Action',
-            'child': [{
+            'items': [{
                 'text': 'Date',
                 'id': '4001',
                 'blockid': 5,
@@ -95,7 +95,7 @@ export const LIST_DATA: { [key: string]: any }[] = [
             'text': 'DropDowns',
             'id': '5',
             'category': 'Action',
-            'child': [{
+            'items': [{
                 'text': 'DropDown',
                 'id': '5001',
                 'blockid': 4,
@@ -143,7 +143,7 @@ export const LIST_DATA: { [key: string]: any }[] = [
       'text': 'Branching',
       'id': '02',
       'category': 'Block Type',
-      'child': [{
+      'items': [{
           'text': 'QB',
           'id': '10',
           'category': 'Branching',
@@ -152,7 +152,7 @@ export const LIST_DATA: { [key: string]: any }[] = [
           'text': 'Selection',
           'id': '11',
           'category': 'Branching',
-          'child': [{
+          'items': [{
                 'text': 'Buttons',
                 'id': '11001',
                 'category': 'Selection',
@@ -174,7 +174,7 @@ export const LIST_DATA: { [key: string]: any }[] = [
       'text': 'Exit',
       'id': '03',
       'category': 'Block Type',
-      'child': [{
+      'items': [{
           'text': 'Call Workflow',
           'id': '3001',
           'category': 'Exit',

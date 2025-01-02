@@ -15,13 +15,13 @@ export class WorkflowService {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
 
-  updateRule(workflowId :number , ruleId: number, body : ChatWorkflowRulesUpdateRequest) :  Promise<{ message: string }> {
+  updateRule(workflowId :number , ruleId: number, updateRuleRequest : ChatWorkflowRulesUpdateRequest) :  Promise<{ message: string }> {
     const url = WorkflowApiPaths.updateWorkflowRules
     .replace('{baseUrl}', this.baseUrl)
     .replace('{workflowId}', workflowId.toString())
     .replace('{ruleId}', ruleId.toString());
 
-    return this.http.put<{ message: string }>(url, body, this.httpOptions).toPromise();
+    return this.http.put<{ message: string }>(url, updateRuleRequest, this.httpOptions).toPromise();
   }
 
   deleteRule(workflowId :number, ruleId: number): Promise<{ message: string }> {
