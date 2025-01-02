@@ -14,7 +14,8 @@
       <input #fileInput type="file" accept=".json" style="display: none" (change)="onFileSelected($event)"/>
     </div>
   </div>
-  <ejs-contextmenu #contextmenu id='contextmenu' [items]= 'menuItems'></ejs-contextmenu>
+  <ejs-contextmenu #contextmenu id='contextmenu' [items]= 'listdata' showItemOnClick="true"
+  (beforeClose)="onCloseContextMenu($event)" (select)="itemSelect($event)"></ejs-contextmenu>
 
   <div>
     <ejs-diagram class="diagram-container" #diagram 
@@ -148,11 +149,13 @@
                   <div class="button-item">
                     <button ejs-button cssClass="e-primary" style="width: 75%;">{{$index+1}}.{{option.label}}</button>
                     @if(checkBranchAdd(data.data.branchDetails, option.value)){
-                      <div class="dropDown-container{{$index}}">
+                      <!-- <div class="dropDown-container{{$index}}">
                         <button #dropdownbutton id="dropdownbutton-{{$index}}" ejs-dropdownbutton target="#listview"
                         (open)="onOpenDropDownButton($event, option, $index)" iconCss='e-icons e-plus' cssClass='e-caret-hide'
                         (beforeClose)="onBeforeCloseDropDownButton($event)" (beforeOpen)="onBeforeOpenDropDownButton()"></button>
-                      </div>                      
+                      </div>-->
+                      <button #addbtn ejs-button id="addbtn{{$index}}" iconCss='e-icons e-plus' cssClass='e-caret-hide' 
+                      (click)="onClickAddBtn(option, $index)"></button>
                     }
                   </div>
                 }
