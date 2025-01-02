@@ -1,26 +1,21 @@
-import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, viewChild, ViewChild } from '@angular/core';
-import { ComplexHierarchicalTree, ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, 
-  HierarchicalTree, HierarchicalTreeService, HtmlModel, IClickEventArgs, IExportOptions, LayoutModel, LineDistribution, Node, NodeModel, PrintAndExport, 
-  SelectorConstraints, SelectorModel, SnapSettingsModel, TextModel, UserHandleEventsArgs, UserHandleModel, DataSourceModel, 
+import { AfterViewInit, Component, ElementRef, EventEmitter, Input, ViewChild } from '@angular/core';
+import { ConnectionPointOrigin, ConnectorConstraints, ConnectorModel, DecoratorModel, Diagram,  DiagramComponent, DiagramModule, 
+  HierarchicalTree, HierarchicalTreeService, HtmlModel, IClickEventArgs, LayoutModel, LineDistribution, Node, NodeModel, PrintAndExport, 
+  SelectorConstraints, SelectorModel, SnapSettingsModel, UserHandleEventsArgs, UserHandleModel, DataSourceModel, 
   DataBindingService} from '@syncfusion/ej2-angular-diagrams';
-import { ChatWorkflowRulesData, FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails } from '../../models/appModel';
+import { ChatWorkflowRulesData } from '../../models/appModel';
 import { DialogModule } from '@syncfusion/ej2-angular-popups';
-import { BeforeOpenCloseMenuEventArgs, DropDownButtonComponent, DropDownButtonModule, ItemModel, OpenCloseMenuEventArgs } from '@syncfusion/ej2-angular-splitbuttons';
+import { BeforeOpenCloseMenuEventArgs} from '@syncfusion/ej2-angular-splitbuttons';
 import { CommonModule } from '@angular/common';
-import { ListViewComponent, ListViewModule, SelectEventArgs } from '@syncfusion/ej2-angular-lists';
 import { LIST_DATA } from '../../data/list-data';
 import { ClickEventArgs, ContextMenuComponent, ContextMenuModule, MenuEventArgs, ToolbarModule } from '@syncfusion/ej2-angular-navigations';
-import { FormsModule } from '@angular/forms';
-import workflowData from '../../data/workflow-data.json'; // Adjust the path as needed
 import { DropDownListModule, MultiSelectModule } from '@syncfusion/ej2-angular-dropdowns';
 import { NumericTextBoxModule, TextAreaModule, TextBoxModule, UploaderModule } from '@syncfusion/ej2-angular-inputs';
 import { DatePickerModule, DateTimePickerModule } from '@syncfusion/ej2-angular-calendars';
-import { TextFormatEnum, ChatWorkflowEditorTypeEnum, ChatWorkflowBlockTypeEnum } from '../../models/enum';
+import { ChatWorkflowEditorTypeEnum, ChatWorkflowBlockTypeEnum } from '../../models/enum';
 import { ButtonModule, SwitchModule } from '@syncfusion/ej2-angular-buttons';
-import sampleWorkflowData from '../../data/sample-workflow-data.json'; // Adjust the path as needed
-import { AsyncSettingsModel, FileInfo, Uploader } from '@syncfusion/ej2-inputs';
 import { WorkflowSidebarComponent } from '../workflow-sidebar/workflow-sidebar.component';  // Import child component
-import { Adaptor, DataManager, WebApiAdaptor } from '@syncfusion/ej2-data';
+import { DataManager } from '@syncfusion/ej2-data';
 import { WorkflowService } from '../../services/workflow.service';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -31,14 +26,12 @@ Diagram.Inject(HierarchicalTree, LineDistribution, PrintAndExport);
   selector: 'app-workflow-diagram',
   standalone: true,
   providers: [HierarchicalTreeService, DataBindingService, WorkflowService],
-  imports: [DiagramModule, ContextMenuModule, DialogModule, DropDownButtonModule, ButtonModule, CommonModule, ListViewModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule, DatePickerModule, DateTimePickerModule, SwitchModule, ToolbarModule, UploaderModule, WorkflowSidebarComponent],
+  imports: [DiagramModule, ContextMenuModule, DialogModule, ButtonModule, CommonModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule, DatePickerModule, DateTimePickerModule, SwitchModule, ToolbarModule, UploaderModule, WorkflowSidebarComponent],
   templateUrl: './workflow-diagram.component.html',
   styleUrl: './workflow-diagram.component.scss'
 })
 export class WorkflowDiagramComponent implements AfterViewInit {
   @ViewChild('diagram') diagram!: DiagramComponent;
-  @ViewChild('dropdownbutton') dropdownbutton!: DropDownButtonComponent;
-  @ViewChild('listview') listView!: ListViewComponent;
   @ViewChild('workflowSidebar') sidebarComponent!: WorkflowSidebarComponent;
   @ViewChild('fileInput', { static: false }) fileInput!: ElementRef;
   @ViewChild('contextmenu') contextmenu!: ContextMenuComponent;
