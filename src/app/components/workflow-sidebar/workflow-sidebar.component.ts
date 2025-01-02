@@ -3,11 +3,13 @@ import { SidebarComponent, SidebarModule } from '@syncfusion/ej2-angular-navigat
 import { TextFormatEnum, ChatWorkflowEditorTypeEnum, ChatWorkflowBlockTypeEnum } from '../../models/enum';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { CustomerBlockFieldDetails, FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails, RuleData2 } from '../../models/appModel';
+import { ChatWorkflowCommonObject, ChatWorkflowRulesData, ChatWorkflowRulesUpdateRequest, CustomerBlockFieldDetails, FieldDetails, FieldOptionDetail, FieldValidation, MessageDetails } from '../../models/appModel';
 import { NodeModel } from '@syncfusion/ej2-angular-diagrams';
 import { DropDownListComponent, DropDownListModule } from '@syncfusion/ej2-angular-dropdowns';
 import { DatePickerModule, DateTimePickerModule } from '@syncfusion/ej2-angular-calendars';
 import { ButtonModule, CheckBoxModule, SwitchModule } from '@syncfusion/ej2-angular-buttons';
+import { WorkflowService } from '../../services/workflow.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
 @Component({
@@ -50,7 +52,6 @@ export class WorkflowSidebarComponent {
   public isEdit: boolean = false;
   public isEditButton: boolean = false;
   public editIndex: number = -1;
-  public soureId: string = "";
   public addOption: boolean = false;
   public newNodeInfo: any;
   private updatePending = false;
@@ -66,13 +67,11 @@ export class WorkflowSidebarComponent {
   @Input() nodeEditType!: number;
   @Input() nodeBlockType!: number;
   @Input() sidebarHeader!: string;
-  @Input() selectedBlockId!: string;
+  @Input() clickedNodeRuleId!: number;
   @Input() selectedWorkFlowId!: number;
-  @Output() addNodeAndConnect = new EventEmitter<[string, NodeModel]>();
-  @Output() updateNode = new EventEmitter<[string, RuleData2]>();
+  @Output() diagramRefresh = new EventEmitter();
 
-
-  constructor() {
+  constructor(private workflowService: WorkflowService) {
     this.textFormatDDLOptions = this.enumToArray(TextFormatEnum);
   }
 
@@ -100,12 +99,12 @@ export class WorkflowSidebarComponent {
   // Add the new block
   onAddCloseSideBarClick(): void {
     this.sidebar?.hide();
-    this.addOrUpdateBlock(this.selectedBlockId);
+    this.addOrUpdateBlock(this.clickedNodeRuleId);
     this.removeSetBlockValues();
   }
   // Update the existing block
   onUpdateCloseSideBarClick(): void {
-    this.addOrUpdateBlock(this.soureId)
+    this.addOrUpdateBlock(this.clickedNodeRuleId)
     this.sidebar?.hide();
     this.removeSetBlockValues();
   }
@@ -174,8 +173,8 @@ export class WorkflowSidebarComponent {
   // Set the node(block) values
   setBlockValues(nodeInfo: NodeModel) {
     this.isEdit = true;
-    let nodeDetails = nodeInfo.data as RuleData2;
-    this.soureId = nodeInfo?.id ?? "";
+    let nodeDetails = nodeInfo.data as ChatWorkflowRulesData;
+    this.clickedNodeRuleId = nodeDetails.id;
     this.nodeBlockType = nodeDetails.chatWorkflowBlockId;
     this.nodeEditType = nodeDetails.chatWorkflowEditorTypeId ?? 0;
     this.sideBarLabel = nodeDetails.fieldDetails?.label as string;
@@ -202,10 +201,9 @@ export class WorkflowSidebarComponent {
     this.addOption = false;
     this.editIndex = -1;
     this.checkedIsPrivate = false;
-    this.ddlTextFormat.value = TextFormatEnum.Text
   }
   // Construct the add or update block details
-  addOrUpdateBlock(sourceNodeId: string) {
+  addOrUpdateBlock(clickedNodeRuleId: number) {
     switch (this.nodeBlockType) {
       case (this.chatWorkflowBlockTypeEnum.SendTextMessage): {
         let messageInfo: MessageDetails = {
@@ -322,22 +320,60 @@ export class WorkflowSidebarComponent {
       }
     }
     if (this.isEdit) {
-      this.updateNode.emit([sourceNodeId, this.newNodeInfo]);
+      this.onUpdateRule();
     }
     else {
-      this.newNode = this.createNode(this.newNodeWidth, this.newNodeHeight, this.newNodeInfo);
-      this.addNodeAndConnect.emit([sourceNodeId, this.newNode]);
+      this.onAddRule();
     }
   }
 
-  public createNodeInfo(editorTypeId: number | null, blockId: number, workflowId: number, fieldInfo: FieldDetails | null, fieldOptionInfo: FieldOptionDetail[] | null, messageInfo: MessageDetails | null, customerBlockFieldInfo: CustomerBlockFieldDetails | null): RuleData2 {
+  public onAddRule(): void {
+    var addRuleRequest : ChatWorkflowCommonObject = {
+      parentRuleId: this.clickedNodeRuleId,
+      chatWorkflowId: this.selectedWorkFlowId,
+      chatWorkflowBlockId: this.newNodeInfo.chatWorkflowBlockId,
+      chatWorkflowEditorTypeId : this.newNodeInfo.chatWorkflowEditorTypeId,
+      fieldDetails: this.newNodeInfo.fieldDetails,
+      messageDetails: this.newNodeInfo.messageDetails,
+      branchDetails: this.newNodeInfo.branchDetails,
+      fieldOptionDetails : this.newNodeInfo.fieldOptionDetails
+    };
+    this.workflowService.addRule(addRuleRequest).then((result) => {
+      console.log(result.message);
+      if (result) {
+        this.diagramRefresh.emit();
+        this.newNodeInfo.id = result.workflowRuleId;
+      }
+    }).catch((e : HttpErrorResponse) => {
+      if(e && e.error?.Message){
+        console.log("Add failed");
+      }
+    });
+  }
+
+  public onUpdateRule(): void {
+    var updateRuleRequest : ChatWorkflowRulesUpdateRequest = {
+      chatWorkflowEditorTypeId : this.newNodeInfo.chatWorkflowEditorTypeId,
+      fieldDetails: this.newNodeInfo.fieldDetails,
+      fieldOptionDetails : this.newNodeInfo.fieldOptionDetails
+    };
+    this.workflowService.updateRule(this.selectedWorkFlowId, this.clickedNodeRuleId, updateRuleRequest).then((result) => {
+      console.log(result.message);
+      this.diagramRefresh.emit();
+    }).catch((e : HttpErrorResponse) => {
+      if(e && e.error?.Message){
+        console.log("Update failed");
+      }
+    });
+  }
+
+  public createNodeInfo(editorTypeId: number | null, blockId: number, workflowId: number, fieldInfo: FieldDetails | null, fieldOptionInfo: FieldOptionDetail[] | null, messageInfo: MessageDetails | null, customerBlockFieldInfo: CustomerBlockFieldDetails | null): ChatWorkflowRulesData {
     let ruleDataId = this.isEdit ? 0 : WorkflowSidebarComponent.nodeLength++; // Need to set value dynamically from db
     return {
       id: ruleDataId,
       chatWorkflowId: workflowId,
       successWorkflowId: null,
       successRuleId: null,
-      isActive: true,
       chatWorkflowBlockId: blockId,
       chatWorkflowEditorTypeId: editorTypeId,
       fieldDetails: fieldInfo,
@@ -373,7 +409,7 @@ export class WorkflowSidebarComponent {
     }
   }
 
-  public createNode(width: number, height: number, nodeInfo: RuleData2): NodeModel {
+  public createNode(width: number, height: number, nodeInfo: ChatWorkflowRulesData): NodeModel {
     return {
       id: `node${nodeInfo.id}`,
       style: { fill: '#FFFFFF', strokeColor: '#0f2c60', strokeWidth: 5 },

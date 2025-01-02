@@ -53,12 +53,20 @@ export interface CustomerBlockFieldDetails {
 }
 
 // Define the main Workflow interface
-export interface RuleData2 {
+export interface ChatWorkflowRulesData extends ChatWorkflowCommonObject {
   id: number;
-  chatWorkflowId: number;
   successWorkflowId?: number | null;
   successRuleId?: number | null;
-  isActive: boolean;
+}
+
+export interface ChatWorkflowRulesUpdateRequest {
+  chatWorkflowEditorTypeId?: number | null;
+  fieldDetails?: FieldDetails | null;
+  fieldOptionDetails?: FieldOptionDetail[] | null;
+}
+
+export interface ChatWorkflowCommonObject {
+  chatWorkflowId: number;
   chatWorkflowBlockId: number;
   chatWorkflowEditorTypeId?: number | null;
   fieldDetails?: FieldDetails | null;
@@ -66,27 +74,10 @@ export interface RuleData2 {
   messageDetails?: MessageDetails | null;
   fieldOptionDetails?: FieldOptionDetail[] | null;
   customerBlockFieldInfo?: CustomerBlockFieldDetails | null;
-  parentId?: number | null;
+  parentRuleId?: number | null;
 }
 
-// Define the main Workflow interface
-export interface ChatWorkflowRulesData {
-  id: number;
-  chatWorkflowId: number;
-  successWorkflowId?: number | null;
-  successRuleId?: number | null;
-  chatWorkflowBlockId: number;
-  chatWorkflowEditorTypeId?: number | null;
-  fieldDetails?: FieldDetails | null;
-  branchDetails?: BranchDetail[] | null;
-  messageDetails?: MessageDetails | null;
-  fieldOptionDetails?: FieldOptionDetail[] | null;
-  customerBlockFieldInfo?: CustomerBlockFieldDetails | null;
-  parentId?: number | null;
-}
-
-export interface ChatWorkflowRulesData2 {
-  chatWorkflowEditorTypeId?: number | null;
-  fieldDetails?: FieldDetails | null;
-  fieldOptionDetails?: FieldOptionDetail[] | null;
+export interface AddWorkflowRulesResponse {
+  workflowRuleId: number;
+  successMessage: string;
 }
