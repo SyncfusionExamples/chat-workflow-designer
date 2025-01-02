@@ -27,7 +27,7 @@
     <ng-template #userHandleTemplate let-data>
       <div class="dropDown-container">
         @if (data.name === 'addBlock') {
-          <button #addbtn ejs-button id="addbtn" iconCss='e-icons e-plus' cssClass='e-caret-hide'></button>
+          <button #addbtn ejs-button id="addbtn" iconCss='e-icons e-plus' cssClass='e-caret-hide bc-add-handler'></button>
         }
         @else if (data.name === 'editBlock'){
           <button #editbtn ejs-button id="editbtn" iconCss='e-icons e-edit' cssClass='e-caret-hide'></button>

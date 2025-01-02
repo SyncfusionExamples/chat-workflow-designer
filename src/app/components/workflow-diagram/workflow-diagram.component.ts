@@ -210,7 +210,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
   // Need to refresh the diagram whenever a node is added or modified
   public onRuleNodeChange(): void {
     this.diagram.setProperties({ nodes: [], connectors: [] }, true);
-      this.diagram.refresh();
+    this.diagram.refresh();
   }
 
   // on node delete 
@@ -234,7 +234,7 @@ export class WorkflowDiagramComponent implements AfterViewInit {
         this.diagram.selectedItems.userHandles[1].visible = false;
         this.diagram.selectedItems.userHandles[2].visible = false;
       }
-      var addbtn=document.getElementById('addbtn');
+      var addbtn=this.diagram.element.querySelector('.e-userHandle-layer .bc-add-handler');
       var addPos = addbtn.getBoundingClientRect();
       this.contextmenu.open(addPos.top + window.scrollY, addPos.left+window.scrollX);
     }
