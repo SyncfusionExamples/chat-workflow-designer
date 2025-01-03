@@ -38,27 +38,27 @@
                         <button ejs-button type="button" iconCss='e-icons e-close'  (click)="removeOption($index)"></button>
                     </div>
                     @if(editIndex==$index){
-                        <div class="add-button-form" *ngTemplateOutlet="addButtonTemplate; context: { visibility: isVisible(nodeEditType) }"></div>
+                        <div class="add-button-form" *ngTemplateOutlet="addButtonTemplate; context: { desc_visibility: isVisible(nodeEditType), value_visibility: isValueVisible(nodeBlockType)}"></div>
                     }
                 }
             </ng-template>
 
-            <ng-template #addOptionTemplate let-isVisible="visibility">
+            <ng-template #addOptionTemplate let-isDescVisible="desc_visibility" let-isValueVisible="value_visibility">
                 <button ejs-button  type="button" iconCss='e-icons e-plus' (click)="onAddOption()">Add Option</button>
                 @if(addOption){
-                    <div class="add-button-form" *ngTemplateOutlet="addButtonTemplate; context: { visibility: isVisible }"></div>
+                    <div class="add-button-form" *ngTemplateOutlet="addButtonTemplate; context: { desc_visibility: isDescVisible, value_visibility : isValueVisible }"></div>
                 }
             </ng-template>
 
-            <ng-template #addButtonTemplate let-isVisible="visibility">
+            <ng-template #addButtonTemplate let-isDescVisible="desc_visibility" let-isValueVisible="value_visibility">
                 <div>
                     <input #optionLabel type="text" placeholder="Option Label" class="button-input" />
                 </div>
                 <div>
-                    <input #optionValue type="text" placeholder="Option Value" class="button-input" />
+                    <input #optionValue type="text" placeholder="Option Value" class="button-input" [style.display]="isValueVisible ? 'none' : 'block'"/>
                 </div>
                 <div>
-                    <input #optionDescription type="text" placeholder="Option Description" class="button-input" [style.display]="isVisible ? 'block' : 'none'"/>
+                    <input #optionDescription type="text" placeholder="Option Description" class="button-input" [style.display]="isDescVisible ? 'block' : 'none'"/>
                 </div>
                 <div>
                     <button ejs-button  type="button" iconCss='e-icons e-check' (click)="addOrUpdateSaveOption(optionLabel.value, optionValue.value, isVisible ? optionDescription.value : null, optionLabel, optionValue, isVisible ? optionDescription : null)"></button>
@@ -101,7 +101,7 @@
                         <div>
                             <div *ngTemplateOutlet="sideBarPlaceholderTemplate"></div>
                             <div class="button-list"  *ngTemplateOutlet="removeButtonTemplate"></div>
-                            <div class="add-button-form" *ngTemplateOutlet="addOptionTemplate; context: { visibility: true }"></div>
+                            <div class="add-button-form" *ngTemplateOutlet="addOptionTemplate; context: { desc_visibility: true , value_visibility: false}"></div>
                         </div>
                         }
                     }
@@ -173,6 +173,33 @@
                         <ejs-checkbox label="Get Customer Phone Number" [(ngModel)]="getPhoneNumberInfo" name="getPhoneNumberInfo"></ejs-checkbox>
                     </div>
                 }
+                
+                @case(chatWorkflowBlockTypeEnum.BranchOnPickerInput){
+                    @switch(nodeEditType){
+                        @case(chatWorkflowEditorTypeEnum.ButtonsBranch){
+                        <div>
+                            <div class="button-list" *ngTemplateOutlet="removeButtonTemplate"></div>
+                            <div class="add-button-form" *ngTemplateOutlet="addOptionTemplate; context: { desc_visibility: false, value_visibility: true }"></div>
+                        </div>
+                        }
+                        @case(chatWorkflowEditorTypeEnum.DropdownBranch){
+                        <div>
+                            <div *ngTemplateOutlet="sideBarDescriptionTemplate"></div>
+                            <div *ngTemplateOutlet="sideBarPlaceholderTemplate"></div>
+                            <div class="button-list"  *ngTemplateOutlet="removeButtonTemplate"></div>
+                            <div class="add-button-form" *ngTemplateOutlet="addOptionTemplate; context: { desc_visibility: false, value_visibility: true }"></div>
+                        </div>
+                        }
+                        @case(chatWorkflowEditorTypeEnum.ListBranch){
+                        <div>
+                            <div *ngTemplateOutlet="sideBarDescriptionTemplate"></div>
+                            <div *ngTemplateOutlet="sideBarPlaceholderTemplate"></div>
+                            <div class="button-list"  *ngTemplateOutlet="removeButtonTemplate"></div>
+                            <div class="add-button-form" *ngTemplateOutlet="addOptionTemplate; context: { desc_visibility: true, value_visibility: true }"></div>
+                        </div>
+                        }
+                    }
+                }
             }
         </form>
     </div>
@@ -186,3 +213,7 @@
         <button ejs-button id="cancel" (click)="onCancelSideBarClick()" class="e-btn close-btn">Cancel</button>
     </div>
 </ejs-sidebar>
+
+<ejs-dialog id='dialog' #ejDialog [animationSettings]='animationSettings'
+     content='Are you sure you want to permanently delete all success rules?'
+     [visible]='false' [buttons]='buttons' [position]='position'>

@@ -153,18 +153,31 @@ export const LIST_DATA: { [key: string]: any }[] = [
           'id': '11',
           'category': 'Branching',
           'items': [{
-                'text': 'Buttons',
+                'text': 'ButtonsBranch',
                 'id': '11001',
+                'blockid': 10,
+                'editerTypeId': 14,
                 'category': 'Selection',
             },
             {
-                'text': 'List',
+                'text': 'DropdownBranch',
                 'id': '11002',
+                'blockid': 10,
+                'editerTypeId': 15,
                 'category': 'Selection',
             },
             {
-                'text': 'Card',
+                'text': 'ListBranch',
                 'id': '11003',
+                'blockid': 10,
+                'editerTypeId': 16,
+                'category': 'Selection',
+            },
+            {
+                'text': 'CardBranch',
+                'id': '11003',
+                'blockid': 10,
+                'editerTypeId': 17,
                 'category': 'Selection',
             }]
       }]
