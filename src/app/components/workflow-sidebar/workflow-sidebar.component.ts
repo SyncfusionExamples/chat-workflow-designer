@@ -153,7 +153,6 @@ export class WorkflowSidebarComponent {
   }
   // Add and Save option
   addOrUpdateSaveOption(label: string, value: string, description: string | null, labelInput: HTMLInputElement, valueInput: HTMLInputElement, descriptionInput: HTMLInputElement | null): void {
-    value = (this.nodeBlockType == ChatWorkflowBlockTypeEnum.BranchOnPickerInput) ? uuidv1() : value;
     const option = { label: label.trim(), value: value.trim(), description };
     if(this.isEditButton){
       this.options[this.editIndex] = option;
@@ -170,6 +169,7 @@ export class WorkflowSidebarComponent {
       }
     } 
     else {
+      value = (this.nodeBlockType == ChatWorkflowBlockTypeEnum.BranchOnPickerInput) ? uuidv1() : value;
       this.options.push({ label, value, description });
       this.addOptions.push({ label, value, description });
     }
@@ -262,6 +262,9 @@ export class WorkflowSidebarComponent {
     this.sideBarDescription = "";
     this.sideBarPlaceholder = "";
     this.options = [];
+    this.addOptions = [];
+    this.editOptions = [];
+    this.deleteOptions = [];
     this.fieldOptionMinValue = 0;
     this.fieldOptionMaxValue = 0;
     this.fieldOptionRegexValue = "";
