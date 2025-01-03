@@ -38,9 +38,6 @@ export interface MessageDetails {
 
 // Define BranchDetails interface
 export interface BranchDetail {
-  id?: number | null;
-  type?: string | null;
-  name?: string | null;
   successRuleId?: number| null;
   successWorkflowId?: number | null;
   value?: string | null;
@@ -54,7 +51,7 @@ export interface CustomerBlockFieldDetails {
 
 // Define the main Workflow interface
 export interface ChatWorkflowRulesData extends ChatWorkflowCommonObject {
-  id: number;
+  id?: number;
   successWorkflowId?: number | null;
   successRuleId?: number | null;
 }
@@ -62,7 +59,9 @@ export interface ChatWorkflowRulesData extends ChatWorkflowCommonObject {
 export interface ChatWorkflowRulesUpdateRequest {
   chatWorkflowEditorTypeId?: number | null;
   fieldDetails?: FieldDetails | null;
-  fieldOptionDetails?: FieldOptionDetail[] | null;
+  addFieldOptionDetails?: FieldOptionDetail[] | null;
+  updateFieldOptionDetails?: FieldOptionDetail[] | null;
+  deleteFieldOptionDetails?: FieldOptionDetail[] | null;
 }
 
 export interface ChatWorkflowCommonObject {

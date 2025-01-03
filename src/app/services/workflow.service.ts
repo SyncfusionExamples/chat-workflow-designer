@@ -33,9 +33,11 @@ export class WorkflowService {
     return this.http.delete<{ message: string }>(url, this.httpOptions).toPromise();
   }
 
-  addRule(addRuleRequest: ChatWorkflowCommonObject): Promise<{ workflowRuleId: number, message: string }> {
-    const url = WorkflowApiPaths.addWorkflowRules.replace('{baseUrl}', this.baseUrl);
-
+  addRule(addRuleRequest: ChatWorkflowCommonObject, branchValue : string | null): Promise<{ workflowRuleId: number, message: string }> {
+    let url = WorkflowApiPaths.addWorkflowRules.replace('{baseUrl}', this.baseUrl);
+    if (branchValue != null) {
+      url += `?branchValue=${branchValue}`;
+    }
     return this.http.post<{ workflowRuleId: number, message: string }>(url, addRuleRequest, this.httpOptions).toPromise();
   }
 }
