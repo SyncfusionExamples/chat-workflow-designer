@@ -15,11 +15,10 @@ import { v1 as uuidv1 } from 'uuid';
 
 
 @Component({
-  selector: 'app-workflow-sidebar',
-  standalone: true,
-  imports: [SidebarModule, FormsModule, DialogModule, CommonModule, DatePickerModule, DateTimePickerModule, ButtonModule, CheckBoxModule, SwitchModule, DropDownListModule ],
-  templateUrl: './workflow-sidebar.component.html',
-  styleUrl: './workflow-sidebar.component.scss'
+    selector: 'app-workflow-sidebar',
+    imports: [SidebarModule, FormsModule, DialogModule, CommonModule, DatePickerModule, DateTimePickerModule, ButtonModule, CheckBoxModule, SwitchModule, DropDownListModule],
+    templateUrl: './workflow-sidebar.component.html',
+    styleUrl: './workflow-sidebar.component.scss'
 })
 export class WorkflowSidebarComponent {
   @ViewChild('sidebar') sidebar?: SidebarComponent;

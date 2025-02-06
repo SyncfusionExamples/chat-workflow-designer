@@ -24,12 +24,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 Diagram.Inject(HierarchicalTree, LineDistribution, PrintAndExport);
 
 @Component({
-  selector: 'app-workflow-diagram',
-  standalone: true,
-  providers: [HierarchicalTreeService, DataBindingService, WorkflowService],
-  imports: [DiagramModule, ContextMenuModule, DialogModule, ButtonModule, CommonModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule, DatePickerModule, DateTimePickerModule, SwitchModule, ToolbarModule, UploaderModule, WorkflowSidebarComponent],
-  templateUrl: './workflow-diagram.component.html',
-  styleUrl: './workflow-diagram.component.scss'
+    selector: 'app-workflow-diagram',
+    providers: [HierarchicalTreeService, DataBindingService, WorkflowService],
+    imports: [DiagramModule, ContextMenuModule, DialogModule, ButtonModule, CommonModule, DropDownListModule, MultiSelectModule, NumericTextBoxModule, TextBoxModule, TextAreaModule, DatePickerModule, DateTimePickerModule, SwitchModule, ToolbarModule, UploaderModule, WorkflowSidebarComponent],
+    templateUrl: './workflow-diagram.component.html',
+    styleUrl: './workflow-diagram.component.scss'
 })
 export class WorkflowDiagramComponent implements AfterViewInit {
   @ViewChild('diagram') diagram!: DiagramComponent;
